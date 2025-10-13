@@ -106,9 +106,9 @@
                                                 <button class="btn btn-light btn-icon btn-sm dropdown material-shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="ri-more-fill align-bottom"></i> </button>
                                                 <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
                                                     <li>
-                                                        <a @click="openView(list,index)" class="dropdown-item d-flex align-items-center" role="button">
+                                                        <Link :href="`/users/${list.code}`" class="dropdown-item d-flex align-items-center" role="button">
                                                             <i class="ri-eye-fill me-2"></i> View
-                                                        </a>
+                                                        </Link>
                                                     </li>
                                                     <li>
                                                         <a @click="openUpdate(list,index)" class="dropdown-item d-flex align-items-center" role="button">

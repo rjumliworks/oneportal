@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'kradworkz' => hash('sha256','kradjumli@gmail.com'),
             'password' => bcrypt('123456789'),
             'is_active' => 1,
+            'must_change' => 1,
             'email_verified_at' => '2024-05-15 08:46:33',
             'created_at' => now(),
             'updated_at' => now()

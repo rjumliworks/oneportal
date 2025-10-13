@@ -75,8 +75,8 @@
             <b-button @click="hide()" variant="light" block>Close</b-button>
         </template>
     </b-modal>
-    <AddRole :roles="roles" ref="addrole"/>
-    <Remove  @update="updateData" ref="remove"/>
+    <AddRole @update="addData" :roles="roles" ref="addrole"/>
+    <Remove @update="updateData" ref="remove"/>
 </template>
 <script>
 import AddRole from './AddRole.vue';
@@ -96,7 +96,7 @@ export default {
     methods: { 
         show(data){
             this.user = data;
-            this.user.roles.sort((a, b) => b.is_active - a.is_active);
+            this.sortRoles();
             this.showModal = true;
         },
         openRemove(data,index){
@@ -108,12 +108,25 @@ export default {
         },
         updateData(data){
             this.user.roles[this.index] = data;
-            this.user.roles.sort((a, b) => b.is_active - a.is_active);
+            this.sortRoles();
+        },
+        addData(data){
+            this.user.roles.push(data);
+            this.sortRoles();
+        },
+        sortRoles() {
+            this.user.roles.sort((a, b) => {
+                if (a.is_active !== b.is_active) {
+                    return b.is_active - a.is_active;
+                }
+                if (a.is_active === 1) {
+                    if (a.name === 'Employee' && b.name !== 'Employee') return 1;
+                    if (a.name !== 'Employee' && b.name === 'Employee') return -1;
+                }
+                return 0;
+            });
         },
         hide(){
-            this.user = {};
-            this.form.reset();
-            this.form.clearErrors();
             this.showModal = false;
         }
     }

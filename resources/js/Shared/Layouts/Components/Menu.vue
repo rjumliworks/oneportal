@@ -25,6 +25,68 @@
                     </Link>
                 </li>
             </tempalte>
+            <tempalte v-if="$page.props.roles.includes('Human Resource Officer')">
+                <li class="menu-title">
+                    <i class="ri-more-fill" aria-expanded="false"></i>
+                    <span data-key="t-menu">Human Resource</span>
+                </li>
+                <li class="nav-item">
+                    <Link href="/employees" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Employees</span>
+                    </Link>
+                </li>
+                <!-- <li class="nav-item">
+                    <Link href="/dtrs" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Dtrs') }">
+                    <i class="ri-alarm-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Daily Time Record</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/payrolls" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Payrolls') }">
+                    <i class="ri-hand-coin-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Payroll</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/leaves" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Leaves') }">
+                    <i class="ri-calendar-2-line "></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Leave Request</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/credits" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Credits') }">
+                    <i class="ri-file-list-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Leave Credits</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/cto" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Cto') }">
+                    <i class="ri-time-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">CTO</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/surveys" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Surveys') }">
+                    <i class="ri-article-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Morale Surveys</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/calendar" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Calendar') }">
+                    <i class="ri-calendar-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Calendar</span>
+                    </Link>
+                </li> -->
+            </tempalte>
             <tempalte v-if="$page.props.roles.includes('Administrator')">
                 <li class="menu-title">
                     <i class="ri-more-fill" aria-expanded="false"></i>
@@ -32,14 +94,14 @@
                 </li>
                 <li class="nav-item">
                     <Link href="/users" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/Administrator/Users') }">
+                    :class="{'active': $page.component.startsWith('Modules/System/Users') }">
                     <i class="ri-team-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Users</span>
                     </Link>
                 </li>
                 <li class="nav-item">
                     <Link href="/signatories" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/Administrator/Signatories') }">
+                    :class="{'active': $page.component.startsWith('Modules/Systme/Signatories') }">
                     <i class="ri-mark-pen-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Signatories</span>
                     </Link>

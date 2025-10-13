@@ -58,9 +58,6 @@ export default {
                 },
             });
         },
-        handleInput(field) {
-            this.form.errors[field] = false;
-        },
         hide(){
             this.showModal = false;
         }

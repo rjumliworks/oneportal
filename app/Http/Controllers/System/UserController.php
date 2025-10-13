@@ -25,6 +25,12 @@ class UserController extends Controller
             case 'list':
                 return $this->user->list($request);
             break;
+            case 'authentication-logs':
+                return $this->user->authentication($request);
+            break;
+            case 'activity-logs':
+                return $this->user->activity($request);
+            break;
             default:
                 return inertia('Modules/System/Users/Index',[
                     'dropdowns' => [
@@ -54,6 +60,15 @@ class UserController extends Controller
             'message' => $result['message'],
             'info' => $result['info'],
             'status' => $result['status'],
+        ]);
+    }
+
+     public function show($code){
+        return inertia('Modules/System/Users/View',[
+            'user_data' => $this->user->view($code),
+            'dropdowns' => [
+               'roles' => $this->dropdown->roles()
+            ],
         ]);
     }
 }

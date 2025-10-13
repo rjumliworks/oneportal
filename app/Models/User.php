@@ -86,6 +86,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $value ? date('M d, Y g:i a', strtotime($value)) : null;
     }
 
+    public function getPasswordChangedAtAttribute($value)
+    {
+        return $value ? date('F d, Y g:i a', strtotime($value)) : null;
+    }
+
     public function getTwoFactorConfirmedAtAttribute($value)
     {
         return $value ? date('M d, Y g:i a', strtotime($value)) : null;

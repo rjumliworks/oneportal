@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'position' => $this->organization->position->name ?? 'Employee',
             'signatory' => $this->signatory,
             'is_active' => $this->is_active,
+            'must_change' => $this->must_change,
             'two_factor_enabled' => ($this->two_factor_secret) ? true : false,
             'two_factor_confirmed' => ($this->two_factor_confirmed_at) ? true : false,
             'password_changed_at' => $this->password_changed_at,

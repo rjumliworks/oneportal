@@ -4,12 +4,18 @@
         <form class="customform">
             <BRow class="g-3 mt-n1">
                 <BCol lg="12" class="mt-0 mb-2">
+                    <div class="alert fs-10 alert-danger alert-dismissible alert-label-icon label-arrow fade show mb-xl-0 material-shadow" role="alert">
+                        <i class="ri-error-warning-line label-icon"></i><strong>Notice</strong>
+                        - Adding a new role will grant the user access to the corresponding role module.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </BCol>
+                <BCol lg="12" class="mt-0 mb-2">
                     <InputLabel value="Role" :message="form.errors.role_id"/>
                     <Multiselect :options="filteredRoles" label="name" v-model="form.role_id" placeholder="Select Role" @input="handleInput('role_id')"/>
                 </BCol>
             </BRow>
         </form>
-       {{form}}
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
             <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
@@ -25,7 +31,6 @@ export default {
     props: ['roles'],
     data(){
         return {
-            currentUrl: window.location.origin,
             form: useForm({
                 code: null,
                 role_id: null,
@@ -54,13 +59,15 @@ export default {
         },
         submit(){
             this.form.put('/users/update', {
-                errorBag: 'updateProfileInformation',
                 preserveScroll: true,
                 onSuccess: () => {
                     this.$emit('update',this.$page.props.flash.data.data);
                     this.hide();
                 },
             });
+        },
+        handleInput(field) {
+            this.form.errors[field] = false;
         },
         hide(){
             this.user = {};

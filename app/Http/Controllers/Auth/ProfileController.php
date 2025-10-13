@@ -94,6 +94,7 @@ class ProfileController extends Controller
         $user->is_active = 1;
         $user->must_change = 0;
         $user->password = bcrypt($validated['password']);
+        $user->password_changed_at = now();
         if($user->save()){
             return redirect()->intended(route('dashboard', absolute: false));
         }
