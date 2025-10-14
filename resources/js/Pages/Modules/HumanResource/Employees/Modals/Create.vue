@@ -37,8 +37,8 @@
                             <TextInput id="name" v-model="form.email" type="email" class="form-control" placeholder="Please enter email" @input="handleInput('email')" :light="true"/>
                         </BCol>
                         <BCol lg="3" class="mt-0">
-                            <InputLabel for="name" value="Contact no." :color="'white'" :message="form.errors.contact_no"/>
-                            <TextInput id="name" v-model="form.contact_no" type="text" class="form-control" placeholder="Please enter contact no." @input="handleInput('contact_no')" :light="true"/>
+                            <InputLabel for="name" value="Contact no." :color="'white'" :message="form.errors.mobile"/>
+                            <TextInput id="name" v-model="form.mobile" type="text" class="form-control" placeholder="Please enter contact no." @input="handleInput('mobile')" :light="true"/>
                         </BCol>
                         <BCol lg="3" class="mt-0">
                             <InputLabel for="name" value="Birthdate" :color="'white'" :message="form.errors.email"/>
@@ -103,7 +103,7 @@
                         <Multiselect :options="filteredPositions" :searchable="true" label="name" v-model="form.position_id" placeholder="Select Position" @input="handleInput('position_id')"/>
                     </BCol>
                     <BCol lg="3" class="mt-1">
-                        <InputLabel for="name" value="Year Rate" :message="form.errors.salary_id"/>
+                        <InputLabel for="name" value="Year Rate"/>
                         <Multiselect :options="uniqueYears" :searchable="true" label="name" v-model="form.year" placeholder="Select Year" @input="handleInput('year')"/>
                     </BCol>
                     <BCol lg="3" class="mt-1">
@@ -240,17 +240,18 @@ export default {
             this.form.suffix = data.profile.suffix;
             this.form.username = data.username;
             this.form.email = data.email;
-            this.form.contact_no = data.profile.contact_no;
+            this.form.mobile = data.profile.mobile;
             this.form.birthdate = data.profile.birthdate;
-            this.form.sex = data.profile.sex;
-            this.form.blood_id = data.profile.blood_id;
-            this.form.marital_id = data.profile.marital_id;
-            this.form.religion_id = data.profile.religion_id;
+            this.form.sex_id = data.profile.sex.id;
+            this.form.blood_id = data.profile.blood.id;
+            this.form.marital_id = data.profile.marital.id;
+            this.form.religion_id = data.profile.religion.id;
             this.form.type_id = data.organization.type_id;
-            this.form.division_id = data.organization.division_id;
+            this.form.division_id = data.organization.division.id;
             this.form.station_id = data.organization.station_id;
             this.form.unit_id = data.organization.unit_id;
             this.form.position_id = data.organization.position_id;
+            this.form.year = data.organization.salary.year;
             this.form.salary_id = data.organization.salary_id;
             this.showModal = true;
         },

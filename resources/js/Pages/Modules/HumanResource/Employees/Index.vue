@@ -96,14 +96,14 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.profile.lastname}}, {{list.profile.firstname}} {{list.profile.middlename}}.</h5>
+                                        <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.fullname}}.</h5>
                                         <p class="fs-12 text-muted mb-0">{{list.organization.position.name}}</p>
                                     </td>
                                     <td class="text-center">{{ list.organization.type.name }}</td>
                                     <td class="text-center">{{ list.username }}</td>
-                                    <td class="text-center">{{ list.profile.contact_no }}</td>
+                                    <td class="text-center">{{ list.mobile }}</td>
                                     <td class="text-center">{{ list.email }}</td>
-                                    <td class="text-center">{{ list.profile.birthdate }}</td>
+                                    <td class="text-center">{{ list.birthdate }}</td>
                                     <td class="text-center">
                                         <span :class="'badge '+list.organization.status.color+' '+list.organization.status.type">{{list.organization.status.name}}</span>
                                     </td>
@@ -200,7 +200,7 @@ export default {
                     unit: this.filter.unit,
                     station: this.filter.station,
                     count: 10, //Math.floor((window.innerHeight-350)/59)
-                    option: 'lists'
+                    option: 'list'
                 }
             })
             .then(response => {

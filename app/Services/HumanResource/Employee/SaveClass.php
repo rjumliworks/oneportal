@@ -11,7 +11,7 @@ use App\Models\UserAcademic;
 use App\Models\UserDeduction;
 use App\Models\UserCredential;
 use App\Models\UserInformation;
-use App\Http\Resources\HumanResource\EmployeeResource;
+use App\Http\Resources\Hr\Employee\IndexResource;
 
 class SaveClass
 {
@@ -53,12 +53,12 @@ class SaveClass
             $profile->middlename = $request->middlename;
             $profile->lastname = $request->lastname;
             $profile->birthdate = $request->birthdate;
-            $profile->contact_no = $request->contact_no;
+            $profile->mobile = $request->mobile;
             $profile->marital_id = $request->marital_id;
             $profile->religion_id = $request->religion_id;
             $profile->blood_id = $request->blood_id;
-            $profile->suffix = $request->suffix;
-            $profile->sex = $request->sex;
+            $profile->suffix_id = $request->suffix_id;
+            $profile->sex_id = $request->sex_id;
             if($profile->save()){
                 $organization = UserOrganization::where('user_id',$request->id)->first();
                 $organization->division_id = $request->division_id;
@@ -71,11 +71,10 @@ class SaveClass
             }
         }
 
-        $data = new EmployeeResource(
+        $data = new IndexResource(
             User::select('users.id','email','username','users.created_at')
-            ->with('profile.religion','profile.blood','profile.marital')
+            ->with('profile.religion','profile.blood','profile.marital','profile.sex','profile.suffix')
             ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
-            ->with('information','academics','credentials')
             ->where('id',$request->id)->first()
         );
 

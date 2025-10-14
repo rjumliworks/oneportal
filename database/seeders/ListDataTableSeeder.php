@@ -1187,6 +1187,41 @@ class ListDataTableSeeder extends Seeder
                 'type' => 'Sex',
                 'is_active' => 1,
             ),
+            167 => 
+            array (
+                'id' => 168,
+                'name' => 'Jr.',
+                'type' => 'Suffix',
+                'is_active' => 1,
+            ),
+            168 => 
+            array (
+                'id' => 169,
+                'name' => 'Sr.',
+                'type' => 'Suffix',
+                'is_active' => 1,
+            ),
+            169 => 
+            array (
+                'id' => 170,
+                'name' => 'II',
+                'type' => 'Suffix',
+                'is_active' => 1,
+            ),
+            170 => 
+            array (
+                'id' => 171,
+                'name' => 'III',
+                'type' => 'Suffix',
+                'is_active' => 1,
+            ),
+            171 => 
+            array (
+                'id' => 172,
+                'name' => 'IV',
+                'type' => 'Suffix',
+                'is_active' => 1,
+            ),
         ));
 
         

@@ -54,8 +54,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ListDeductionsTableSeeder::class);
         $this->call(ListDropdownsTableSeeder::class);
         $this->call(ListUnitsTableSeeder::class);
-        // $this->call(ListStatusesTableSeeder::class);
-
+        $this->call(ListDropdownsTableSeeder::class);
+        $this->call(ListStatusesTableSeeder::class);
+        $this->call(ListUnitsTableSeeder::class);
         // \DB::table('user_organizations')->insert([
         //     'user_id' => 1,
         //     'status_id' => 2,
@@ -83,8 +84,10 @@ class DatabaseSeeder extends Seeder
         // ]);
         // $this->call(SurveyQuestionsTableSeeder::class);
         // $this->call(ListLeavesTableSeeder::class);
-        // $this->call(UsersTableSeeder::class);
-        // $this->call(UserProfilesTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
+        $this->call(UserProfilesTableSeeder::class);
+        $this->call(UserOrganizationsTableSeeder::class);
+        $this->call(UserRolesTableSeeder::class);
         // $this->call(UserCredentialsTableSeeder::class);
         // $this->call(UserAcademicsTableSeeder::class);
         // $this->call(UserRolesTableSeeder::class);
@@ -96,6 +99,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(UserDeductionsTableSeeder::class);
         // $this->call(ListVehiclesTableSeeder::class);
         // $this->call(SignatoriesTableSeeder::class);
-        $this->call(ListDropdownsTableSeeder::class);
+        
     }
 }

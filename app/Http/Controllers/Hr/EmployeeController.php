@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\DropdownClass;
 use App\Traits\HandlesTransaction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\EmployeeRequest;
 use App\Services\HumanResource\Employee\SaveClass;
 use App\Services\HumanResource\Employee\ViewClass;
 use App\Services\HumanResource\Employee\UpdateClass;
@@ -26,7 +27,7 @@ class EmployeeController extends Controller
     public function index(Request $request){
         switch($request->option){
             case 'list':
-                return [];
+                return $this->view->list($request);
             break;
             default:
                 return inertia('Modules/HumanResource/Employees/Index',[
