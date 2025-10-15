@@ -1222,6 +1222,20 @@ class ListDataTableSeeder extends Seeder
                 'type' => 'Suffix',
                 'is_active' => 1,
             ),
+            172 => 
+            array (
+                'id' => 173,
+                'name' => 'School',
+                'type' => 'Academic',
+                'is_active' => 1,
+            ),
+            173 => 
+            array (
+                'id' => 174,
+                'name' => 'Course',
+                'type' => 'Academic',
+                'is_active' => 1,
+            ),
         ));
 
         

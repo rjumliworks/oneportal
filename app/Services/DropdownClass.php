@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ListAcademic;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\ListUnit;
@@ -342,5 +343,41 @@ class DropdownClass
         });
 
         return $vehicles;
+    }
+
+    public function schools($keyword){
+        $data = ListAcademic::where(function($query) use ($keyword) {
+            $query->where('name', 'LIKE', "%{$keyword}%");
+        })
+        ->where('type_id',173)
+        ->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name
+            ];
+        });
+        if($keyword){
+            return $data;
+        }else{
+            return [];
+        }
+    }
+
+    public function courses($keyword){
+        $data = ListAcademic::where(function($query) use ($keyword) {
+            $query->where('name', 'LIKE', "%{$keyword}%");
+        })
+        ->where('type_id',174)
+        ->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name
+            ];
+        });
+        if($keyword){
+            return $data;
+        }else{
+            return [];
+        }
     }
 }

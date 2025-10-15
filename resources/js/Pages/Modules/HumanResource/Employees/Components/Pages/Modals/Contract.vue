@@ -4,15 +4,15 @@
             <BRow>
                 <BCol lg="6" class="mb-3 mt-2">
                     <InputLabel for="name" value="Start Date" :message="form.errors.start_at"/>
-                    <TextInput id="name" v-model="form.start_at" type="date" class="form-control" placeholder="Please enter contact no." @input="handleInput('contact_no')" :light="true"/>
+                    <TextInput id="name" v-model="form.start_at" type="date" class="form-control" placeholder="Please enter contact no." @input="handleInput('start_at')" :light="true"/>
                 </BCol>
                 <BCol lg="6" class="mb-3 mt-2">
                     <InputLabel for="name" value="End Date" :message="form.errors.end_at"/>
-                    <TextInput id="name" v-model="form.end_at" type="date" class="form-control" placeholder="Please enter contact no." @input="handleInput('contact_no')" :light="true"/>
+                    <TextInput id="name" v-model="form.end_at" type="date" class="form-control" placeholder="Please enter contact no." @input="handleInput('end_at')" :light="true"/>
                 </BCol>
                 <BCol lg="12" class="mt-n3 mb-n4"><hr class="text-muted"/></BCol><BCol lg="12" style="margin-top: 13px; margin-bottom: -5px;">
                     <div class="d-flex position-relative">
-                        <div class="flex-shrink-0 fs-12" :class="(form.errors.status || form.errors.statusothers) ? 'text-danger' : ''" :style="(form.status == 'Others') ? 'margin-top: 6px' : ''">
+                        <div class="flex-shrink-0 fs-12" :class="form.errors.type_id ? 'text-danger' : ''" :style="(form.status == 'Others') ? 'margin-top: 6px' : ''" @input="handleInput('type_id')" >
                             Employment Status :
                         </div>
                         <div class="flex-grow-1 ms-2"></div>
@@ -44,7 +44,7 @@
                     <Multiselect :options="filteredPositions" :searchable="true" label="name" v-model="form.position_id" placeholder="Select Position" @input="handleInput('position_id')"/>
                 </BCol>
                 <BCol lg="3" class="mt-1">
-                    <InputLabel for="name" value="Year Rate" :message="form.errors.salary_id"/>
+                    <InputLabel for="name" value="Year Rate"/>
                     <Multiselect :options="uniqueYears" :searchable="true" label="name" v-model="form.year" placeholder="Select Year" @input="handleInput('year')"/>
                 </BCol>
                 <BCol lg="3" class="mt-1">
@@ -72,12 +72,16 @@ export default {
             currentUrl: window.location.origin,
             form: useForm({
                 id: null,
+                user_id: null,
                 division_id: null,
                 station_id: null,
                 position_id: null,
                 salary_id: null,
                 unit_id: null,
                 type_id: null,
+                status_id: 10,
+                start_at: null,
+                end_at: null,
                 option: 'contract'
             }),
             types: [

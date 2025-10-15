@@ -21,6 +21,7 @@
                        <th style="width: 4%;" class="text-center">#</th>
                        <th>Deduction</th>
                        <th style="width: 15%;" class="text-center">Amount</th>
+                       <th style="width: 15%;" class="text-center">Automatic Deduction</th>
                        <th style="width: 15%;" class="text-center">Status</th>
                        <th style="width: 7%;"></th>
                    </tr>
@@ -34,8 +35,12 @@
                         </td>
                         <td class="text-center">{{ list.amount }}</td>
                         <td class="text-center">
-                            <span v-if="list.status" class="badge bg-warning">Ongoing</span>
-                            <span v-else class="badge bg-success">Completed</span>
+                            <i v-if="list.is_automatic" class="ri-checkbox-circle-fill fs-18 text-success"></i>
+                            <i v-else class="ri-close-circle-fill fs-18 text-danger"></i>
+                        </td>
+                        <td class="text-center">
+                            <span v-if="list.status" class="badge bg-danger">Inactive</span>
+                            <span v-else class="badge bg-success">Active</span>
                         </td>
                         <td class="text-end">
                             <b-button @click="openEdit(list,index)" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">

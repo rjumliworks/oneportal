@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Hr;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeRequest extends FormRequest
@@ -51,12 +52,26 @@ class EmployeeRequest extends FormRequest
             break;
             case 'academic':
                 return [
-                    'school' => 'required',
-                    'course' => 'required',
+                    'school_id' => 'required',
+                    'course_id' => 'required',
                     'is_ongoing' => 'required',
                     'level_id' => 'required',
                     'user_id' => 'required',
                     'graduated_at' => 'required_if:is_ongoing,0'
+                ];
+            break;
+            case 'contract':
+                return [
+                    'start_at' => 'required',
+                    'end_at' => 'required',
+                    'status_id' => 'required',
+                    'type_id' => 'required',
+                    'position_id' => 'required',
+                    'salary_id' => 'required',
+                    'division_id' => 'required',
+                    'unit_id' => 'required',
+                    'station_id' => 'required',
+                    'user_id' => 'required'
                 ];
             break;
             default: 
@@ -89,9 +104,25 @@ class EmployeeRequest extends FormRequest
             break;
             case 'academic':
                 return [
+                    'school_id.required' => 'required',
+                    'course_id.required' => 'required',
                     'level_id.required' => 'required',
                     'graduated_at.required_if' => 'required',
                 ];
+            break;
+            case 'contract':
+               return [
+                'start_at.required' => 'Please specify the start date.',
+                'end_at.required' => 'Please specify the end date.',
+                'status_id.required' => 'Please select an employment status.',
+                'type_id.required' => 'Please select the appointment type.',
+                'position_id.required' => 'Please select a position.',
+                'salary_id.required' => 'Please select grade.',
+                'division_id.required' => 'Please select a division.',
+                'unit_id.required' => 'Please select a unit.',
+                'station_id.required' => 'Please select a station.',
+                'user_id.required' => 'A user must be assigned to this record.',
+            ];
             break;
             default: 
                 return [];

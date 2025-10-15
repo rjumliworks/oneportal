@@ -27,6 +27,10 @@ class ViewResource extends JsonResource
             'mobile' => $this->profile->mobile,
             'birthdate' => $this->profile->birthdate,
             'organization' => $this->organization,
+            'academics' => AcademicResource::collection($this->academics),
+            'credentials' => $this->credentials,
+            'contracts' => $this->contracts,
+            'deductions' => $this->deductions,
             'created_at' => $this->created_at
         ];
     }

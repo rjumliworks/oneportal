@@ -22,8 +22,25 @@
                                 <div class="flex-shrink-0">
                                     <div class="d-inline-block" v-for="(list,index) in types"  v-bind:key="index">
                                         <div class="custom-control custom-radio mb-3 ms-4">
-                                            <input type="radio" id="customRadio1" class="custom-control-input me-2" @input="handleInput('type_id')" :value="list.value" v-model="form.is_active">
+                                            <input type="radio" id="customRadio1" class="custom-control-input me-2" @input="handleInput('is_active')" :value="list.value" v-model="form.is_active">
                                             <label class="custom-control-label fs-12 fw-normal" for="customRadio1">{{list.name}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </BCol>
+                        <BCol lg="12"><hr class="text-muted mt-n2 mb-n4"/></BCol>
+                         <BCol lg="12" style="margin-top: 13px; margin-bottom: -10px;">
+                            <div class="d-flex position-relative">
+                                <div class="flex-shrink-0 fs-12" :class="(form.errors.is_automatic) ? 'text-danger' : ''">
+                                   Is Automatically deducted? 
+                                </div>
+                                <div class="flex-grow-1 ms-2"></div>
+                                <div class="flex-shrink-0">
+                                    <div class="d-inline-block" v-for="(list,index) in types"  v-bind:key="index">
+                                        <div class="custom-control custom-radio mb-3 ms-4">
+                                            <input type="radio" id="customRadio2" class="custom-control-input me-2" @input="handleInput('is_automatic')" :value="list.value" v-model="form.is_automatic">
+                                            <label class="custom-control-label fs-12 fw-normal" for="customRadio2">{{list.name}}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -55,6 +72,7 @@ export default {
             form: useForm({
                 id: null,
                 amount: null,
+                is_automatic: null,
                 is_active: null,
                 deduction: null,
                 deduction_id: null,

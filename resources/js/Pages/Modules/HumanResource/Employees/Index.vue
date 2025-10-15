@@ -96,7 +96,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.fullname}}.</h5>
+                                        <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.name}}</h5>
                                         <p class="fs-12 text-muted mb-0">{{list.organization.position.name}}</p>
                                     </td>
                                     <td class="text-center">{{ list.organization.type.name }}</td>

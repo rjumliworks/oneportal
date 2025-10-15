@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('user_academics', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('school');
-            $table->string('course');
             $table->boolean('is_ongoing');
+            $table->year('graduated_at')->nullable();
             $table->unsignedSmallInteger('school_id');
             $table->foreign('school_id')->references('id')->on('list_academics')->onDelete('cascade');
             $table->unsignedSmallInteger('course_id');
@@ -25,7 +24,6 @@ return new class extends Migration
             $table->foreign('level_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->year('graduated_at')->nullable();
             $table->timestamps();
         });
     }

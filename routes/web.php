@@ -15,6 +15,7 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     });
     Route::middleware(['role:Human Resource Officer'])->group(function () {
         Route::resource('/employees', App\Http\Controllers\Hr\EmployeeController::class);
+        Route::resource('/dtrs', App\Http\Controllers\Hr\DtrController::class);
     });
 });
 

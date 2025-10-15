@@ -2,15 +2,17 @@
 
 namespace App\Services\HumanResource\Employee;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserOrganization;
 use App\Models\UserAcademic;
+use App\Models\UserContract;
 use App\Models\UserDeduction;
 use App\Models\UserCredential;
 use App\Models\UserInformation;
+use App\Models\ListAcademic;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\Hr\Employee\IndexResource;
 
 class SaveClass
@@ -21,6 +23,15 @@ class SaveClass
             'data' => $data,
             'message' => 'Credential added successfully', 
             'info' => 'You can now manage this employee’s credentials',
+        ];
+    }
+
+    public function contract($request){
+        $data = UserContract::create($request->all());
+        return [
+            'data' => $data,
+            'message' => 'Contract added successfully', 
+            'info' => 'You can now manage this employee’s contract',
         ];
     }
 
@@ -203,5 +214,21 @@ class SaveClass
             'user_id' => $id
         ]);
         
+    }
+
+    public function listacademic($request){
+        $data = ListAcademic::create($request->all());
+        $item = ListAcademic::findOrFail($data->id);
+        $item = [
+            'value' => $item->id,
+            'name' => $item->name,
+            'short' => $item->short,
+            'type_id' => $item->type_id
+        ];
+        return [
+            'data' => $item,
+            'message' => 'Data added successfully', 
+            'info' => 'You can now select the data.',
+        ];
     }
 }

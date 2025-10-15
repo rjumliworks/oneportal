@@ -37,6 +37,13 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Employees</span>
                     </Link>
                 </li>
+                <li class="nav-item">
+                    <Link href="/dtrs" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Dtr') }">
+                    <i class="ri-alarm-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Daily Time Record</span>
+                    </Link>
+                </li>
                 <!-- <li class="nav-item">
                     <Link href="/dtrs" class="nav-link menu-link"
                         :class="{'active': $page.component.startsWith('Modules/HumanResource/Dtrs') }">

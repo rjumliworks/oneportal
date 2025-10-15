@@ -38,12 +38,12 @@
                             <transition mode="out-in">
                                 <div :key="index" class="tab-content">
                                     <!-- <Overview :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Overview'" /> -->
-                                    <!-- <Credits :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credits'" />
+                                    <!-- <Credits :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credits'" /> -->
                                     <Contracts :dropdowns="dropdowns" :lists="employee.contracts" :id="employee.id" v-if="menu == 'Contracts'" />
                                     <Deductions :type="employee.organization.type.name" :dropdowns="dropdowns" :lists="employee.deductions" :id="employee.id" v-if="menu == 'Deductions'" />
-                                    <Eligibility :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credentials'" />
-                                    <Academic :dropdowns="dropdowns" :lists="employee.academics" :id="employee.id" v-if="menu == 'Academics'"/>
-                                    <Background :marital="employee.profile.marital.name" :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/> -->
+                                    <Eligibility :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credentials'" /> 
+                                    <Academic :dropdowns="dropdowns" :lists="employee.academics" :id="employee.id" v-if="menu == 'Academics'"/> 
+                                    <!--<Background :marital="employee.profile.marital.name" :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/> -->
                                 </div>
                             </transition>
                         </div>
@@ -69,7 +69,7 @@ export default {
     data(){
         return {
             menus: [
-                'Overview','Credits','Deductions','Contracts','Informations','Academics','Credentials'
+                'Overview','Informations','Credits','Deductions','Contracts','Academics','Credentials'
             ],
             index: null,
         }

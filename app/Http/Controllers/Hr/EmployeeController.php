@@ -64,6 +64,12 @@ class EmployeeController extends Controller
                 case 'deduction':
                     return $this->save->deduction($request);
                 break;
+                case 'contract':
+                    return $this->save->contract($request);
+                break;
+                case 'listacademic':
+                    return $this->save->listacademic($request);
+                break;
             }
         });
 

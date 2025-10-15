@@ -5,15 +5,47 @@
                 <BCol lg="12">
                     <BRow class="g-3 mt-n1">
                         <BCol lg="12" class="mt-1">
-                            <InputLabel value="School" :message="form.errors.school"/>
-                            <TextInput v-model="form.school" type="text" class="form-control" placeholder="Please enter school" @input="handleInput('school')" :light="true" />
+                            <!-- <InputLabel value="School" :message="form.errors.school"/>
+                            <TextInput v-model="form.school" type="text" class="form-control" placeholder="Please enter school" @input="handleInput('school')" :light="true" /> -->
+                            <div class="d-flex">
+                                <div style="width: 100%;">
+                                    <InputLabel value="School" :message="form.errors.school_id"/>
+                                    <Multiselect 
+                                    :options="schools" 
+                                    v-model="form.school_id" 
+                                    @search-change="fetchSchool" 
+                                    label="name"
+                                    @input="handleInput('school_id')"
+                                    :searchable="true" 
+                                    placeholder="Select School"/>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <b-button @click="openAdd(173)" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-add-circle-fill"></i></b-button>
+                                </div>
+                            </div>
                         </BCol>
                         
-                        <BCol lg="12" class="mt-n1">
-                            <InputLabel value="Course" :message="form.errors.course"/>
-                            <TextInput v-model="form.course" type="text" class="form-control" placeholder="Please enter course" @input="handleInput('course')" :light="true" />
+                        <BCol lg="12" class="mt-1">
+                            <!-- <InputLabel value="Course" :message="form.errors.course"/>
+                            <TextInput v-model="form.course" type="text" class="form-control" placeholder="Please enter course" @input="handleInput('course')" :light="true" /> -->
+                            <div class="d-flex">
+                                <div style="width: 100%;">
+                                    <InputLabel value="Course" :message="form.errors.course_id"/>
+                                    <Multiselect 
+                                    :options="courses" 
+                                    v-model="form.course_id" 
+                                    @search-change="fetchCourse" 
+                                    label="name"
+                                    @input="handleInput('course_id')"
+                                    :searchable="true" 
+                                    placeholder="Select Course"/>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <b-button @click="openAdd(174)" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-add-circle-fill"></i></b-button>
+                                </div>
+                            </div>
                         </BCol>
-                        <BCol lg="12" class="mt-0 mb-2">
+                        <BCol lg="12" class="mt-1 mb-2">
                             <InputLabel value="Education Level" :message="form.errors.level_id"/>
                             <Multiselect :options="levels" :searchable="true" label="name" v-model="form.level_id" placeholder="Select Level" @input="handleInput('level_id')"/>
                         </BCol>
@@ -49,15 +81,18 @@
             <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
         </template>
     </b-modal>
+    <Add @selected="set" ref="add"/>
 </template>
 <script>
+import _ from 'lodash';
+import Add from './Add.vue';
 import { vMaska } from "maska/vue"
 import { useForm } from '@inertiajs/vue3';
 import Multiselect from "@vueform/multiselect";
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
-    components: {InputLabel, TextInput, Multiselect },
+    components: {InputLabel, TextInput, Multiselect, Add },
     directives: { maska: vMaska },
     props: ['levels'],
     data(){
@@ -65,8 +100,8 @@ export default {
             currentUrl: window.location.origin,
             form: useForm({
                 id: null,
-                school: null,
-                course: null,
+                school_id: null,
+                course_id: null,
                 is_ongoing: null,
                 level_id: null,
                 user_id: null,
@@ -82,7 +117,9 @@ export default {
                    'value': 0,
                    'name': 'No'
                }
-           ],
+            ],
+            schools: [],
+            courses: [],
             showModal: false,
             editable: false
         }
@@ -122,6 +159,42 @@ export default {
                         this.$emit('success',true);
                     },
                 });
+            }
+        },
+        fetchSchool: _.debounce(function (code) {
+            axios.get('/search', {
+                params: {
+                    option: 'schools',
+                    keyword: code
+                }
+            })
+            .then(response => {
+                this.schools = response.data;
+            })
+            .catch(err => console.log(err));
+        }, 300),
+        fetchCourse: _.debounce(function (code) {
+            axios.get('/search', {
+                params: {
+                    option: 'courses',
+                    keyword: code
+                }
+            })
+            .then(response => {
+                this.courses = response.data;
+            })
+            .catch(err => console.log(err));
+        }, 300),
+        openAdd(type){
+            this.$refs.add.show(type);
+        },
+        set(data){
+            if(data.type_id == 173){
+                this.schools.push(data);
+                this.form.school_id = data.value;
+            }else{
+                this.courses.push(data);
+                this.form.course_id = data.value;
             }
         },
         handleInput(field) {

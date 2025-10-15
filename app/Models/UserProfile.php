@@ -57,7 +57,7 @@ class UserProfile extends Model
     public function getNameAttribute()
     {
         $middleInitial = $this->middlename ? strtoupper($this->middlename[0]) . '.' : '';
-        $parts = [trim($this->lastname), trim($this->firstname),$middleInitial,$this->suffix?->name];
+        $parts = [trim($this->lastname) . ',', trim($this->firstname), $middleInitial, $this->suffix?->name];
         return implode(' ', array_filter($parts));
     }
 
