@@ -10,7 +10,7 @@ class UserCredit extends Model
 {
     use LogsActivity;
 
-    protected $fillable = ['balance','earned','used','carried_over','year','leave_id','user_id','is_active'];
+    protected $fillable = ['balance','earned','used','carried_over','expired','year','leave_id','user_id','is_active'];
 
     public function user()
     {

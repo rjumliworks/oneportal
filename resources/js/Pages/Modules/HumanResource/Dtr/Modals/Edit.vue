@@ -74,6 +74,7 @@ export default {
             this.form.errors[field] = false;
         },
         hide(){
+            this.form.reset();
             this.showModal = false;
         }
     }

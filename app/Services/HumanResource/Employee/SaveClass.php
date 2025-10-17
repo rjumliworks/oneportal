@@ -2,6 +2,7 @@
 
 namespace App\Services\HumanResource\Employee;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserOrganization;
@@ -108,10 +109,11 @@ class SaveClass
                 'firstname' => $request->firstname,
                 'middlename' => $request->middlename,
                 'lastname' => $request->lastname,
-                'suffix' => $request->suffix,
-                'sex' => $request->sex,
-                'contact_no' => $request->contact_no,
+                'suffix_id' => $request->suffix_id,
+                'sex_id' => $request->sex_id,
+                'mobile' => $request->mobile,
                 'birthdate' => $request->birthdate,
+                'birthmonth' => Carbon::parse($request->birthdate)->format('m'),
                 'marital_id' => $request->marital_id,
                 'religion_id' => $request->religion_id,
                 'blood_id' => $request->blood_id,
@@ -123,11 +125,13 @@ class SaveClass
                     'position_id' => $request->position_id,
                     'division_id' => $request->division_id,
                     'station_id' => $request->station_id,
+                    'salary_id' => $request->salary_id,
                     'unit_id' => $request->unit_id,
                 ]);
                 if($organization){
                     $role = $data->myroles()->create([
-                        'role_id' => 5,
+                        'role_id' => 2,
+                        'added_by' => \Auth::user()->id
                     ]);
                     if($role){
                         $this->information($data->id);

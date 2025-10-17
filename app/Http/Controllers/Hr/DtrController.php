@@ -26,13 +26,33 @@ class DtrController extends Controller
     public function index(Request $request){
         switch($request->option){
             case 'lists':
-                return [];
+                return $this->view->list($request);
             break;
             case 'print':
-                return [];
+                return $this->print->dtr($request);
             break;
             default:
                return inertia('Modules/HumanResource/Dtr/Index');
         }   
+    }
+
+    public function update(Request $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            switch($request->option){
+                case 'dtr':
+                    return $this->update->save($request);
+                break;
+                case 'add':
+                    return $this->update->add($request);
+                break;
+            }
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
 }

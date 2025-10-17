@@ -42,7 +42,7 @@
             <div style="font-family:Arial, Helvetica, sans-serif;">
                 <p style="font-size: 9px; margin-left: 10px;"><i>CIVIL SERVICE FORM No.48</i></p>
                 <h3 style="font-size: 12px; text-align: center;"><u>DAILY TIME RECORD</u></h3>
-                <p style="font-size: 11px; text-align: center; margin-top: -7px;">{{ strtoupper($employee['firstname'].' '.$employee['middlename'].' '.$employee['lastname']) }}</p>
+                <p style="font-size: 11px; text-align: center; margin-top: -7px;">{{ strtoupper($employee['name']) }}</p>
                 <div style="border-bottom: 1px solid #333; width: 94%; margin-left: 10px; margin-top: -8px;"></div>
                 <div style="font-size: 10px; width: 50%; float: left;">
                     <p style="margin-top: 2px; margin-left: 10px;">For the month of</p>
@@ -211,7 +211,7 @@
             <div style="font-family:Arial, Helvetica, sans-serif;">
                 <p style="font-size: 9px; margin-left: 10px;"><i>CIVIL SERVICE FORM No.48</i></p>
                 <h3 style="font-size: 12px; text-align: center;"><u>DAILY TIME RECORD</u></h3>
-                <p style="font-size: 11px; text-align: center; margin-top: -7px;">{{ strtoupper($employee['firstname'].' '.$employee['middlename'].' '.$employee['lastname']) }}</p>
+                <p style="font-size: 11px; text-align: center; margin-top: -7px;">{{ strtoupper($employee['name']) }}</p>
                 <div style="border-bottom: 1px solid #333; width: 94%; margin-left: 10px; margin-top: -8px;"></div>
                 <div style="font-size: 10px; width: 50%; float: left;">
                     <p style="margin-top: 2px; margin-left: 10px;">For the month of</p>

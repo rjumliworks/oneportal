@@ -76,10 +76,12 @@
                         <tbody class="table-white fs-12">
                             <tr v-for="(list,index) in lists" v-bind:key="index" :class="{ 
                                 'bg-success-subtle': list.is_completed === 1,
-                                'bg-warning-subtle': getTotalMinutes(list) > 0,
+                                'bg-warning-subtle': list.is_updated === 1,
+                                'bg-danger-subtle': list.is_completed === 0  && !isToday(list.date),
+                                // 'bg-warning-subtle': getTotalMinutes(list) > 0,
                              }">
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
-                                <td>{{ list.user.profile.firstname }} {{ list.user.profile.lastname }}</td>
+                                <td>{{ list.name }}</td>
                                 <td class="text-center">{{ formatDateWithDay(list.date) }}</td>
                                 <td class="text-center">{{ (list.am_in_at) ? list.am_in_at.time : '-' }}</td>
                                 <td class="text-center">{{ (list.am_out_at) ? list.am_out_at.time : '-' }}</td>
@@ -166,6 +168,15 @@ export default {
                 (list.am_out_at?.minutes || 0) +
                 (list.pm_in_at?.minutes || 0) +
                 (list.pm_out_at?.minutes || 0)
+            );
+        },
+        isToday(dateString) {
+            const today = new Date();
+            const date = new Date(dateString);
+            return (
+                date.getFullYear() === today.getFullYear() &&
+                date.getMonth() === today.getMonth() &&
+                date.getDate() === today.getDate()
             );
         },
         formatDateWithDay(date) {

@@ -4,7 +4,7 @@
             <BRow>
                <div class="col-md-12">
                     <div>
-                        <h4 class="fw-semibold fs-16 mb-1">{{ selected.user.profile.firstname }} {{ selected.user.profile.lastname }}</h4>
+                        <h4 class="fw-semibold fs-16 mb-1">{{ selected.name }}</h4>
                         <div class="hstack gap-3 flex-wrap fs-12">
                             <div><span class="text-muted">Date :</span> {{ formatDateWithDay(selected.date) }}</div>
                             <div class="vr" style="width: 1px;"></div>

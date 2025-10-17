@@ -44,6 +44,27 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Daily Time Record</span>
                     </Link>
                 </li>
+                <li class="nav-item">
+                    <Link href="/credits" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Credits') }">
+                    <i class="ri-file-list-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Leave Credits</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/surveys" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Surveys') }">
+                    <i class="ri-article-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Morale Surveys</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/calendar" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Calendar') }">
+                    <i class="ri-calendar-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Calendar</span>
+                    </Link>
+                </li>
                 <!-- <li class="nav-item">
                     <Link href="/dtrs" class="nav-link menu-link"
                         :class="{'active': $page.component.startsWith('Modules/HumanResource/Dtrs') }">
