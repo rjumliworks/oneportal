@@ -95,7 +95,7 @@ export default {
     },
     computed: {
         filteredDeductions() {
-            if (this.type === 'Regular') {
+            if (this.type === 'Plantilla') {
             return this.deductions.filter(d => d.is_regular === 1);
             } else {
             return this.deductions.filter(d => d.is_regular === 0);

@@ -20,6 +20,8 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
         Route::resource('/dtrs', App\Http\Controllers\Hr\DtrController::class);
         Route::resource('/credits', App\Http\Controllers\Hr\CreditController::class);
         Route::resource('/calendar', App\Http\Controllers\Hr\CalendarController::class);
+        Route::resource('/payroll', App\Http\Controllers\Hr\PayrollController::class);
+        Route::get('/payroll/{type}/{code}', [App\Http\Controllers\Hr\PayrollController::class, 'view']);
     });
     Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
 });

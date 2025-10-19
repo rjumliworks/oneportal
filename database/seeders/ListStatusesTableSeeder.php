@@ -15,7 +15,7 @@ class ListStatusesTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_statuses')->delete();
+        \DB::table('list_statuses')->truncate();
         
         \DB::table('list_statuses')->insert(array (
             0 => 
@@ -191,6 +191,50 @@ class ListStatusesTableSeeder extends Seeder
                 'type' => 'n/a',
                 'color' => 'text-white',
                 'bg' => 'bg-warning',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            16 => 
+            array (
+                'id' => 17,
+                'name' => 'Draft',
+                'classification' => 'Payroll',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-info',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            17 => 
+            array (
+                'id' => 18,
+                'name' => 'Pending',
+                'classification' => 'Payroll',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-warning',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            18 => 
+            array (
+                'id' => 19,
+                'name' => 'Completed',
+                'classification' => 'Payroll',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-success',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            19 => 
+            array (
+                'id' => 20,
+                'name' => 'Cancelled',
+                'classification' => 'Payroll',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-danger',
                 'icon' => 'n/a',
                 'is_active' => 1,
             ),

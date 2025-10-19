@@ -11,7 +11,7 @@
                 </div>
                 <div class="flex-grow-1">
                     <h5 class="mb-0 fs-14"><span class="text-body">Leave Credits</span></h5>
-                    <p class="text-muted text-truncate-two-lines fs-12">Detailed overview of the Travel Order request</p>
+                    <p class="text-muted text-truncate-two-lines fs-12">List of leaves with available credits; other leave types are applied for and subject to approval.</p>
                 </div>
             </div>
         </div>
@@ -30,7 +30,9 @@
                         </tr>
                     </thead>
                     <tbody class="table-white fs-12">
-                        <tr v-for="(list,index) in credits" v-bind:key="index">
+                        <tr v-for="(list,index) in credits" v-bind:key="index" :class="{
+                                'bg-info-subtle': selectedRow === index
+                            }">
                             <td class="text-center">{{ index+1 }}</td>
                             <td>{{list.leave.name}}</td>
                             <td class="text-center text-muted">{{list.earned}}</td>
@@ -38,7 +40,7 @@
                             <td class="text-center text-muted">{{list.carried_over}}</td>
                             <td class="text-center fw-semibold">{{list.balance}}</td>
                             <td class="text-center">
-                                <b-button variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                <b-button @click="openView(list,index)" variant="success" v-b-tooltip.hover title="View" size="sm">
                                     <i class="ri-eye-fill align-bottom"></i>
                                 </b-button>
                             </td>
@@ -55,8 +57,15 @@ export default {
     props: ['credits'],
     data(){
         return {
-            showName: false
+            showName: false,
+            selectedRow: null
         }
     },
+    methods: { 
+        openView(data,index){
+            this.selectedRow = index;
+            this.$emit('openhistory',data);
+        },
+    }
 }
 </script>

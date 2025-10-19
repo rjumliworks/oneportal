@@ -66,10 +66,10 @@
                     </BCard>
                 </BCol>
                 <BCol lg="6">
-                    <Sidebar :credits="information_data.data.credits"/>
+                    <Sidebar @openhistory="openHistory" :credits="information_data.data.credits"/>
                 </BCol>
                 <BCol lg="6">
-                    <Main :information="information_data.data"/>
+                    <Main :information="information_data.data" ref="main"/>
                 </BCol>
             </BRow>
         </div>
@@ -87,6 +87,9 @@ export default {
         }
     },
     methods: {
+        openHistory(data){
+            this.$refs.main.openView(data);
+        },
         back(){
             this.$inertia.visit('/credits');
         }

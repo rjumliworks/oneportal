@@ -26,6 +26,9 @@ class CreditController extends Controller
             case 'lists':
                 return $this->view->lists($request);
             break;
+            case 'logs':
+                return $this->view->logs($request);
+            break;
             default:
                 return inertia('Modules/HumanResource/Credits/Index',[
                     'dropdowns' => [

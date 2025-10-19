@@ -5,6 +5,8 @@ namespace App\Services\HumanResource\Credit;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use App\Models\User;
+use App\Models\CreditLog;
+use App\Http\Resources\Hr\Credit\LogResource;
 use App\Http\Resources\Hr\Credit\IndexResource;
 use App\Http\Resources\Hr\Credit\ViewResource;
 
@@ -42,6 +44,11 @@ class ViewClass
         );
 
         return $data;
+    }
+
+    public function logs($request){
+        $data = CreditLog::with('type')->where('credit_id',$request->id)->paginate($request->count);
+        return LogResource::collection($data);
     }
 
     public function view($code){
