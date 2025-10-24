@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Services\System\Signatory;
+
+use App\Models\OrganizationalChart;
+use App\Http\Resources\System\Signatory\DesignationResource;
+
+class ViewClass
+{
+    public function designations(){
+        $data = OrganizationalChart::with('designation','assigned')
+        ->with([
+            // 'designationable.schedules.user:id,email,username',
+            // 'designationable.schedules.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'designationable.schedules' => function ($q) {
+                $q->where('is_completed', 0)
+                  ->whereIn('is_ongoing', [0, 1])
+                  ->where('is_designated', 0)
+                  ->whereDate('end_at', '>=', now()->toDateString())
+                  ->with([
+                      'user:id,email,username',
+                      'user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+                  ]);
+            },
+            'designationable.user:id,email,username',
+            'designationable.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'designationable.oic:id,email,username',
+            'designationable.oic.profile:user_id,firstname,middlename,lastname,suffix_id,avatar'
+        ])
+        ->with('user:id,email,username','user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar','oic:id,email,username','oic.profile:user_id,firstname,middlename,lastname,suffix_id,avatar')
+        ->orderBy('order','ASC')
+        ->get();
+        return DesignationResource::collection($data);
+    }
+}

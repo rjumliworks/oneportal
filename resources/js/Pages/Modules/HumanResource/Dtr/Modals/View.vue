@@ -34,6 +34,24 @@
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-bottom">
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex border border-dashed rounded  bg-warning-subtle p-3">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="mb-0 text-muted fs-12">Total Tardiness :</p>
+                                            <h6 class="fw-semibold fs-12 mb-0"> {{ selected.tardiness }} minutes</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex border border-dashed bg-warning-subtle rounded p-3">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="mb-0 text-muted fs-12">Total Undertime :</p>
+                                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ selected.undertime }} minutes</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered align-middle mb-1">
                                     <thead class="bg-primary fs-11 thead-fixed">

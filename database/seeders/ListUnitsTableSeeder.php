@@ -15,7 +15,7 @@ class ListUnitsTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_units')->delete();
+        \DB::table('list_units')->truncate();
         
         \DB::table('list_units')->insert(array (
             0 => 
@@ -207,6 +207,16 @@ class ListUnitsTableSeeder extends Seeder
                 'division_id' => 35,
                 'created_at' => '2024-08-29 08:40:12',
                 'updated_at' => '2024-08-29 08:40:12',
+            ),
+            19 => 
+            array (
+                'id' => 20,
+                'name' => 'Management Information System',
+                'short' => 'MIS',
+                'is_active' => 1,
+                'division_id' => 2,
+                'created_at' => '2024-08-29 08:00:50',
+                'updated_at' => '2024-08-29 08:00:50',
             ),
         ));
 

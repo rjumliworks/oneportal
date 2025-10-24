@@ -14,8 +14,10 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::middleware(['role:Administrator'])->group(function () {
         Route::resource('/users', App\Http\Controllers\System\UserController::class);
         Route::resource('/references', App\Http\Controllers\System\ReferenceController::class);
+        Route::resource('/signatories', App\Http\Controllers\System\SignatoryController::class);
     });
     Route::middleware(['role:Human Resource Officer'])->group(function () {
+        Route::resource('/humanresource', App\Http\Controllers\Hr\DashboardController::class);
         Route::resource('/employees', App\Http\Controllers\Hr\EmployeeController::class);
         Route::resource('/dtrs', App\Http\Controllers\Hr\DtrController::class);
         Route::resource('/credits', App\Http\Controllers\Hr\CreditController::class);

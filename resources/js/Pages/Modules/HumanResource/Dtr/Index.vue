@@ -42,11 +42,18 @@
                         <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
                             <li class="nav-item">
                                 <BLink @click="viewStatus(null,null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <i class="ri-apps-2-line me-1 align-bottom"></i> All Attendance
+                                <i class="ri-apps-2-line me-1 align-bottom"></i> All DTR
                                 </BLink>
                             </li>
-                            <li class="nav-item" v-for="(list,index) in counts" v-bind:key="index">
-                              
+                            <li class="nav-item">
+                                  <BLink @click="viewStatus('completed',1)" class="nav-link py-3" :class="(this.type == 'completed') ? 'text-success' : ''" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                <i class="ri-checkbox-circle-fill me-1 align-bottom"></i> Completed ({{ counts[0] }})
+                                </BLink>
+                            </li>
+                            <li class="nav-item">
+                                <BLink @click="viewStatus('incomplete',false)" class="nav-link py-3" :class="(this.type == 'incomplete') ? 'text-danger' : ''" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                    <i class="ri-close-circle-fill me-1 align-bottom"></i> Incomplete ({{ counts[1] }})
+                                </BLink>
                             </li>
                         </ul>
                     </div>
@@ -115,6 +122,7 @@ import PageHeader from '@/Shared/Components/PageHeader.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
     components: { PageHeader, Pagination, View, Generate },
+    props: ['counts'],
     data(){
         return {
             currentUrl: window.location.origin,
@@ -123,8 +131,10 @@ export default {
             links: {},
             filter: {
                 keyword: null,
-                date: null
+                date: null,
+                status: null
             },
+            type: null,
             index: null
         }
     },
@@ -149,6 +159,7 @@ export default {
                 params : {
                     keyword: this.filter.keyword,
                     date: this.filter.date,
+                    status: this.filter.status,
                     count: 10,
                     option: 'lists'
                 }
@@ -195,7 +206,12 @@ export default {
         },
         updateList(data){
             this.lists[this.index] = data;
-        }
+        },
+        viewStatus(type,status){
+            this.type = type;
+            this.filter.status = status;
+            this.fetch();
+        },
     }
 }
 </script>

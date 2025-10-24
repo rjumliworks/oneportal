@@ -31,6 +31,13 @@
                     <span data-key="t-menu">Human Resource</span>
                 </li>
                 <li class="nav-item">
+                    <Link href="/humanresource" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Dashboard') }">
+                    <i class="ri-apps-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
                     <Link href="/employees" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
                     <i class="ri-team-fill"></i>
@@ -158,7 +165,7 @@
                 </li>
                 <li class="nav-item">
                     <Link href="/signatories" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/Systme/Signatories') }">
+                    :class="{'active': $page.component.startsWith('Modules/System/Signatories') }">
                     <i class="ri-mark-pen-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Signatories</span>
                     </Link>

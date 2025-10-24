@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ListDropdown extends Model
 {
     use HasFactory;
+
+    public function designationable()
+    {
+        return $this->morphOne('App\Models\Signatory', 'designationable');
+    }
 }

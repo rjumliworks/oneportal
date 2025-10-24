@@ -11,7 +11,7 @@
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h5 class="mb-0 fs-14"><span class="text-body">List of Regular Employees</span></h5>
+                        <h5 class="mb-0 fs-14"><span class="text-body">List of Contractual Employees</span></h5>
                         <p class="text-muted text-truncate-two-lines fs-12">Displays regular staff included in this payroll cycle. Use this list to review, add, or exclude employees before processing.</p>
                     </div>
                     <div class="flex-shrink-0" style="width: 45%;">
@@ -43,8 +43,6 @@
                                 <th style="width: 11%;" class="text-center">Salary</th>
                                 <th style="width: 11%;" class="text-center">Tardiness</th>
                                 <th style="width: 11%;" class="text-center">Deductions</th>
-                                <th style="width: 10%;" class="text-center">1st Quincena</th>
-                                <th style="width: 10%;" class="text-center">2nd Quincena</th>
                                 <th style="width: 13%;" class="text-center">Net Amount Due</th>
                                 <th style="width: 6%;"></th>
                             </tr>
@@ -59,8 +57,6 @@
                                 <td class="text-center">{{ list.salary }}</td>
                                 <td class="text-center">{{ list.tardiness }}</td>
                                 <td class="text-center">{{ list.deduction }}</td>
-                                <td class="text-center">{{ list.first}}</td>
-                                <td class="text-center">{{ list.second }}</td>
                                 <td class="text-center">{{ list.netpay }}</td>
                                 <td class="text-end">
                                     <b-button v-if="payroll.status.name == 'Draft'" @click="openView(list,'delete')" variant="soft-danger" class="me-1" v-b-tooltip.hover title="Remove" size="sm">
@@ -88,7 +84,7 @@
             </div>
         </div>
     </div>
-    <Add :is_regular="is_regular" :id="payroll.id" ref="add"/>
+    <Add :is_regular="is_regular" :id="payroll.id" :start="payroll.start" :end="payroll.end" ref="add"/>
     <View :type="payroll.type" :deductions="dropdowns.deductions" :status="payroll.status.name" ref="view"/>
 </template>
 <script>

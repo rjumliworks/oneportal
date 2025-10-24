@@ -6,7 +6,11 @@ use App\Models\Dtr;
 use App\Http\Resources\Hr\Dtr\IndexResource;
 
 class ViewClass
-{
+{   
+    public function counts(){
+        return [Dtr::where('is_completed',1)->count(),Dtr::where('is_completed',0)->count()];
+    }
+
     public function list($request){
         $data = IndexResource::collection(
             Dtr::with('user:id,email,username','user.profile:user_id,firstname,middlename,lastname,suffix_id')
@@ -22,7 +26,10 @@ class ViewClass
             ->when($request->date, function ($query, $date) {
                 $query ->where('date',$date);
             })
-            ->orderBy('created_At', 'DESC')
+            ->when($request->status, function ($query, $status) {
+                $query ->where('is_completed',$status);
+            })
+            ->orderBy('date', 'DESC')
             ->paginate($request->count)
         );
         return $data;

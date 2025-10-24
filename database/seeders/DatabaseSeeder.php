@@ -13,50 +13,53 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(ListDataTableSeeder::class);
-        $this->call(ListRolesTableSeeder::class);
+        // $this->call(ListDataTableSeeder::class);
+        // $this->call(ListRolesTableSeeder::class);
 
-        User::create([
-            'username' => 'rij0311',
-            'email' => 'kradjumli@gmail.com',
-            'kradworkz' => hash('sha256','kradjumli@gmail.com'),
-            'password' => bcrypt('123456789'),
-            'is_active' => 1,
-            'must_change' => 1,
-            'email_verified_at' => '2024-05-15 08:46:33',
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        // User::create([
+        //     'username' => 'rij0311',
+        //     'email' => 'kradjumli@gmail.com',
+        //     'kradworkz' => hash('sha256','kradjumli@gmail.com'),
+        //     'password' => bcrypt('123456789'),
+        //     'is_active' => 1,
+        //     'must_change' => 1,
+        //     'email_verified_at' => '2024-05-15 08:46:33',
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
 
-        UserProfile::create([
-            'lastname' => 'Jumli',
-            'firstname' => 'Ra-ouf',
-            'middlename' => 'Indanan',
-            'mobile' => '09123456789',
-            'birthdate' => '1994-03-11',
-            'birthmonth' => 3,
-            'marital_id' => 3,
-            'religion_id' => 20,
-            'blood_id' => 1,
-            'sex_id' => 166,
-            'user_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // UserProfile::create([
+        //     'lastname' => 'Jumli',
+        //     'firstname' => 'Ra-ouf',
+        //     'middlename' => 'Indanan',
+        //     'mobile' => '09123456789',
+        //     'birthdate' => '1994-03-11',
+        //     'birthmonth' => 3,
+        //     'marital_id' => 3,
+        //     'religion_id' => 20,
+        //     'blood_id' => 1,
+        //     'sex_id' => 166,
+        //     'user_id' => 1,
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
         
-        $this->call(LocationRegionsTableSeeder::class);
-        $this->call(LocationProvincesTableSeeder::class);
-        $this->call(LocationMunicipalitiesTableSeeder::class);
-        $this->call(LocationBarangaysTableSeeder::class);
-        $this->call(ListSalariesTableSeeder::class);
-        $this->call(ListPositionsTableSeeder::class);
-        $this->call(ListLeavesTableSeeder::class);
-        $this->call(ListDeductionsTableSeeder::class);
-        $this->call(ListDropdownsTableSeeder::class);
-        $this->call(ListUnitsTableSeeder::class);
-        $this->call(ListDropdownsTableSeeder::class);
-        $this->call(ListStatusesTableSeeder::class);
-        $this->call(ListUnitsTableSeeder::class);
+        // $this->call(LocationRegionsTableSeeder::class);
+        // $this->call(LocationProvincesTableSeeder::class);
+        // $this->call(LocationMunicipalitiesTableSeeder::class);
+        // $this->call(LocationBarangaysTableSeeder::class);
+        // $this->call(ListSalariesTableSeeder::class);
+        // $this->call(ListPositionsTableSeeder::class);
+        // $this->call(ListLeavesTableSeeder::class);
+        // $this->call(ListDeductionsTableSeeder::class);
+        // $this->call(ListDropdownsTableSeeder::class);
+        // $this->call(ListUnitsTableSeeder::class);
+        // $this->call(ListDropdownsTableSeeder::class);
+        // $this->call(ListStatusesTableSeeder::class);
+        // $this->call(ListUnitsTableSeeder::class);
+
+
+
         // \DB::table('user_organizations')->insert([
         //     'user_id' => 1,
         //     'status_id' => 2,
@@ -84,10 +87,10 @@ class DatabaseSeeder extends Seeder
         // ]);
         // $this->call(SurveyQuestionsTableSeeder::class);
         // $this->call(ListLeavesTableSeeder::class);
-        $this->call(UsersTableSeeder::class);
-        $this->call(UserProfilesTableSeeder::class);
-        $this->call(UserOrganizationsTableSeeder::class);
-        $this->call(UserRolesTableSeeder::class);
+        // $this->call(UsersTableSeeder::class);
+        // $this->call(UserProfilesTableSeeder::class);
+        // $this->call(UserOrganizationsTableSeeder::class);
+        // $this->call(UserRolesTableSeeder::class);
         // $this->call(UserCredentialsTableSeeder::class);
         // $this->call(UserAcademicsTableSeeder::class);
         // $this->call(UserRolesTableSeeder::class);
@@ -99,6 +102,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(UserDeductionsTableSeeder::class);
         // $this->call(ListVehiclesTableSeeder::class);
         // $this->call(SignatoriesTableSeeder::class);
-        
+        // $this->call(OldDtrTableSeeder::class);
+        $this->call(OrganizationalChartsTableSeeder::class);
+        $this->call(SignatoriesTableSeeder::class);
     }
 }

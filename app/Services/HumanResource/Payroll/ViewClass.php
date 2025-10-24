@@ -199,7 +199,7 @@ class ViewClass
         ];
 
 
-        return inertia('Modules/HumanResource/Payrolls/Components/Pages/Nonregular',[
+         return inertia('Modules/HumanResource/Payroll/Contractual/Print',[
             'cutoff' => $cutoff,
             'deductionHeaders' => $deductionNames,
         ]);

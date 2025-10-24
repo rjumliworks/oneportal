@@ -288,24 +288,21 @@ class DropdownClass
         })
         ->when($keyword, function ($query) use ($keyword){
             $query->whereHas('profile', function ($q) use ($keyword) {
-                $q->where('firstname', 'like', '%' . $keyword . '%')
-                ->orWhere('lastname', 'like', '%' . $keyword . '%')
-                ->orWhereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
-                ->orWhereRaw('concat(lastname, " ", firstname) LIKE ?', ['%' . $keyword . '%']);
+                $q->where('lastname', 'like', '%' . $keyword . '%');
             });
         })
         ->limit(5)->get()->map(function ($item) {
             return [
                 'value' => $item->id,
                 'signatory' => $item->signatory,
-                'name' => $item->profile->lastname . ', ' . $item->profile->firstname . ' ' . $item->profile->middlename . '.',
+                'name' => $item->profile->lastname . ', ' . $item->profile->firstname . ' ' . $item->profile->middlename[0] . '.',
                 'position' => optional($item->organization->position)->name,
                 'division' => optional($item->organization->division)->name,
                 'division_id' => optional($item->organization->division)->id,
                 'type' => $item->organization->type->name,
-                'avatar' => ($item->profile->avatar != 'avatar.jpg') 
-                            ? '/storage/profile-pictures/' . $item->profile->avatar 
-                            : '/images/avatars/avatar.jpg',
+                 'avatar' => ($item->profile && $item->profile->avatar && $item->profile->avatar !== 'noavatar.jpg')
+                ? asset('storage/' . $item->profile->avatar) 
+                : asset('images/avatars/avatar.jpg'), 
             ];
         });
         return $data;

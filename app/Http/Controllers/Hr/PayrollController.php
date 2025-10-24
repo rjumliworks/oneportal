@@ -38,7 +38,7 @@ class PayrollController extends Controller
                 if($request->is_regular){
                     return $this->regular->search($request);
                 }else{
-
+                    return $this->contractual->search($request);
                 }
             break;
             case 'print':
@@ -106,7 +106,7 @@ class PayrollController extends Controller
                     if($request->is_regular){
                         return $this->regular->payroll($request);
                     }else{
-
+                        return $this->contractual->payroll($request);
                     }
                 break;
                 case 'remove':
