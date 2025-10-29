@@ -238,6 +238,171 @@ class ListStatusesTableSeeder extends Seeder
                 'icon' => 'n/a',
                 'is_active' => 1,
             ),
+            20 => 
+            array (
+                'id' => 21,
+                'name' => 'Available',
+                'classification' => 'Vehicle',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-success',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            21 => 
+            array (
+                'id' => 22,
+                'name' => 'On Travel',
+                'classification' => 'Vehicle',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-danger',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            22 => 
+            array (
+                'id' => 23,
+                'name' => 'Maintenance',
+                'classification' => 'Vehicle',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-warning',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            23 => 
+            array (
+                'id' => 24,
+                'name' => 'Pending',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-white',
+                'bg' => 'bg-warning',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            24 => 
+            array (
+                'id' => 25,
+                'name' => 'Recommended',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-secondary',
+                'bg' => 'bg-primary',
+                'icon' => 'ri-radio-button-fill',
+                'is_active' => 1,
+            ),
+            25 => 
+            array (
+                'id' => 26,
+                'name' => 'Approved',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-primary',
+                'bg' => 'bg-info',
+                'icon' => 'ri-checkbox-circle-line',
+                'is_active' => 1,
+            ),
+            26 => 
+            array (
+                'id' => 27,
+                'name' => 'Ongoing',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-info',
+                'bg' => 'bg-secondary',
+                'icon' => 'ri-question-fill',
+                'is_active' => 1,
+            ),
+            27 => 
+            array (
+                'id' => 28,
+                'name' => 'Completed',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-success',
+                'bg' => 'bg-success',
+                'icon' => 'ri-checkbox-circle-fill',
+                'is_active' => 1,
+            ),
+            28 => 
+            array (
+                'id' => 29,
+                'name' => 'Cancelled',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-danger',
+                'bg' => 'bg-danger',
+                'icon' => 'ri-close-circle-line',
+                'is_active' => 1,
+            ),
+            29 => 
+            array (
+                'id' => 30,
+                'name' => 'Disapproved',
+                'classification' => 'Request',
+                'type' => 'n/a',
+                'color' => 'text-dark',
+                'bg' => 'bg-dark',
+                'icon' => 'ri-close-circle-fill',
+                'is_active' => 1,
+            ),
+            30 => 
+            array (
+                'id' => 31,
+                'name' => 'Pending',
+                'classification' => 'Overtime',
+                'type' => 'n/a',
+                'color' => 'text-warning',
+                'bg' => 'bg-warning',
+                'icon' => 'ri-close-circle-fill',
+                'is_active' => 1,
+            ),
+            31 => 
+            array (
+                'id' => 32,
+                'name' => 'Approved',
+                'classification' => 'Overtime',
+                'type' => 'n/a',
+                'color' => 'text-warning',
+                'bg' => 'bg-success',
+                'icon' => 'ri-close-circle-fill',
+                'is_active' => 1,
+            ),
+            32 => 
+            array (
+                'id' => 33,
+                'name' => 'Disapproved',
+                'classification' => 'Overtime',
+                'type' => 'n/a',
+                'color' => 'text-warning',
+                'bg' => 'bg-danger',
+                'icon' => 'ri-close-circle-fill',
+                'is_active' => 1,
+            ),
+            33 => 
+            array (
+                'id' => 34,
+                'name' => 'Ongoing',
+                'classification' => 'Overtime',
+                'type' => 'n/a',
+                'color' => 'text-warning',
+                'bg' => 'bg-info',
+                'icon' => 'ri-close-circle-fill',
+                'is_active' => 1,
+            ),
+            34 => 
+            array (
+                'id' => 35,
+                'name' => 'Completed',
+                'classification' => 'Overtime',
+                'type' => 'n/a',
+                'color' => 'text-success',
+                'bg' => 'bg-success',
+                'icon' => 'ri-close-circle-fill',
+                'is_active' => 1,
+            ),
         ));
 
         

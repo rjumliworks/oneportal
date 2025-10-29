@@ -12,7 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_locations', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');
+            $table->string('address');
+            $table->string('longitude')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('barangay_code')->nullable()->constrained();
+            $table->foreign('barangay_code')->references('code')->on('location_barangays')->onDelete('cascade');
+            $table->string('municipality_code')->nullable()->constrained();
+            $table->foreign('municipality_code')->references('code')->on('location_municipalities')->onDelete('cascade');
+            $table->string('province_code')->nullable()->constrained();
+            $table->foreign('province_code')->references('code')->on('location_provinces')->onDelete('cascade');
+            $table->string('region_code')->nullable()->constrained();
+            $table->foreign('region_code')->references('code')->on('location_regions')->onDelete('cascade');
+            $table->bigInteger('request_id')->unsigned()->index();
+            $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });
     }

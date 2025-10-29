@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_reports', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');
+            $table->longText('information');
+            $table->longText('secret_key')->nullable();
+            $table->bigInteger('request_id')->unsigned()->index();
+            $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });
     }

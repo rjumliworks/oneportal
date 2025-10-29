@@ -44,6 +44,17 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    protected $appends = ['signatory'];
+
+    public function getSignatoryAttribute()
+    {
+        $sig = $this->oic()->with('designationable.designation:id,name,others','designationable.assigned:id,name,others')->where('is_oic', 1)->where('is_active', 1)->first();
+        if(!$sig){
+            $sig = $this->signa()->with('designationable.designation:id,name,others','designationable.assigned:id,name,others')->where('is_oic', 0)->where('is_active', 1)->first();
+        }
+        return $sig;
+    }
+
     public function profile()
     {
         return $this->hasOne('App\Models\UserProfile', 'user_id');
@@ -107,6 +118,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasRole($roleName)
     {
         return $this->roles()->where('name', $roleName)->exists();
+    }
+
+    public function signa()
+    {
+        return $this->hasOne('App\Models\Signatory', 'user_id');
+    }
+
+    public function oic()
+    {
+        return $this->hasOne('App\Models\Signatory', 'oic_id');
     }
 
     public function setEmailAttribute($value)

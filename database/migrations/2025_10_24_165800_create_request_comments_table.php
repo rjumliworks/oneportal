@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_comments', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');
+            $table->text('content');
+            $table->morphs('commentable');
+            $table->integer('user_id')->unsigned()->index();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

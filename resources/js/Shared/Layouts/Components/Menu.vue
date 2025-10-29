@@ -11,7 +11,7 @@
             </li>
             <li class="nav-item">
                 <Link href="/requests" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/Employee/Requests') }">
+                    :class="{'active': $page.component.startsWith('Modules/Portal/Requests') }">
                 <i class="ri-list-check-2"></i>
                 <span class="fw-semibold fs-14" data-key="t-dashboards">My Requests</span>
                 </Link>
@@ -19,7 +19,7 @@
             <tempalte v-if="$page.props.user.data.signatory">
                 <li class="nav-item">
                     <Link href="/approvals" class="nav-link menu-link"
-                        :class="{'active': $page.component.startsWith('Modules/Employee/Approvals') }">
+                        :class="{'active': $page.component.startsWith('Modules/Portal/Approvals') }">
                     <i class="ri-ball-pen-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">For Approval</span>
                     </Link>

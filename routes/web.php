@@ -26,6 +26,9 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
         Route::get('/payroll/{type}/{code}', [App\Http\Controllers\Hr\PayrollController::class, 'view']);
     });
     Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
+    Route::resource('/requests', App\Http\Controllers\Portal\RequestController::class);
+    Route::resource('/approvals', App\Http\Controllers\Portal\ApprovalController::class);
+    Route::post('/comment', [App\Http\Controllers\Portal\CommentController::class, 'store']);
 });
 
 require __DIR__.'/auth.php';

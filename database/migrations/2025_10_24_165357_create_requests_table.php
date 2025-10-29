@@ -12,7 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('requests', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');
+            $table->string('code',30)->unique()->index();
+            $table->integer('user_id')->unsigned()->index();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->tinyInteger('status_id')->unsigned()->index();
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');
+            $table->smallInteger('type_id')->unsigned()->index();
+            $table->foreign('type_id')->references('id')->on('list_data')->onDelete('cascade');
+            $table->boolean('is_sender_viewed')->default(0);
+            $table->boolean('is_receiver_viewed')->default(0);
+            $table->boolean('is_completed')->default(0);
             $table->timestamps();
         });
     }

@@ -12,7 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_comment_views', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');
+            $table->boolean('viewed')->default(false);
+            $table->timestamp('viewed_at')->nullable();
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('comment_id')->unsigned();
+            $table->foreign('comment_id')->references('id')->on('request_comments')->onDelete('cascade');
+            $table->unique(['user_id', 'comment_id']);
             $table->timestamps();
         });
     }

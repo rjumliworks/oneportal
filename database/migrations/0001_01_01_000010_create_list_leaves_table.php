@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('sex', ['male', 'female'])->nullable()->comment('null means no sex restriction'); 
             $table->boolean('is_convertible')->default(0);
             $table->boolean('is_regular')->default(1);
+            $table->boolean('is_nonregular')->default(0);
             $table->boolean('is_after')->default(0);
             $table->boolean('is_requested')->default(0);
             $table->boolean('carry_over')->default(0);

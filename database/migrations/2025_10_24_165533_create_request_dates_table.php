@@ -12,7 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_dates', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');
+            $table->string('time')->nullable();
+            $table->date('start');
+            $table->date('end');
+            $table->enum('time_of_day', ['AM', 'PM', 'Whole Day']);
+            $table->bigInteger('request_id')->unsigned()->index();
+            $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });
     }

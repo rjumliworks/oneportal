@@ -12,7 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_signatories', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+            $table->bigIncrements('id');     
+            $table->tinyInteger('division_id')->unsigned()->index();
+            $table->foreign('division_id')->references('id')->on('list_dropdowns')->onDelete('cascade');    
+            $table->unsignedInteger('recommended_id')->nullable();
+            $table->foreign('recommended_id')->references('id')->on('users')->onDelete('cascade');
+            $table->datetime('recommended_date')->nullable();
+            $table->string('recommended_by', 200)->nullable();
+            $table->unsignedInteger('approved_id')->nullable();
+            $table->foreign('approved_id')->references('id')->on('users')->onDelete('cascade');
+            $table->datetime('approved_date')->nullable();
+            $table->string('approved_by', 200)->nullable();
+            $table->bigInteger('request_id')->unsigned()->index();
+            $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
+            $table->boolean('is_approval_only')->default(0);
+            $table->boolean('is_completed')->default(0);
+            $table->boolean('is_disapproved')->default(0);
             $table->timestamps();
         });
     }
