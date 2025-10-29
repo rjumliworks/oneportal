@@ -134,7 +134,7 @@
     <Add @saveTargets="handleSaveTargets" ref="add"/>
 </template>
 <script>
-import Add from './Pages/Add.vue';
+import Add from '../Modals/Add.vue';
 export default {
     components: { Add },
     props: ['information'],

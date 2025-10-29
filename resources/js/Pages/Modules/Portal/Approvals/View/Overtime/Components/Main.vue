@@ -187,7 +187,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { useForm } from '@inertiajs/vue3';
-import Attachment from './Pages/Attachment.vue';
+import Attachment from '../../../Pages/Attachment.vue';
 import Signatories from '../../../Pages/Signatories.vue';
 import simplebar from "simplebar-vue";
 import Multiselect from "@vueform/multiselect";
