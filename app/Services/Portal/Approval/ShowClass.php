@@ -26,9 +26,12 @@ class ShowClass
             'detail',
             'user:id',
             'overtime.status',
-            'comments.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar','comments.replies.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'comments.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'comments.replies.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
             'user.profile:user_id,firstname,middlename,lastname,suffix_id',
-            'signatories.division','signatories.approved.profile','signatories.recommended.profile'
+            'signatories.division',
+            'signatories.approved.user.profile','signatories.approved.signatory.designationable.designation',
+            'signatories.recommended.user.profile','signatories.recommended.signatory.designationable.designation'
         ])
         ->where('id',$id)
         ->first();
@@ -57,7 +60,7 @@ class ShowClass
             'request.detail',
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'request.signatories.division','request.signatories.approved','request.signatories.recommended'
+            'request.signatories.division','request.signatories.approved','request.signatories.approved.signatory.designationable.designation','request.signatories.recommended','request.signatories.recommended.signatory.designationable.designation'
         ])
         ->where('request_id',$id)
         ->first();

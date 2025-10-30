@@ -22,12 +22,12 @@ class RequestSignatory extends Model
 
     public function recommended()
     {
-        return $this->belongsTo('App\Models\User', 'recommended_id', 'id');
+        return $this->belongsTo('App\Models\OrgSignatorySchedule', 'recommended_id', 'id');
     }
 
     public function approved()
     {
-        return $this->belongsTo('App\Models\User', 'approved_id', 'id');
+        return $this->belongsTo('App\Models\OrgSignatorySchedule', 'approved_id', 'id');
     }
 
     public function division()

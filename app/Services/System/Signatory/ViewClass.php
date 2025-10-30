@@ -2,13 +2,13 @@
 
 namespace App\Services\System\Signatory;
 
-use App\Models\OrganizationalChart;
+use App\Models\OrgChart;
 use App\Http\Resources\System\Signatory\DesignationResource;
 
 class ViewClass
 {
     public function designations(){
-        $data = OrganizationalChart::with('designation','assigned')
+        $data = OrgChart::with('designation','assigned')
         ->with([
             // 'designationable.schedules.user:id,email,username',
             // 'designationable.schedules.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',

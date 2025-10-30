@@ -3,9 +3,9 @@
 namespace App\Services\System\Signatory;
 
 use Carbon\Carbon;
-use App\Models\Signatory;
-use App\Models\SignatorySchedule;
-use App\Models\OrganizationalChart;
+use App\Models\OrgChart;
+use App\Models\OrgSignatory;
+use App\Models\OrgSignatorySchedule;
 use Illuminate\Support\Facades\DB;
 
 class SaveClass
@@ -13,15 +13,15 @@ class SaveClass
     public function signatory($request)
     {
         if (now()->greaterThanOrEqualTo($request->start_at)) {
-            $data = SignatorySchedule::create($request->all());
-            $signatory = Signatory::find($request->signatory_id);
+            $data = OrgSignatorySchedule::create($request->all());
+            $signatory = OrgSignatory::find($request->signatory_id);
             $signatory->update([
                 'oic_id' => $request->user_id,
                 'is_oic' => 1,
             ]);
             $data->update(['is_ongoing' => 1]);
         } else {
-            $data = SignatorySchedule::create(
+            $data = OrgSignatorySchedule::create(
                 array_merge($request->all(), ['is_ongoing' => 0])
             );
         }
@@ -36,14 +36,17 @@ class SaveClass
     public function designate($request)
     {
         if(now()->greaterThanOrEqualTo($request->start_at)){
-            $data = SignatorySchedule::create($request->all());
-            $chart = OrganizationalChart::find($request->signatory_id);
+            $data = OrgSignatorySchedule::create($request->all());
+            OrgSignatorySchedule::where('signatory_id', $request->signatory_id)
+            ->where('id', '!=', $data->id)
+            ->update(['is_ongoing' => 0]);
+            $chart = OrgChart::find($request->signatory_id);
             $chart->update([
                 'oic_id' => $request->user_id,
                 'is_oic' => 1,
             ]);
             if($chart){
-                $signatory = Signatory::find($request->signatory_id);
+                $signatory = OrgSignatory::find($request->signatory_id);
                 $signatory->update([
                     'oic_id' => $request->user_id,
                     'is_oic' => 1,
@@ -51,7 +54,7 @@ class SaveClass
             }
             $data->update(['is_ongoing' => 1]);
         }else{
-            $data = SignatorySchedule::create(
+            $data = OrgSignatorySchedule::create(
                 array_merge($request->all(), ['is_ongoing' => 0])
             );
         }

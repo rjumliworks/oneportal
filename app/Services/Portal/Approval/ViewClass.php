@@ -3,13 +3,13 @@
 namespace App\Services\Portal\Approval;
 
 use App\Models\Request;
-use App\Models\Signatory;
+use App\Models\OrgSignatory;
 use App\Http\Resources\Portal\Request\IndexResource;
 
 class ViewClass
 {
     public function lists($request){
-        $signatory = Signatory::with('designationable')->where('user_id',\Auth::user()->id)->where('is_active',1)->first(); 
+        $signatory = OrgSignatory::with('designationable')->where('user_id',\Auth::user()->id)->where('is_active',1)->first(); 
         $status = $request->status ?? (($signatory['designationable']['designation_id'] == 44) ? 24 : 25);
         $data = Request::with([
             'tags.user:id',

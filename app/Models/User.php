@@ -122,12 +122,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function signa()
     {
-        return $this->hasOne('App\Models\Signatory', 'user_id');
+        return $this->hasOne('App\Models\OrgSignatory', 'user_id');
     }
 
     public function oic()
     {
-        return $this->hasOne('App\Models\Signatory', 'oic_id');
+        return $this->hasOne('App\Models\OrgSignatory', 'oic_id');
     }
 
     public function setEmailAttribute($value)

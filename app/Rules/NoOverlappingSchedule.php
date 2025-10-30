@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use Closure;
-use App\Models\SignatorySchedule;
+use App\Models\OrgSignatorySchedule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class NoOverlappingSchedule implements ValidationRule
@@ -21,7 +21,7 @@ class NoOverlappingSchedule implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $hasOverlap = SignatorySchedule::where('signatory_id', $this->signatory_id)
+        $hasOverlap = OrgSignatorySchedule::where('signatory_id', $this->signatory_id)
             ->where(function ($query) {
                 $query->whereBetween('start_at', [$this->start_at, $this->end_at])
                     ->orWhereBetween('end_at', [$this->start_at, $this->end_at])

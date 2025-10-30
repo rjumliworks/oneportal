@@ -5,7 +5,8 @@ namespace App\Services\Portal\Approval;
 use Hashids\Hashids;
 use App\Models\Request;
 use App\Models\RequestOvertime;
-use App\Models\Signatory;
+use App\Models\OrgSignatory;
+use App\Models\OrgSignatorySchedule;
 use App\Models\RequestSignatory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -19,18 +20,19 @@ class SaveClass
         $data = Request::find($id[0]);
         $data->status_id = $request->status_id;
         if($data->save()){
+            $user = OrgSignatorySchedule::where('user_id', \Auth::user()->id)->where('is_ongoing',1)->first();
             if($request->status_id == 25){
-                $division = Signatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
+                $division = OrgSignatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
                 $division = $division?->designationable?->assigned_id;
                 $signatory = RequestSignatory::where('division_id',$division)->where('request_id',$data->id)->where('is_approval_only',0)->first();
         
-                $signatory->recommended_id = \Auth::user()->id;
+                $signatory->recommended_id = $user->id;
                 $signatory->recommended_date = now();
                 $signatory->recommended_by = $this->image($request,$id[0]);
                 $signatory->save();
             }else if($request->status_id == 26){
                 $signatory = RequestSignatory::where('request_id',$data->id)->update([
-                    'approved_id' => \Auth::user()->id,
+                    'approved_id' => $user->id,
                     'approved_date' => now(),
                     'approved_by' => $this->image($request,$id[0]),
                     'is_completed' => 1

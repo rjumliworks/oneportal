@@ -18,7 +18,7 @@ class SignatoryRequest extends FormRequest
         switch($this->option){
             case 'signatory':
                 return [
-                    'signatory_id' => ['required', 'exists:signatories,id'],
+                    'signatory_id' => ['required', 'exists:org_signatories,id'],
                     'user_id' => ['required', 'exists:users,id'],
                     'start_at' => [
                         'required',
@@ -34,7 +34,7 @@ class SignatoryRequest extends FormRequest
             break;
             case 'designate':
                 return [
-                    'signatory_id' => ['required', 'exists:signatories,id'],
+                    'signatory_id' => ['required', 'exists:org_signatories,id'],
                     'user_id' => ['required', 'exists:users,id'],
                     'start_at' => [
                         'required',
