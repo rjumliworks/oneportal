@@ -9,18 +9,20 @@
                         </a>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mt-2 mb-3">Recommended By</h6>
-                        <h5 class="mb-1 mt-n2 fs-14">{{(list.recommended) ? list.recommended : '-'}}</h5>
-                        <p class="mb-0 mt-1 text-muted fs-12"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.recommended_date}}</p>
+                        <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mt-0 mb-3">Recommended By</h6>
+                        <h5 class="mb-0 mt-n2 fs-14">{{(list.recommended) ? list.recommended : '-'}}</h5>
+                        <p class="mb-0 mt-0 text-muted fs-11">{{list.recommended_role}} {{list.recommended_oic}}</p>
+                        <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.recommended_date}}</p>
                     </div>
                 </div>
             </div>
             <div class="text-end">
                 <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
-                        <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mt-2 mb-3">Approved By</h6>
-                        <h5 class="mb-1 mt-n2 fs-14">{{(list.approved) ? list.approved : '-'}}</h5>
-                        <p class="mb-0 mt-1 text-muted fs-12"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.approved_date}}</p>
+                        <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mt-0 mb-3">Approved By</h6>
+                        <h5 class="mb-0 mt-n2 fs-14">{{(list.approved) ? list.approved : '-'}}</h5>
+                        <p class="mb-0 mt-0 text-muted fs-11">{{list.approved_role}} {{list.approved_oic}}</p>
+                        <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.approved_date}}</p>
                     </div>
                     <div class="flex-grow-1">
                         <a v-if="list.approved_by" class="glightbox" :href="list.approved_by">

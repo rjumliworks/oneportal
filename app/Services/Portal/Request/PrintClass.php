@@ -23,7 +23,9 @@ class PrintClass
             'user:id',
             'overtime',
             'user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'signatories.division','signatories.approved.profile','signatories.recommended.profile'
+            'signatories.division','signatories.approved',
+            'signatories.approved.user.profile','signatories.approved.signatory.designationable.designation',
+            'signatories.recommended.user.profile','signatories.recommended.signatory.designationable.designation'
         ])
         ->where('id',$id)
         ->first();
@@ -55,6 +57,6 @@ class PrintClass
             $width = $fontMetrics->get_text_width($text, $font, $size);
             $canvas->text(106 - $width, 796, $text, $font, $size);
         });
-        return $pdf->stream('test.pdf');
+        return $pdf->stream($data->code.'.pdf');
     }
 }

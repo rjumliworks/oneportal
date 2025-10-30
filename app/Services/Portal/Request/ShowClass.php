@@ -27,7 +27,9 @@ class ShowClass
             'user:id',
             'overtime.status',
             'user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'signatories.division','signatories.approved.profile','signatories.recommended.profile'
+            'signatories.division',
+            'signatories.approved.user.profile','signatories.approved.signatory.designationable.designation',
+            'signatories.recommended.user.profile','signatories.recommended.signatory.designationable.designation'
         ])
         ->where('id',$id)
         ->first();
