@@ -126,11 +126,35 @@
                                         <span :class="'badge '+list.status.bg">{{list.status.name}}</span>
                                     </td>
                                     <td class="text-end">
-                                        <Link :href="`/requests/${list.link}`">
+                                        <!-- <Link :href="`/requests/${list.link}`">
                                             <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                                 <i class="ri-eye-fill align-bottom"></i>
                                             </b-button>
-                                        </Link>
+                                        </Link> -->
+                                        <div class="d-flex gap-3 justify-content-center"> 
+                                            <div class="dropdown" @click.stop> 
+                                                <button class="btn btn-light btn-icon btn-sm dropdown material-shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="ri-more-fill align-bottom"></i> </button>
+                                                <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
+                                                    <li>
+                                                        <Link :href="`/requests/${list.link}`" class="dropdown-item d-flex align-items-center" role="button">
+                                                            <i class="ri-eye-fill me-2"></i> View
+                                                        </Link>
+                                                    </li>
+                                                    <li>
+                                                        <a @click="openDetail(list,index)" class="dropdown-item d-flex align-items-center" role="button">
+                                                            <i class="ri-information-fill me-2"></i> Details
+                                                        </a>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <a @click="openPrint(list.key,index)" class="dropdown-item d-flex align-items-center" role="button">
+                                                            <i class="ri-printer-fill me-2"></i> Print
+                                                        </a>
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -242,6 +266,10 @@ export default {
         },
         openCreate(){
             this.$refs.create.show();
+        },
+        openPrint(key,index){
+            this.index = index;
+            window.open('/requests?option=print&type=overtime&key='+key);
         },
         refresh(){
             this.filter.expense = null;

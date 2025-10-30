@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class OrganizationalChartsTableSeeder extends Seeder
+class OrgChartsTableSeeder extends Seeder
 {
     /**
      * Auto generated seeder file.
@@ -15,9 +15,9 @@ class OrganizationalChartsTableSeeder extends Seeder
     {
         
 
-        \DB::table('organizational_charts')->delete();
+        \DB::table('org_charts')->delete();
         
-        \DB::table('organizational_charts')->insert(array (
+        \DB::table('org_charts')->insert(array (
             0 => 
             array (
                 'id' => 1,

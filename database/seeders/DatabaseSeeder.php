@@ -103,7 +103,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(ListVehiclesTableSeeder::class);
         // $this->call(SignatoriesTableSeeder::class);
         // $this->call(OldDtrTableSeeder::class);
-        $this->call(OrganizationalChartsTableSeeder::class);
-        $this->call(SignatoriesTableSeeder::class);
+        $this->call(OrgChartsTableSeeder::class);
+        $this->call(OrgSignatoriesTableSeeder::class);
+        $this->call(OrgSignatorySchedulesTableSeeder::class);
     }
 }

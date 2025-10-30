@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('signatory_schedules', function (Blueprint $table) {
+        Schema::create('org_signatory_schedules', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');   
             $table->date('start_at');
             $table->date('end_at');  
             $table->unsignedInteger('signatory_id');
-            $table->foreign('signatory_id')->references('id')->on('signatories')->onDelete('cascade');        
+            $table->foreign('signatory_id')->references('id')->on('org_signatories')->onDelete('cascade');        
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->boolean('is_designated')->default(0);
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('signatory_schedules');
+        Schema::dropIfExists('org_signatory_schedules');
     }
 };

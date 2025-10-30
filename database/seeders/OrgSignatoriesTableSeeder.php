@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class SignatoriesTableSeeder extends Seeder
+class OrgSignatoriesTableSeeder extends Seeder
 {
     /**
      * Auto generated seeder file.
@@ -15,14 +15,14 @@ class SignatoriesTableSeeder extends Seeder
     {
         
 
-        \DB::table('signatories')->delete();
+        \DB::table('org_signatories')->delete();
         
-        \DB::table('signatories')->insert(array (
+        \DB::table('org_signatories')->insert(array (
             0 => 
             array (
                 'id' => 1,
                 'designationable_id' => 1,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => NULL,
                 'oic_id' => 13,
                 'is_oic' => 1,
@@ -35,7 +35,7 @@ class SignatoriesTableSeeder extends Seeder
             array (
                 'id' => 2,
                 'designationable_id' => 2,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => 10,
                 'oic_id' => NULL,
                 'is_oic' => 0,
@@ -48,7 +48,7 @@ class SignatoriesTableSeeder extends Seeder
             array (
                 'id' => 3,
                 'designationable_id' => 3,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => 12,
                 'oic_id' => NULL,
                 'is_oic' => 0,
@@ -61,7 +61,7 @@ class SignatoriesTableSeeder extends Seeder
             array (
                 'id' => 4,
                 'designationable_id' => 4,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => 13,
                 'oic_id' => 16,
                 'is_oic' => 1,
@@ -74,7 +74,7 @@ class SignatoriesTableSeeder extends Seeder
             array (
                 'id' => 5,
                 'designationable_id' => 5,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => 14,
                 'oic_id' => NULL,
                 'is_oic' => 0,
@@ -87,7 +87,7 @@ class SignatoriesTableSeeder extends Seeder
             array (
                 'id' => 6,
                 'designationable_id' => 6,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => 15,
                 'oic_id' => NULL,
                 'is_oic' => 0,
@@ -100,7 +100,7 @@ class SignatoriesTableSeeder extends Seeder
             array (
                 'id' => 7,
                 'designationable_id' => 7,
-                'designationable_type' => 'App\\Models\\OrganizationalChart',
+                'designationable_type' => 'App\\Models\\OrgChart',
                 'user_id' => 12,
                 'oic_id' => NULL,
                 'is_oic' => 0,

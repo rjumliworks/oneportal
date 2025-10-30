@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('organizational_charts', function (Blueprint $table) {
+        Schema::create('org_charts', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->tinyIncrements('id');
             $table->integer('order');
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('organizational_charts');
+        Schema::dropIfExists('org_charts');
     }
 };

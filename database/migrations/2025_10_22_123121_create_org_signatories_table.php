@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('signatories', function (Blueprint $table) {
+        Schema::create('org_signatories', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->unsignedInteger('designationable_id');
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('signatories');
+        Schema::dropIfExists('org_signatories');
     }
 };
