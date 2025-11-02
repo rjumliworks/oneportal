@@ -15,11 +15,11 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->integer('count');
-            $table->tinyInteger('detail_id')->unsigned()->index();
+            $table->unsignedTinyInteger('detail_id');
             $table->foreign('detail_id')->references('id')->on('list_dropdowns')->onDelete('cascade');   
-            $table->tinyInteger('type_id')->unsigned()->index();
+            $table->unsignedTinyInteger('type_id');
             $table->foreign('type_id')->references('id')->on('list_leaves')->onDelete('cascade');
-            $table->bigInteger('request_id')->unsigned()->index();
+            $table->unsignedBigInteger('request_id');
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });

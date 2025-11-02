@@ -84,7 +84,7 @@
 <?php 
     // $travel = json_encode($travel); 
     // $travel = json_decode($travel, true);   
-    $signatory = $data['signatories'][0];
+    // $signatory = $data['signatories'][0];
 ?>
 <body>
     
@@ -104,7 +104,7 @@
     </div>
 
     <div class="content">
-        
+        @foreach ($data['divisions'] as $division)
             <div style="font-family:Arial;">
                 <img src="{{ public_path('images/logo-sm.png') }}" alt="tag" style="position: absolute; top: -4; left: 60; width: 50px; height: 50px;">
                 <center style="font-size: 10px; margin-bottom: 0px; text-transform: uppercase;">Republic of the Philippines</center>
@@ -113,7 +113,7 @@
             
                 <br/>
                 <center style="margin-top: 15px; font-size: 11px;  color:#000; font-weight: bold; padding: 2px;">RENDER OVERTIME SERVICE</center>
-                <center style="font-size: 11px; background-color: #097eeb; color:#fff; font-weight: bold; padding: 2px; text-transform: uppercase; ">{{$signatory['division']['name']}}</center>
+                <center style="font-size: 11px; background-color: #097eeb; color:#fff; font-weight: bold; padding: 2px; text-transform: uppercase; ">{{$division}}</center>
             </div>
             <table style="border: 1px solid black;">
                 <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
@@ -124,7 +124,7 @@
                 </thead>
                 <tbody>
                     <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
-                        <td style="text-align: center; padding: 5px; font-size: 10x;">{{$data['user']['profile']['fullname']}}</td>
+                        <td style="text-align: center; padding: 5px; font-size: 10x;">{{$data['created_by']}}</td>
                         <td style="text-align: center; padding: 5px; font-size: 10x;">{{$data['created_at']}}</td>
                     </tr>
                 </tbody>
@@ -139,10 +139,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($data['tags'] as $employee)
+                    @foreach($data['employees'] as $employee)
                         <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
-                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['user']['profile']['name']}}</td>
-                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['user']['organization']['position']['name']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['name']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position']}}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -158,7 +158,7 @@
                 <tbody>
                     <tr style="font-size: 10px; color: #072388;">
                         <td style="text-align: center; padding: 7px; text-transform: uppercase;">
-                            {{-- <span style="font-weight: bold;">{{$travel['expense']}}</span>  --}}
+                            <span style="font-weight: bold;">{{$data['date']}}</span>  
                         </td>
                     </tr>
                 </tbody>
@@ -170,7 +170,7 @@
                 <tbody>
                     <tr style="font-size: 10px; color: #072388;">
                         <td style="text-align: center; padding: 7px; text-transform: uppercase;">
-                            {{-- <span style="font-weight: bold;">{{$travel['expense']}}</span>  --}}
+                            <span style="font-weight: bold;">{{$data['purpose']}}</span> 
                         </td>
                     </tr>
                 </tbody>
@@ -178,90 +178,77 @@
 
             <center style="margin-top: 15px; font-size: 8px; background-color: #000; color:#fff; font-weight: bold; padding: 2px;">FOR RECOMMENDATION AND APPROVAL SIGNATURE</center>
             <table style="border: 1px solid black; font-size: 10px; margin-top: 0px; page-break-inside: avoid;">
-            <tbody>
-                <tr>
-                    <td style="min-height: 50px; border-bottom-style: hidden;">
-                        @if($signatory['division']['name'] != 'Office of the Regional Director')
-                            @if($signatory['is_approval_only'] === 0)
-                                <span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>
-                            @endif
-                        @endif
-                    </td>
-                    <td style="min-height: 50px; border-bottom-style: hidden;">
-                        <span style="font-size:9px; color: #606060;">APPROVED:</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="min-height: 100px; padding: 15px; border-bottom-style: hidden;"></td>
-                    <td style="min-height: 100px; padding: 15px; border-bottom-style: hidden;"></td>
-                </tr>
-                <tr style="text-align: center;">
-                    <td width="33.3%" style="vertical-align: bottom; position: relative; height: 50px; text-align: center;">
-                        @if($data['signatories'][0]['division']['name'] == 'Office of the Regional Director')
-
-                        @else
+                <tbody>
+                    <tr>
+                        <td style="min-height: 50px; border-bottom-style: hidden;">
+                            @if($division != 'Office of the Regional Director')<span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>@endif
+                        </td>
+                        <td style="min-height: 50px; border-bottom-style: hidden;">
+                            <span style="font-size:9px; color: #606060;">APPROVED:</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="min-height: 100px; padding: 15px; border-bottom-style: hidden;"></td>
+                        <td style="min-height: 100px; padding: 15px; border-bottom-style: hidden;"></td>
+                    </tr>
+                    <tr style="text-align: center;">
+                        <td width="33.3%" style="vertical-align: bottom; position: relative; height: 50px; text-align: center;">
+                            @if($division != 'Office of the Regional Director')
                             <div style="position: relative; height:50px;">
-                            {{-- Signature container --}}
-                            <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                @if(!empty($signatory['recommended']['user']['profile']['signature']))
-                                    <img 
-                                        src="{{ public_path('storage/profile-signatures/' . $signatory['recommended']['user']['profile']['signature']) }}" 
-                                        alt="Signature" 
-                                        style="height: 60px; width: auto;"
-                                    >
-                                @endif
-                            </div>
-
-                            {{-- Name and designation --}}
-                            <div style="position: absolute; bottom: 0; width: 100%;">
-                                <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
-                                    {{ $signatory['recommended']['user']['profile']['fullname']}}
-                                </span>
-                                <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
-                                <div style="font-size: 10px;">
-                                    @if($signatory['recommended']['is_designated'])
-                                        Assistant Regional Director ({{$signatory['division']['others']}})
-                                    @else 
-                                        OIC - Assistant Regional Director  ({{$signatory['division']['others']}})
+                                {{-- Signature container --}}
+                                <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
+                                    @if(!empty($data['recommended']['signature']))
+                                        <img 
+                                            src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
+                                            alt="Signature" 
+                                            style="height: 60px; width: auto;"
+                                        >
                                     @endif
                                 </div>
-                            </div>
-                        </div>
-                        @endif
-                    </td>
-                    <td width="33.3%" style="vertical-align: bottom; position: relative; height: 50px; text-align: center;">
-                        <div style="position: relative; height: 50px;">
-                            {{-- Signature container --}}
-                            <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                @if(!empty($signatory['approved']['user']['profile']['signature']))
-                                    <img 
-                                        src="{{ public_path('storage/profile-signatures/' . $signatory['approved']['user']['profile']['signature']) }}" 
-                                        alt="Signature" 
-                                        style="height: 60px; width: auto;"
-                                    >
-                                @endif
-                            </div>
 
-                            {{-- Name and designation --}}
-                            <div style="position: absolute; bottom: 0; width: 100%;">
-                                <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
-                                    {{ $signatory['approved']['user']['profile']['fullname']}}
-                                </span>
-                                <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
-                                <div style="font-size: 10px;">
-                                    @if($signatory['approved']['is_designated'])
-                                        Regional Director 
-                                    @else 
-                                        OIC - Regional Director
-                                    @endif
+                                {{-- Name and designation --}}
+                                <div style="position: absolute; bottom: 0; width: 100%;">
+                                    <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
+                                        {{ ($data['recommended']) ? $data['recommended']['name'] : $signatory['recommended'][$loop->index]['name']}}
+                                    </span>
+                                    <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
+                                    <div style="font-size: 10px;">
+                                        {{  ($data['recommended']) ? $data['recommended']['role'] : $signatory['recommended'][$loop->index]['role']}}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                            @endif
+                        </td>
+                        <td width="33.3%" style="vertical-align: bottom; position: relative; height: 50px; text-align: center;">
+                            <div style="position: relative; height: 50px;">
+                                {{-- Signature container --}}
+                                <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
+                                    @if(!empty($data['approved']['signature']))
+                                        <img 
+                                            src="{{ public_path('storage/profile-signatures/' . $data['approved']['signature']) }}" 
+                                            alt="Signature" 
+                                            style="height: 60px; width: auto;"
+                                        >
+                                    @endif
+                                </div>
 
-                </tr>
-            </tbody>
-        </table>
+                                {{-- Name and designation --}}
+                                <div style="position: absolute; bottom: 0; width: 100%;">
+                                    <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
+                                        {{ ($data['approved']) ? $data['approved']['name'] : $signatory['approved']['name']}}
+                                    </span>
+                                    <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
+                                    <div style="font-size: 10px;">
+                                       {{  ($data['approved']) ? $data['approved']['role'] : $signatory['approved']['role'] }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        @endforeach
     </div>
 </body>
 </html>

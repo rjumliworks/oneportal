@@ -11,16 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('request_overtimes', function (Blueprint $table) {
+        Schema::create('request_travels', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->string('code',30)->unique()->index();
-            $table->decimal('earned', 3, 2)->nullable();
-            $table->longtext('targets')->nullable();
-            $table->unsignedTinyInteger('status_id');
-            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');
+            $table->json('expenses');
+            $table->unsignedSmallInteger('mode_id');
+            $table->foreign('mode_id')->references('id')->on('list_data')->onDelete('cascade');
+            $table->unsignedSmallInteger('transpo_id');
+            $table->foreign('transpo_id')->references('id')->on('list_data')->onDelete('cascade');
+            $table->unsignedSmallInteger('expense_id');
+            $table->foreign('expense_id')->references('id')->on('list_data')->onDelete('cascade');            
             $table->unsignedBigInteger('request_id');
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
+            $table->boolean('is_ard')->default(0);
             $table->timestamps();
         });
     }
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_overtimes');
+        Schema::dropIfExists('request_travels');
     }
 };

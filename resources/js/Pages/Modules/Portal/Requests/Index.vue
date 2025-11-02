@@ -150,6 +150,9 @@
                                                         <a @click="openPrint(list.key,index)" class="dropdown-item d-flex align-items-center" role="button">
                                                             <i class="ri-printer-fill me-2"></i> Print
                                                         </a>
+                                                        <a @click="openPrint(list.key,index)" class="dropdown-item d-flex align-items-center" role="button">
+                                                            <i class="ri-download-cloud-fill me-2"></i> Download
+                                                        </a>
                                                     </li>
                                                 </ul>
 
@@ -269,7 +272,7 @@ export default {
         },
         openPrint(key,index){
             this.index = index;
-            window.open('/requests?option=print&type=overtime&key='+key);
+            window.open('/requests?option=print&type=leave&key='+key);
         },
         refresh(){
             this.filter.expense = null;

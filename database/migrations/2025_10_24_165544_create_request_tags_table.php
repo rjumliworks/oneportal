@@ -16,13 +16,13 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->boolean('is_sender_viewed')->default(0);
             $table->boolean('is_receiver_viewed')->default(0);
-            $table->integer('user_id')->unsigned()->index();
+            $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->tinyInteger('division_id')->unsigned()->index();
+            $table->unsignedTinyInteger('division_id');
             $table->foreign('division_id')->references('id')->on('list_dropdowns')->onDelete('cascade');  
-            $table->bigInteger('signatory_id')->unsigned()->index();
+            $table->unsignedBigInteger('signatory_id');
             $table->foreign('signatory_id')->references('id')->on('request_signatories')->onDelete('cascade');  
-            $table->bigInteger('request_id')->unsigned()->index();
+            $table->unsignedBigInteger('request_id');
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });

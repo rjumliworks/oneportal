@@ -30,6 +30,11 @@ class Request extends Model
         return $this->hasOne('App\Models\RequestLeave', 'request_id');
     }
 
+    public function travel()
+    {
+        return $this->hasOne('App\Models\RequestTravel', 'request_id');
+    }
+
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id', 'id');

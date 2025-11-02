@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('start');
             $table->date('end');
             $table->enum('time_of_day', ['AM', 'PM', 'Whole Day']);
-            $table->bigInteger('request_id')->unsigned()->index();
+            $table->unsignedBigInteger('request_id');
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });

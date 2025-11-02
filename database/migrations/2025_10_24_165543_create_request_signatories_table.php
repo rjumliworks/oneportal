@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreign('approved_id')->references('id')->on('org_signatory_schedules')->onDelete('cascade');
             $table->datetime('approved_date')->nullable();
             $table->string('approved_by', 200)->nullable();
-            $table->bigInteger('request_id')->unsigned()->index();
+            $table->unsignedBigInteger('request_id');
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->boolean('is_approval_only')->default(0);
             $table->boolean('is_completed')->default(0);

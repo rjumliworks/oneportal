@@ -2,7 +2,10 @@
 
 namespace App\Services\Portal\Request;
 
+use Carbon\Carbon;
 use App\Models\Request;
+use App\Models\RequestLeave;
+use App\Models\RequestReport;
 use App\Models\UserCredit;
 
 class LeaveClass
@@ -163,6 +166,7 @@ class LeaveClass
                     }
                 }
             }
+            $this->report($data->id);
         }
 
         return [
@@ -189,5 +193,104 @@ class LeaveClass
 
             return $code;
         });
+    }
+
+    private function report($id){
+        $data = RequestLeave::with([
+            'detail',
+            'type',
+            'credits.log','credits.credit.leave',
+            'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,avatar,suffix_id',
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.statuses.user:id',
+            'request.statuses.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.statuses.status',
+            'request.status',
+            'request.type',
+            'request.dates',
+            'request.detail',
+            'request.user:id',
+            'request.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.user.organization.position','request.user.organization.salary','request.user.organization.division','request.user.organization.unit',
+            'request.signatories.division','request.signatories.approved','request.signatories.recommended'
+        ])
+        ->where('request_id',$id)
+        ->first();
+
+        $user = $data->request->tags[0]->user;
+  
+        $employee = [
+            'name' => $user->profile->name,
+            'position' => $user->organization->position->name ?? 'n/a',
+            'salary' => $user->organization->salary->amount ?? 0,
+            'position_short' => $user->organization->position->short ?? 'n/a',
+            'unit' => $user->organization->unit->name ?? 'n/a',
+            'unit_short' => $user->organization->unit->short ?? 'n/a',
+            'division' => $user->organization->division->name ?? 'n/a',
+            'division_id' => $user->organization->division->id ?? null
+        ];
+
+        $divisions[] = $user->organization->division->name;
+ 
+
+        $start = Carbon::parse($data->request->dates[0]->start);
+        $end = Carbon::parse($data->request->dates[0]->end);
+        if($start->format('Y-m-d') === $end->format('Y-m-d')) {
+            $formattedDateRange = $start->format('F j, Y');
+        }else if($start->format('F Y') === $end->format('F Y')) {
+            $formattedDateRange = $start->format('F j') . '–' . $end->format('j, Y');
+        }else{
+            $formattedDateRange = $start->format('F j, Y') . ' – ' . $end->format('F j, Y');
+        }
+        if($data->request->signatories[0]->approved){
+            $approved = [
+                'name' => $data->signatories[0]->approved->user->profile->fullname,
+                'signature' => $data->signatories[0]->approved->user->profile->signature,
+                'role' => ($data->signatories[0]->approved->is_designated) ? 'Regional Director' : 'OIC - Regional Director'
+            ];
+        }else{
+            $approved = null;
+        }
+
+        if($data->request->signatories[0]->recommended){
+            $recommended = [
+                'name' => $data->signatories[0]->recommended->user->profile->fullname,
+                'signature' => $data->signatories[0]->recommended->user->profile->signature,
+                'role' => ($data->signatories[0]->recommended->is_designated) ? 'Assistant Regional Director' : 'OIC - Assistant Regional Director',
+                'division' => $data->signatories[0]->division->others
+            ];
+        }else{
+            $recommended = null;
+        }
+
+        $information = [
+            'code' => $data->code,
+            'count' => $data->count,
+            'detail' => $data->detail,
+            'type' => $data->type,
+            'credits' => $data->credits,
+            'purpose' => $data->request->detail->purpose,
+            'date' => $formattedDateRange,
+            'employee' => $employee,
+            'approved' => $approved,
+            'recommended' => $recommended,
+            'divisions' => $divisions,
+            'created_by' => $data->request->user->profile->fullname,
+            'created_at' => $data->request->created_at
+        ];
+
+        if(RequestReport::where('request_id',$id)->count() > 0){
+            $data = RequestReport::where('request_id',$id)->first();
+            $data->information = json_encode($information);
+            $data->save();
+        }else{
+            $data = RequestReport::create([
+                'information' => json_encode($information,true),
+                'request_id' => $id
+            ]);
+        }
+        return true;
     }
 }

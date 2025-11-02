@@ -4,6 +4,7 @@ namespace App\Services\Portal\Approval;
 
 use Hashids\Hashids;
 use App\Models\Request;
+use App\Models\RequestReport;
 use App\Models\RequestOvertime;
 use App\Models\OrgSignatory;
 use App\Models\OrgSignatorySchedule;
@@ -21,15 +22,17 @@ class SaveClass
         $data->status_id = $request->status_id;
         if($data->save()){
             $user = OrgSignatorySchedule::where('user_id', \Auth::user()->id)->where('is_ongoing',1)->first();
+            $division = OrgSignatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
+            $division = $division?->designationable?->assigned;
             if($request->status_id == 25){
-                $division = OrgSignatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
-                $division = $division?->designationable?->assigned_id;
-                $signatory = RequestSignatory::where('division_id',$division)->where('request_id',$data->id)->where('is_approval_only',0)->first();
+               
+                $signatory = RequestSignatory::where('division_id',$division->id)->where('request_id',$data->id)->where('is_approval_only',0)->first();
         
                 $signatory->recommended_id = $user->id;
                 $signatory->recommended_date = now();
                 $signatory->recommended_by = $this->image($request,$id[0]);
                 $signatory->save();
+                $this->updateSignatory($data->id,'recommended',$user->is_designated,$division->others);
             }else if($request->status_id == 26){
                 $signatory = RequestSignatory::where('request_id',$data->id)->update([
                     'approved_id' => $user->id,
@@ -38,6 +41,9 @@ class SaveClass
                     'is_completed' => 1
                 ]);
                 if($signatory){
+                   
+                    $this->updateSignatory($data->id,'approved',$user->is_designated);
+
                     if($data->type_id == 165){
                         $this->overtime($data->id);
                     }
@@ -119,5 +125,26 @@ class SaveClass
             $code = now()->format('Y') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
             return $code;
         });
+    }
+
+    private function updateSignatory($requestId,$type,$is_designated,$division = null)
+    {
+        $report = RequestReport::where('request_id', $requestId)->first();
+        $information = json_decode($report->information, true);
+    
+        if($type == 'recommended'){
+            $role = ($is_designated) ? 'Assistant Regional Director ('.$division.')' : 'OIC - '.'Assistant Regional Director ('.$division.')';
+        }else{
+            $role = ($is_designated) ? '' : 'OIC - '.'Regional Director';
+        }
+        $information[$type] = [
+            'name' => \Auth::user()->profile->fullname,
+            'signature' => \Auth::user()->profile->signature,
+            'role' => $role
+        ];
+        $report->information = json_encode($information);
+        $report->save();
+
+        return true;
     }
 }

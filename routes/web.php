@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\WelcomeController::class, 'index'])->middleware('guest')->name('welcome');
+Route::get('/verification', [App\Http\Controllers\WelcomeController::class, 'verification']);
+Route::post('/verify', [App\Http\Controllers\WelcomeController::class, 'verify']);
 Route::get('/attendance', [App\Http\Controllers\AttendanceController::class, 'index']);
 Route::post('/attendance', [App\Http\Controllers\AttendanceController::class, 'store']);
 

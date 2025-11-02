@@ -15,11 +15,11 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->string('code',30)->unique()->index();
-            $table->integer('user_id')->unsigned()->index();
+            $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->tinyInteger('status_id')->unsigned()->index();
+            $table->unsignedTinyInteger('status_id');
             $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');
-            $table->smallInteger('type_id')->unsigned()->index();
+            $table->unsignedSmallInteger('type_id');
             $table->foreign('type_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->boolean('is_sender_viewed')->default(0);
             $table->boolean('is_receiver_viewed')->default(0);

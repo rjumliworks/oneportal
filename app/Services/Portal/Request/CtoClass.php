@@ -2,7 +2,9 @@
 
 namespace App\Services\Portal\Request;
 
+use Carbon\Carbon;
 use App\Models\Request;
+use App\Models\RequestReport;
 
 class CtoClass
 {
@@ -58,6 +60,8 @@ class CtoClass
                     
                 }
             }
+
+            $this->report($data->id);
         }
 
         return [
@@ -84,5 +88,97 @@ class CtoClass
 
             return $code;
         });
+    }
+
+    private function report($id){
+        $data = Request::with([
+            'tags.user:id',
+            'tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'tags.user.organization.division','tags.user.organization.position','tags.user.organization.unit',
+            'type',
+            'dates',
+            'detail',
+            'user:id',
+            'user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'signatories.division',
+            'signatories.approved.user.profile','signatories.approved.signatory.designationable.designation',
+            'signatories.recommended.user.profile','signatories.recommended.signatory.designationable.designation'
+        ])
+        ->where('id',$id)
+        ->first();
+
+        $users = $data->tags;
+        foreach ($users as $tag) {
+            $user = $tag->user;
+            $division = $user->organization->division->name ?? 'n/a';
+            $division_id = $user->organization->division->id ?? null;
+
+            $employees[] = [
+                'name' => $user->profile->name,
+                'position' => $user->organization->position->name ?? 'n/a',
+                'position_short' => $user->organization->position->short ?? 'n/a',
+                'unit' => $user->organization->unit->name ?? 'n/a',
+                'unit_short' => $user->organization->unit->short ?? 'n/a',
+                'division' => $division,
+                'division_id' => $division_id,
+            ];
+
+            $divisions[] = $division;
+        }
+
+        $start = Carbon::parse($data->dates[0]->start);
+        $end = Carbon::parse($data->dates[0]->end);
+        if($start->format('Y-m-d') === $end->format('Y-m-d')) {
+            $formattedDateRange = $start->format('F j, Y');
+        }else if($start->format('F Y') === $end->format('F Y')) {
+            $formattedDateRange = $start->format('F j') . '–' . $end->format('j, Y');
+        }else{
+            $formattedDateRange = $start->format('F j, Y') . ' – ' . $end->format('F j, Y');
+        }
+
+        if($data->signatories[0]->approved){
+            $approved = [
+                'name' => $data->signatories[0]->approved->user->profile->fullname,
+                'signature' => $data->signatories[0]->approved->user->profile->signature,
+                'role' => ($data->signatories[0]->approved->is_designated) ? 'Regional Director' : 'OIC - Regional Director'
+            ];
+        }else{
+            $approved = null;
+        }
+
+        if($data->signatories[0]->recommended){
+            $recommended = [
+                'name' => $data->signatories[0]->recommended->user->profile->fullname,
+                'signature' => $data->signatories[0]->recommended->user->profile->signature,
+                'role' => ($data->signatories[0]->recommended->is_designated) ? 'Assistant Regional Director' : 'OIC - Assistant Regional Director',
+                'division' => $data->signatories[0]->division->others
+            ];
+        }else{
+            $recommended = null;
+        }
+
+        $information = [
+            'code' => $data->code,
+            'purpose' => $data->detail->purpose,
+            'date' => $formattedDateRange,
+            'employees' => $employees,
+            'divisions' => $divisions,
+            'approved' => $approved,
+            'recommended' => $recommended,
+            'created_by' => $data->user->profile->fullname,
+            'created_at' => $data->created_at
+        ];
+
+        if(RequestReport::where('request_id',$id)->count() > 0){
+            $data = RequestReport::where('request_id',$id)->first();
+            $data->information = json_encode($information);
+            $data->save();
+        }else{
+            $data = RequestReport::create([
+                'information' => json_encode($information,true),
+                'request_id' => $id
+            ]);
+        }
+        return true;
     }
 }

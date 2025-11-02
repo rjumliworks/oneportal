@@ -13,13 +13,14 @@ use App\Services\Portal\Request\ViewClass;
 use App\Services\Portal\Request\ShowClass;
 use App\Services\Portal\Request\LeaveClass;
 use App\Services\Portal\Request\PrintClass;
+use App\Services\Portal\Request\TravelClass;
 use App\Http\Requests\Portal\MyrequestRequest;
 
 class RequestController extends Controller
 {
     use HandlesTransaction;
 
-    public $view,$save,$dropdown,$show,$cto,$leave,$print;
+    public $view,$save,$dropdown,$show,$cto,$leave,$print,$travel;
 
     public function __construct(
         CtoClass $cto,
@@ -28,6 +29,7 @@ class RequestController extends Controller
         ShowClass $show, 
         LeaveClass $leave,
         PrintClass $print,
+        TravelClass $travel,
         DropdownClass $dropdown
     ){
         $this->cto = $cto;
@@ -36,6 +38,7 @@ class RequestController extends Controller
         $this->show = $show;
         $this->leave = $leave;
         $this->print = $print;
+        $this->travel = $travel;
         $this->dropdown = $dropdown;
     }
 
@@ -48,11 +51,7 @@ class RequestController extends Controller
                 return $this->view->check($request);
             break;
             case 'print':
-                 switch($request->type){
-                    case 'overtime':
-                        return $this->print->overtime($request);
-                    break;
-                 }
+                return $this->print->document($request);
             break;
             default:
                 return inertia('Modules/Portal/Requests/Index',[
@@ -88,6 +87,9 @@ class RequestController extends Controller
                 break;
                 case 'leave':
                     return $this->leave->store($request);
+                break;
+                case 'travel':
+                    return $this->travel->store($request);
                 break;
             }
         });
