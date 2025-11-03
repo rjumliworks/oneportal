@@ -147,7 +147,7 @@
                                                     </li>
                                                     <li><hr class="dropdown-divider"></li>
                                                     <li>
-                                                        <a @click="openPrint(list.key,index)" class="dropdown-item d-flex align-items-center" role="button">
+                                                        <a @click="openPrint(list.key,index,list.type)" class="dropdown-item d-flex align-items-center" role="button">
                                                             <i class="ri-printer-fill me-2"></i> Print
                                                         </a>
                                                         <a @click="openPrint(list.key,index)" class="dropdown-item d-flex align-items-center" role="button">
@@ -270,9 +270,9 @@ export default {
         openCreate(){
             this.$refs.create.show();
         },
-        openPrint(key,index){
+        openPrint(key,index,type){
             this.index = index;
-            window.open('/requests?option=print&type=leave&key='+key);
+            window.open('/requests?option=print&type='+type+'&key='+key);
         },
         refresh(){
             this.filter.expense = null;

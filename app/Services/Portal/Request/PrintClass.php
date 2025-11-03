@@ -3,6 +3,8 @@
 namespace App\Services\Portal\Request;
 use Hashids\Hashids;
 use App\Models\OrgChart;
+use App\Models\ListLeave;
+use App\Models\ListDropdown;
 use App\Models\RequestReport;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -30,11 +32,21 @@ class PrintClass
         ];
 
         switch($request->type){
-            case 'overtime':
+            case 'Render Overtime Service':
                 $pdf = \PDF::loadView('reports.overtime', $array)->setPaper('a4', 'portrait');
             break;
-            case 'leave':
+            case 'Leave Form':
+
+                $array['types'] = ListLeave::where('is_active',1)->where('is_regular',1)->take(12)->get();
+                $array['titles'] = ListDropdown::where('classification','Leave Details')->select('type')->distinct()->get();
+                $array['details'] = ListDropdown::where('classification','Details of Leave')->get();
                 $pdf = \PDF::loadView('reports.leave', $array)->setPaper('a4', 'portrait');
+            break;
+            case 'Travel Order':
+
+            break;
+            case 'Vehicle Reservation':
+
             break;
         }
 
