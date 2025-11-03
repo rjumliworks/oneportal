@@ -16,6 +16,101 @@
                 <span class="fw-semibold fs-14" data-key="t-dashboards">My Requests</span>
                 </Link>
             </li>
+
+            <li class="menu-title">
+                <i class="ri-more-fill" aria-expanded="false"></i>
+                <span data-key="t-menu">Procurement</span>
+            </li>
+            <li class="nav-item">
+                <Link href="/procurement-dashboard" class="nav-link menu-link"
+                :class="{'active': $page.component.startsWith('Modules/HumanResource/Dashboard') }">
+                <i class="ri-apps-fill"></i>
+                <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/faims/procurements" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-file-list-3-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Request</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/faims/procurement-codes" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-code-box-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">PAP Codes</span>
+                </Link>
+            </li>
+            <!-- <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Quotations</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">BAC Resolutions</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Notice Of Awards</span>
+                </Link>
+            </li>
+
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Purchase Orders</span>
+                </Link>
+            </li>
+
+            
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Notice to Proceeds</span>
+                </Link>
+            </li>
+
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Inspection Reports</span>
+                </Link>
+            </li>
+
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">PAP Codes</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Groups</span>
+                </Link>
+            </li>
+                <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-team-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
+                </Link>
+            </li> -->
+
             <tempalte v-if="$page.props.user.data.signatory">
                 <li class="nav-item">
                     <Link href="/approvals" class="nav-link menu-link"
@@ -220,6 +315,8 @@
                     </div>
                 </li>
             </tempalte>
+
+  
         </ul>
         
     </BContainer>

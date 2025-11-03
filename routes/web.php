@@ -31,6 +31,16 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::resource('/requests', App\Http\Controllers\Portal\RequestController::class);
     Route::resource('/approvals', App\Http\Controllers\Portal\ApprovalController::class);
     Route::post('/comment', [App\Http\Controllers\Portal\CommentController::class, 'store']);
+
+    Route::prefix('faims')->group(function () {
+        Route::resource('/procurement-codes', App\Http\Controllers\FAIMS\Procurement\ProcurementCodeController::class);
+        Route::resource('/procurements', App\Http\Controllers\FAIMS\Procurement\ProcurementController::class)->names([
+            'index' => 'procurement.index',
+        ]);
+        Route::get('/procurements/create', [App\Http\Controllers\FAIMS\Procurement\ProcurementController::class, 'create_index']);
+
+
+    });
 });
 
 require __DIR__.'/auth.php';

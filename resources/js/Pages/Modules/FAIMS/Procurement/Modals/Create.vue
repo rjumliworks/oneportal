@@ -69,18 +69,12 @@
             <b-button @click="continueToForm()" variant="primary" block>Continue</b-button>
         </template>
     </b-modal>
-    <Vehicle :dropdowns="vehicle_dropdowns" ref="vehicle"/>
-    <Travel :dropdowns="travel_dropdowns" ref="travel"/>
-    <Leave @update="fetch()" :dropdowns="leave_dropdowns" ref="leave"/>
-    <Overtime @update="fetch()" :dropdowns="leave_dropdowns" ref="overtime"/>
+
 </template>
 <script>
-import Travel from './Travel.vue';
-import Vehicle from './Vehicle.vue';
-import Leave from './Leave.vue';
-import Overtime from './Overtime.vue';
+
 export default {
-    components : { Travel, Vehicle, Leave, Overtime },
+    components : { },
     props: ['leave_dropdowns','travel_dropdowns','vehicle_dropdowns'],
     data(){
         return {

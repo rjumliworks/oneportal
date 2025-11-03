@@ -6,5 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcurementCodeGroup extends Model
 {
-    //
+    protected $fillable = [
+        'procurement_code_id',
+        'end_user_id'
+    ];
+
+    public function procurement_code()
+    {
+        return $this->belongsTo('App\Models\ProcurementCode', 'procurement_code_id' );
+    }
+
+    public function end_user()
+    {
+        return $this->belongsTo('App\Models\ListDropdown', 'end_user_id' );
+    }
+
 }

@@ -19,6 +19,8 @@ use App\Models\LocationProvince;
 use App\Models\LocationMunicipality;
 use App\Models\LocationBarangay;
 use App\Models\ListVehicle;
+use App\Models\ProcurementCode;
+
 
 class DropdownClass
 {  
@@ -267,6 +269,17 @@ class DropdownClass
         return $data;
     }
 
+    public function list_units(){
+        $data = ListUnit::where('is_active',1)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name,
+                'short' => $item->short
+            ];
+        });
+        return $data;
+    }
+
     public function units($code){
         $data = ListUnit::where('division_id',$code)->where('is_active',1)->get()->map(function ($item) {
             return [
@@ -376,5 +389,15 @@ class DropdownClass
         }else{
             return [];
         }
+    }
+
+    public function procurement_codes(){
+        $data = ProcurementCode::get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'code' => $item->code,
+            ];
+        });
+        return $data;
     }
 }
