@@ -192,7 +192,8 @@ export default {
                 municipality_code: null,
                 barangay_code: null,
                 latitude: null,
-                longitude: null
+                longitude: null,
+                option: 'travel'
             }),
             config: {
                 enableTime: false,
@@ -233,7 +234,7 @@ export default {
             this.showModal = true;
         },
         submit(){
-            this.form.post('/travels',{
+            this.form.post('/requests',{
                 preserveScroll: true,
                 forceFormData: true, 
                 onSuccess: (response) => {

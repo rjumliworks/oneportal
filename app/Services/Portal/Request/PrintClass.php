@@ -36,10 +36,20 @@ class PrintClass
                 $pdf = \PDF::loadView('reports.overtime', $array)->setPaper('a4', 'portrait');
             break;
             case 'Leave Form':
+                $array['types'] = ListLeave::where('is_active',1)->get(); //->where('is_regular',1)->take(12)
+                $array['titles'] = ListDropdown::where('classification','Leave Details')->where('type','!=','Absent')->select('type')->distinct()->get();
+                $array['details'] = ListDropdown::where('classification','Leave Details')->get();
+                $a = OrgChart::with('user.profile', 'oic.profile')
+                    ->where('designation_id', 48)
+                    ->where('is_active', 1)
+                    ->first();
 
-                $array['types'] = ListLeave::where('is_active',1)->where('is_regular',1)->take(12)->get();
-                $array['titles'] = ListDropdown::where('classification','Leave Details')->select('type')->distinct()->get();
-                $array['details'] = ListDropdown::where('classification','Details of Leave')->get();
+                if ($a && $a->user && $a->user->profile) {
+                    $array['signatory']['certified'] = [
+                        'name' => $a->user->profile->fullname,
+                        'role' => null,
+                    ];
+                }
                 $pdf = \PDF::loadView('reports.leave', $array)->setPaper('a4', 'portrait');
             break;
             case 'Travel Order':
@@ -54,11 +64,11 @@ class PrintClass
         $dompdf = $pdf->getDomPDF();
 
         $canvas = $dompdf->getCanvas();
-        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
-            $text = "PAGE $pageNumber OF $pageCount";
-            $font = $fontMetrics->get_font("Helvetica", "normal");
-            $canvas->text(63.5, 796, $text, $font, 7);
-        });
+        // $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
+        //     $text = "PAGE $pageNumber OF $pageCount";
+        //     $font = $fontMetrics->get_font("Helvetica", "normal");
+        //     $canvas->text(63.5, 796, $text, $font, 7);
+        // });
 
         $pdfBinary = $dompdf->output();
         $secret = config('app.key');
@@ -77,7 +87,7 @@ class PrintClass
 
         return response($pdfBinary)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="'.$data['code'].'"');
+             ->header('Content-Disposition', 'inline; filename="' . $data['code'] . '.pdf"');
     }
 
     private function signatory($divisions){

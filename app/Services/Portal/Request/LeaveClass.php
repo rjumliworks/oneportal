@@ -203,7 +203,7 @@ class LeaveClass
             'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
             'request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,avatar,suffix_id',
             'request.tags.user:id',
-            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,signature,suffix_id',
             'request.statuses.user:id',
             'request.statuses.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
             'request.statuses.status',
@@ -222,7 +222,10 @@ class LeaveClass
         $user = $data->request->tags[0]->user;
   
         $employee = [
-            'name' => $user->profile->name,
+            'lastname' => $user->profile->lastname,
+            'middlename' => $user->profile->middlename,
+            'firstname' => $user->profile->firstname,
+            'signature' => $user->profile->signature,
             'position' => $user->organization->position->name ?? 'n/a',
             'salary' => $user->organization->salary->amount ?? 0,
             'position_short' => $user->organization->position->short ?? 'n/a',
@@ -235,14 +238,37 @@ class LeaveClass
         $divisions[] = $user->organization->division->name;
  
 
-        $start = Carbon::parse($data->request->dates[0]->start);
-        $end = Carbon::parse($data->request->dates[0]->end);
-        if($start->format('Y-m-d') === $end->format('Y-m-d')) {
-            $formattedDateRange = $start->format('F j, Y');
-        }else if($start->format('F Y') === $end->format('F Y')) {
-            $formattedDateRange = $start->format('F j') . '–' . $end->format('j, Y');
-        }else{
-            $formattedDateRange = $start->format('F j, Y') . ' – ' . $end->format('F j, Y');
+        if (count($data->request->dates) === 1) {
+            // Only one date range
+            $start = Carbon::parse($data->request->dates[0]->start);
+            $end = Carbon::parse($data->request->dates[0]->end);
+
+            if ($start->equalTo($end)) {
+                $formattedDateRange = $start->format('F j, Y');
+            } elseif ($start->format('F Y') === $end->format('F Y')) {
+                $formattedDateRange = $start->format('F j') . '–' . $end->format('j, Y');
+            } else {
+                $formattedDateRange = $start->format('F j, Y') . ' – ' . $end->format('F j, Y');
+            }
+        } else {
+            // Multiple date ranges
+            $ranges = [];
+
+            foreach ($data->request->dates as $date) {
+                $start = Carbon::parse($date->start);
+                $end = Carbon::parse($date->end);
+
+                if ($start->equalTo($end)) {
+                    $ranges[] = $start->format('M j, Y');
+                } elseif ($start->format('F Y') === $end->format('M Y')) {
+                    $ranges[] = $start->format('M j') . '–' . $end->format('j, Y');
+                } else {
+                    $ranges[] = $start->format('M j, Y') . ' – ' . $end->format('M j, Y');
+                }
+            }
+
+            // Join multiple ranges with comma
+            $formattedDateRange = implode(', ', $ranges);
         }
         if($data->request->signatories[0]->approved){
             $approved = [
@@ -266,7 +292,7 @@ class LeaveClass
         }
 
         $information = [
-            'code' => $data->code,
+            'code' => $data->request->code,
             'count' => $data->count,
             'detail' => $data->detail,
             'type' => $data->type,
@@ -278,7 +304,7 @@ class LeaveClass
             'recommended' => $recommended,
             'divisions' => $divisions,
             'created_by' => $data->request->user->profile->fullname,
-            'created_at' => $data->request->created_at
+            'created_at' => Carbon::parse($data->request->created_at)->format('d F Y')
         ];
 
         if(RequestReport::where('request_id',$id)->count() > 0){

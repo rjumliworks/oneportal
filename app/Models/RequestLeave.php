@@ -14,8 +14,16 @@ class RequestLeave extends Model
         'count',
         'detail_id',
         'type_id',
-        'request_id'
+        'request_id',
+        'certified_by',
+        'certified_id',
+        'certified_date'
     ];
+
+    public function certified()
+    {
+        return $this->belongsTo('App\Models\OrgSignatorySchedule', 'recommended_id', 'id');
+    }
 
     public function credits()
     {

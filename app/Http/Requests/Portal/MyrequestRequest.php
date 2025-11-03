@@ -38,6 +38,9 @@ class MyrequestRequest extends FormRequest
                     // 'document' => 'required_if:type.required_document,1',
                 ];
             break;
+            case 'travel':
+                
+            break;
         }
     }
 
