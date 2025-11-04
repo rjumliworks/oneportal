@@ -56,7 +56,7 @@
             </div>
             <hr class="text-muted mt-0"/>
             <div class="align-items-center d-flex">
-                <p class="ms-3 mb-0 text-primary fs-12 fw-semibold flex-grow-1">Assigned {{$page.props.user.data.signatory.division.others}} Employees for this Travel</p>
+                <p class="ms-3 mb-0 text-primary fs-12 fw-semibold flex-grow-1">Assigned {{$page.props.user.data.signatory.designationable.assigned.others}} Employees for this Travel</p>
                 <div class="flex-shrink-0 pe-3">
                     <p class="ms-3 mb-0 text-primary fs-12 fw-semibold flex-grow-1">Other Division Employees</p>
                 </div>
@@ -169,10 +169,10 @@ export default {
             return chunks;
         },
         matchingTags() {
-            return this.information.tags.filter(tag => tag.division === this.$page.props.user.data.signatory.division_id);
+            return this.information.tags.filter(tag => tag.division === this.$page.props.user.data.signatory.designationable.assigned_id);
         },
         nonMatchingTags() {
-            return this.information.tags.filter(tag => tag.division !== this.$page.props.user.data.signatory.division_id);
+            return this.information.tags.filter(tag => tag.division !== this.$page.props.user.data.signatory.designationable.assigned_id);
         } 
     },
     methods: {

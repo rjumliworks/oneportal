@@ -33,15 +33,18 @@
                                                     <i class="ri-close-circle-fill fs-16"></i> Close
                                                 </div>
                                             </Link>
-                                            <template v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44">
+                                             <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designationable.designation_id == 44">
                                                 <div class="vr" style="width: 1px;"></div>
-                                                <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" class="me-n3" @click="openDisapprove(information.request_key,information.type)">  
+                                                <div class="me-n3" @click="openDisapprove(information.key,information.type,information.request_key)">  
                                                     <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
                                                 </div>
-                                                <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" @click="openRecommend(information.request_key,information.type)">  
+                                                <div @click="openRecommend(information.key,information.type,information.request_key)">  
                                                     <b-button variant="secondary" block><i class="ri-checkbox-circle-fill me-1"></i>Recommend</b-button>
                                                 </div>
-                                                <div v-if="information.status.name == 'Recommended'" @click="openApprove(information.request_key,information.type)">  
+                                            </template>
+                                            <template  v-if="information_data.data.status.name == 'Recommended' && $page.props.user.data.signatory.designationable.designation_id == 43">
+                                                <div class="vr" style="width: 1px;"></div>
+                                                <div @click="openApprove(information.key,information.type,information.request_key)">  
                                                     <b-button variant="success" block><i class="ri-checkbox-circle-fill me-1"></i>Approve</b-button>
                                                 </div>
                                             </template>
@@ -49,6 +52,8 @@
                                     </BCol>
                                 </BRow>
                             </BCardBody>
+                            <!-- {{ $page.props.user.data }} -->
+                            <!-- {{ information.codes }} -->
                         </div>
                     </BCard>
                 </BCol>
@@ -69,9 +74,9 @@
 <script>
 import Main from './Components/Main.vue';
 import Edit from './Modals/Edit.vue';
-import Approved from './Modals/Approved.vue';
-import Recommend from './Modals/Recommend.vue';
-import Disapproved from './Modals/Disapproved.vue';
+import Approved from '../../Modals/Approved.vue';
+import Recommend from '../../Modals/Recommend.vue';
+import Disapproved from '../../Modals/Disapproved.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
     props: ['information_data'],
@@ -91,15 +96,15 @@ export default {
         openEdit(selected){
             this.$refs.edit.show(selected);
         },
-        openApprove(id,type){
-            this.$refs.approve.show(id,type);
+        openApprove(id,type,request_id){
+            this.$refs.approve.show(id,type,request_id);
         },
-        openRecommend(id,type){
-            this.$refs.recommend.show(id,type);
+        openRecommend(id,type,request_id){
+            this.$refs.recommend.show(id,type,request_id);
         },
-        openDisapprove(id,type){
-            this.$refs.disapprove.show(id,type);
-        }
+        openDisapprove(id,type,request_id){
+            this.$refs.disapprove.show(id,type,request_id);
+        },
     }
 }
 </script>

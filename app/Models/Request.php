@@ -20,6 +20,11 @@ class Request extends Model
         'status_id'
     ];
 
+    public function statusable()
+    {
+        return $this->morphMany('App\Models\RequestStatus', 'statusable');
+    }
+
     public function overtime()
     {
         return $this->hasOne('App\Models\RequestOvertime', 'request_id');

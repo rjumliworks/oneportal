@@ -28,6 +28,7 @@
                         placeholder="Select date" 
                         v-model="form.date" 
                         :config="config"
+                         @input="handleInput('date')"
                         class="form-control flatpickr-input" id="calendar">
                         </flat-pickr>
                     </div>
@@ -54,6 +55,7 @@
                         :loading="isLoading"
                         label="name"
                         object
+                         @input="handleInput('tags')"
                         :preserve-search="true"
                         :filter-results="false"
                         placeholder="Select Employee"
@@ -71,6 +73,7 @@
                         v-model="form.expense_id" 
                         :options="dropdowns.expenses"
                         label="name"
+                         @input="handleInput('expense_id')"
                         placeholder="Select type"
                     />
                 </BCol>
@@ -80,6 +83,7 @@
                         v-model="form.mode_id" 
                         :options="dropdowns.modes"
                         label="name"
+                        @input="handleInput('mode_id')"
                         placeholder="Select type"
                     />
                 </BCol>
@@ -89,6 +93,7 @@
                         v-model="form.transpo_id" 
                         :options="dropdowns.transportations"
                         label="name"
+                        @input="handleInput('transpo_id')"
                         placeholder="Select"
                     />
                 </BCol>

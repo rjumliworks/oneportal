@@ -17,12 +17,12 @@ return new class extends Migration
             $table->boolean('is_sender_viewed')->default(0);
             $table->boolean('is_receiver_viewed')->default(0);
             $table->string('remarks')->nullable();
+            $table->unsignedInteger('statusable_id');
+            $table->string('statusable_type');
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedTinyInteger('status_id');
-            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');            
-            $table->unsignedBigInteger('request_id');
-            $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');   
             $table->boolean('is_final')->default(0);
             $table->timestamps();
         });

@@ -29,6 +29,7 @@ class TravelClass
                 if(!empty($user['signatory'])) {
                     $signatory = $data->signatories()->create([
                         'division_id' => $divisionId,
+                        'status_id' => 25,
                         'is_approval_only' => 1
                     ]);
                 }else{
@@ -46,6 +47,7 @@ class TravelClass
                     }elseif(!$signatory) {
                         $signatory = $data->signatories()->create([
                             'division_id' => $divisionId,
+                            'status_id' => ($isApprovalOnly) ? 25 : 24,
                             'is_approval_only' => $isApprovalOnly
                         ]);
                     }
@@ -103,14 +105,14 @@ class TravelClass
                 if(!$signatory) {
                     $signatory = $data->signatories()->create([
                         'division_id' => $divisionId,
+                        'status_id' => 24,
                         'is_approval_only' => 0
                     ]);
                 }
-                $travel->codes()->create([
+               $a = $travel->codes()->create([
                     'code' => $this->generateTravelSoloCode(),
                     'division_id' => $divisionId
                 ]);
-               
                 $data->tags()->create([
                     'user_id' => $request->vehicle['driver_id'],
                     'division_id' => 3,

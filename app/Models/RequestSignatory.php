@@ -17,8 +17,19 @@ class RequestSignatory extends Model
         'recommended_date',
         'recommended_by',
         'division_id',
-        'request_id'
+        'request_id',
+        'status_id'
     ];
+
+    public function statusable()
+    {
+        return $this->morphMany('App\Models\RequestStatus', 'statusable');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo('App\Models\ListStatus', 'status_id', 'id');
+    }
 
     public function recommended()
     {

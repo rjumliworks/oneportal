@@ -42,7 +42,7 @@ class ApprovalController extends Controller
         $code  = $parts[1]; 
         switch($type){
             case 'travel-order':
-                return inertia('Modules/Employee/Approvals/View/Travels/View',[
+                return inertia('Modules/Portal/Approvals/View/Travels/View',[
                     'information_data' => $this->show->travel($code)
                 ]);
             break;

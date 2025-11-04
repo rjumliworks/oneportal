@@ -19,6 +19,7 @@ class CtoClass
         if($data){
             $signatory = $data->signatories()->create([
                 'division_id' => $division_id,
+                'status_id' => ($division_id == 2) ? 25 : 24,
                 'is_approval_only' => ($division_id == 2) ? 1 : 0
             ]);
 

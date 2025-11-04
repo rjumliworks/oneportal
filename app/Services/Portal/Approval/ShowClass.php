@@ -5,11 +5,43 @@ namespace App\Services\Portal\Approval;
 use Hashids\Hashids;
 use App\Models\Request;
 use App\Models\RequestLeave;
-use App\Http\Resources\Portal\Request\LeaveResource;
-use App\Http\Resources\Portal\Request\OvertimeResource;
+use App\Models\RequestTravel;
+use App\Models\RequestSignatory;
+use App\Http\Resources\Portal\Approval\TravelResource;
+use App\Http\Resources\Portal\Approval\LeaveResource;
+use App\Http\Resources\Portal\Approval\OvertimeResource;
 
 class ShowClass
 {
+    public function travel($code){
+        $hashids = new Hashids('krad',10);
+        $id = $hashids->decode($code);
+
+        $data = RequestSignatory::with([
+            'request.travel.mode',
+            'request.travel.expense',
+            'request.travel.codes',
+            'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id','request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.statusable.user:id',
+            'request.statusable.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.statusable.status',
+            'request.status',
+            'request.type',
+            'request.dates',
+            'request.detail',
+            'request.user:id',
+            'request.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.signatories.division','request.signatories.approved','request.signatories.recommended',
+            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name'
+        ])
+        ->where('id',$id)
+        ->first();
+
+        return new TravelResource($data);
+    }
+
     public function overtime($code){
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($code);

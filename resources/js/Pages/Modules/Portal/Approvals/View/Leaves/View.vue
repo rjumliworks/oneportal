@@ -35,16 +35,16 @@
                                             </Link>
                                             <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designationable.designation_id == 44">
                                                 <div class="vr" style="width: 1px;"></div>
-                                                <div class="me-n3" @click="openDisapprove(information.request_key,information.type)">  
+                                                <div class="me-n3" @click="openDisapprove(information.key,information.type)">  
                                                     <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
                                                 </div>
-                                                <div @click="openRecommend(information.request_key,information.type)">  
+                                                <div @click="openRecommend(information.key,information.type,information.request_key)">  
                                                     <b-button variant="secondary" block><i class="ri-checkbox-circle-fill me-1"></i>Recommend</b-button>
                                                 </div>
                                             </template>
                                             <template  v-if="information_data.data.status.name == 'Recommended' && $page.props.user.data.signatory.designationable.designation_id == 43">
                                                 <div class="vr" style="width: 1px;"></div>
-                                                <div @click="openApprove(information.request_key,information.type)">  
+                                                <div @click="openApprove(information.key,information.type,information.request_key)">  
                                                     <b-button variant="success" block><i class="ri-checkbox-circle-fill me-1"></i>Approve</b-button>
                                                 </div>
                                             </template>
@@ -83,14 +83,15 @@ export default {
         }
     },
     methods: {
-        openApprove(id,type){
-            this.$refs.approve.show(id,type);
+        openApprove(id,type,request_id){
+            this.$refs.approve.show(id,type,request_id);
         },
-        openRecommend(id,type){
-            this.$refs.recommend.show(id,type);
+        openRecommend(id,type,request_id){
+            alert(requset_id);
+            this.$refs.recommend.show(id,type,request_id);
         },
-        openDisapprove(id,type){
-            this.$refs.disapprove.show(id,type);
+        openDisapprove(id,type,request_id){
+            this.$refs.disapprove.show(id,type,request_id);
         },
         back(){
             this.$inertia.visit('/travels');

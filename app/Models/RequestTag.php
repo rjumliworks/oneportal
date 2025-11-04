@@ -17,8 +17,19 @@ class RequestTag extends Model
         'user_id',
         'division_id',
         'signatory_id',
+        'status_id',
         'request_id'
     ];
+
+    public function statusable()
+    {
+        return $this->morphMany('App\Models\RequestStatus', 'statusable');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo('App\Models\ListStatus', 'status_id', 'id');
+    }
 
     public function user()
     {

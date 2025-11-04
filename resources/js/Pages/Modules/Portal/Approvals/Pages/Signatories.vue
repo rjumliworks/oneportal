@@ -3,11 +3,7 @@
         <div class="d-flex justify-content-between border border-dashed rounded p-3">
             <div class="text-start">
                 <div class="d-flex" v-if="!list.is_approval_only">
-                    <div class="flex-shrink-0 me-3">
-                        <a v-if="list.recommended_by" class="glightbox" :href="list.recommended_by">
-                            <img :src="list.recommended_by" alt="" class="rounded avatar-md material-shadow">
-                        </a>
-                    </div>
+                   
                     <div class="flex-grow-1">
                         <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mt-0 mb-3">Recommended By</h6>
                         <h5 class="mb-0 mt-n2 fs-14">{{(list.recommended) ? list.recommended : '-'}}</h5>
@@ -24,11 +20,7 @@
                         <p class="mb-0 mt-0 text-muted fs-11">{{list.approved_role}} {{list.approved_oic}}</p>
                         <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.approved_date}}</p>
                     </div>
-                    <div class="flex-grow-1">
-                        <a v-if="list.approved_by" class="glightbox" :href="list.approved_by">
-                            <img :src="list.approved_by" alt="" class="rounded avatar-md material-shadow">
-                        </a>
-                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -69,7 +61,7 @@ export default {
     props: ['information','statuses'],
     data(){
         return {
-                list : this.information.signatories,
+                list : this.information,
                 filter: {
                     keyword: null
                 }

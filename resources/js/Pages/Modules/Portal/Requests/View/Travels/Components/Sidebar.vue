@@ -54,37 +54,35 @@
                     </div>
                 </div>
             </div>
-            <hr class="text-muted mt-0"/>
-            <div class="align-items-center d-flex">
-                <p class="ms-3 mb-0 text-primary fs-12 fw-semibold flex-grow-1">Assigned {{$page.props.user.data.signatory.division.others}} Employees for this Travel</p>
-                <div class="flex-shrink-0 pe-3">
-                    <p class="ms-3 mb-0 text-primary fs-12 fw-semibold flex-grow-1">Other Division Employees</p>
+             <hr class="text-muted mt-0"/>
+                <div class="align-items-center d-flex">
+                    <p class="ms-3 mb-0 text-primary fs-12 fw-semibold flex-grow-1">Assigned Employees for this Travel</p>
+                    <div class="flex-shrink-0 pe-3">
+                        <div class="form-check form-switch form-switch-right form-switch-md">
+                            <label for="navbarscrollspy-showcode" class="form-label text-muted">
+                                <span v-if="!showName">Show names</span>
+                                <span v-else>Hide names</span>
+                            </label>
+                            <input class="form-check-input code-switcher" v-model="showName" type="checkbox" id="navbarscrollspy-showcode">
+                        </div>
+                    </div>
+                </div>
+            <hr class="text-muted mb-0"/>
+            <div class="avatar-group p-3 ms-2" v-if="!showName">
+                <div class="avatar-group-item material-shadow"  v-for="(list, index) of information.tags" :key="index">
+                    <a href="javascript: void(0);" class="d-inline-block" 
+                    v-b-tooltip.hover="{title: list.name,placement: 'top',customClass: 'my-tooltip-class'}">
+                        <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
+                    </a>
                 </div>
             </div>
-            <hr class="text-muted mb-0"/>
-            <div class="d-flex justify-content-between">
-                <div class="avatar-group p-3 ms-2">
-                    <div class="avatar-group-item material-shadow"  
-                        v-for="(list, index) of matchingTags" 
-                        :key="index">
-                        <a href="javascript: void(0);" 
-                        class="d-inline-block" 
-                        v-b-tooltip.hover="{title: list.name, placement: 'top', customClass: 'my-tooltip-class'}">
-                            <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
-                        </a>
-                    </div>
-                </div>
-
-                <div class="avatar-group p-3 ms-2">
-                    <div class="avatar-group-item material-shadow"  
-                        v-for="(list, index) of nonMatchingTags" 
-                        :key="index">
-                        <a href="javascript: void(0);" 
-                        class="d-inline-block" 
-                        v-b-tooltip.hover="{title: list.name, placement: 'top', customClass: 'my-tooltip-class'}">
-                            <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
-                        </a>
-                    </div>
+            <div class="border border-dashed rounded p-2 m-3" v-else>
+                <div v-for="(row, rowIndex) in chunkedTags" :key="rowIndex" class="mb-1">
+                    <ul class="list-unstyled fs-12 mb-0 d-flex">
+                        <li class="py-0 me-3 d-flex align-items-center" style="min-width: 160px;" v-for="(list, index) in row" :key="index">
+                            <i class="mdi mdi-circle-medium me-1 text-muted"></i> {{ list.name }}
+                        </li>
+                    </ul>
                 </div>
             </div>
             <hr class="text-muted mt-0"/>
@@ -168,12 +166,12 @@ export default {
             }
             return chunks;
         },
-        matchingTags() {
-            return this.information.tags.filter(tag => tag.division === this.$page.props.user.data.signatory.division_id);
-        },
-        nonMatchingTags() {
-            return this.information.tags.filter(tag => tag.division !== this.$page.props.user.data.signatory.division_id);
-        } 
+        // matchingTags() {
+        //     return this.information.tags.filter(tag => tag.division === this.$page.props.user.data.signatory.division_id);
+        // },
+        // nonMatchingTags() {
+        //     return this.information.tags.filter(tag => tag.division !== this.$page.props.user.data.signatory.division_id);
+        // } 
     },
     methods: {
         formatDateRange(start, end) {

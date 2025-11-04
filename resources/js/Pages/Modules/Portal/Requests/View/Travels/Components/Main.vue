@@ -170,8 +170,8 @@ import { useForm } from '@inertiajs/vue3';
 import Home from './Pages/Home.vue';
 import Status from './Pages/Status.vue';
 import Detail from './Pages/Detail.vue';
-import Attachment from './Pages/Attachment.vue';
-import Signatories from './Pages/Signatories.vue';
+import Attachment from '../../../Components/Pages/Attachment.vue';
+import Signatories from '../../../Components/Pages/Signatories.vue';
 import simplebar from "simplebar-vue";
 import Multiselect from "@vueform/multiselect";
 export default {

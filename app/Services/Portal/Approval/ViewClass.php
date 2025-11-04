@@ -3,21 +3,26 @@
 namespace App\Services\Portal\Approval;
 
 use App\Models\Request;
+use App\Models\RequestSignatory;
 use App\Models\OrgSignatory;
-use App\Http\Resources\Portal\Request\IndexResource;
+use App\Http\Resources\Portal\Approval\IndexResource;
 
 class ViewClass
 {
     public function lists($request){
         $signatory = OrgSignatory::with('designationable')->where('user_id',\Auth::user()->id)->where('is_active',1)->first(); 
         $status = $request->status ?? (($signatory['designationable']['designation_id'] == 44) ? 24 : 25);
-        $data = Request::with([
-            'tags.user:id',
-            'tags.user.profile:user_id,firstname,middlename,lastname,avatar',
+        $data = RequestSignatory::with([
             'status',
-            'type',
-            'dates',
-            'detail',
+            'statusable',
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.status',
+            'request.type',
+            'request.dates',
+            'request.detail',
+            'request.travel', // add relation to request_travel
+            'request.travel.codes', // nested relation to request_travel_code
         ])
         ->when($request->type, fn($q, $expense) => $q->where('type_id', $expense))
         ->when($request->keyword, function ($query, $keyword) {
@@ -26,17 +31,18 @@ class ViewClass
             });
         })
         ->when(empty($request->status), fn($q) => $q->where('status_id', $status))
-        ->whereHas('signatories', function ($query) use ($signatory,$request) {
-            if($request->status){
-                if($request->status == 26){
+        ->when(true, function ($query) use ($signatory, $request) {
+            // previously inside whereHas('signatories')
+            if ($request->status) {
+                if ($request->status == 26) {
                     $query->where('approved_id', \Auth::user()->id);
-                }else{
+                } else {
                     $query->where('recommended_id', \Auth::user()->id);
                 }
-            }else{
-                if ($signatory['designationable']['designation_id'] == 44){
-                    $query->where('division_id', $signatory['designationable']['assigned_id']);
-                    $query->where('is_approval_only',0);
+            } else {
+                if ($signatory['designationable']['designation_id'] == 44) {
+                    $query->where('division_id', $signatory['designationable']['assigned_id'])
+                          ->where('is_approval_only', 0);
                 }
             }
         })

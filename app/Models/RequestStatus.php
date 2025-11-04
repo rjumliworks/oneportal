@@ -19,6 +19,11 @@ class RequestStatus extends Model
         'request_id',
         'is_final'
     ];
+
+    public function statusable()
+    {
+        return $this->morphTo();
+    }
     
     public function status()
     {

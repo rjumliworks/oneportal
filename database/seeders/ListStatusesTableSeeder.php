@@ -403,6 +403,61 @@ class ListStatusesTableSeeder extends Seeder
                 'icon' => 'ri-close-circle-fill',
                 'is_active' => 1,
             ),
+            35 => 
+            array (
+                'id' => 36,
+                'name' => 'Pending',
+                'classification' => 'Tag',
+                'type' => 'n/a',
+                'color' => 'text-warning',
+                'bg' => 'bg-warning',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            36 => 
+            array (
+                'id' => 37,
+                'name' => 'Joined',
+                'classification' => 'Tag',
+                'type' => 'n/a',
+                'color' => 'text-success',
+                'bg' => 'bg-success',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            37 => 
+            array (
+                'id' => 38,
+                'name' => 'Left',
+                'classification' => 'Tag',
+                'type' => 'n/a',
+                'color' => 'text-danger',
+                'bg' => 'bg-danger',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            38 => 
+            array (
+                'id' => 39,
+                'name' => 'Rejected',
+                'classification' => 'Tag',
+                'type' => 'n/a',
+                'color' => 'text-danger',
+                'bg' => 'bg-danger',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
+            39 => 
+            array (
+                'id' => 40,
+                'name' => 'Removed',
+                'classification' => 'Tag',
+                'type' => 'n/a',
+                'color' => 'text-dark',
+                'bg' => 'bg-dark',
+                'icon' => 'n/a',
+                'is_active' => 1,
+            ),
         ));
 
         

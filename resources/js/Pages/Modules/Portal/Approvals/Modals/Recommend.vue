@@ -34,8 +34,10 @@ export default {
         return {
             form: useForm({
                 id: null,
+                request_id: null,
                 status_id: 25,
                 photo: null,
+                type: null,
                 option: 'status'
             }),
             type: null,
@@ -43,9 +45,10 @@ export default {
         }
     },
     methods: { 
-        show(id,type){
+        show(id,type,request_id){
             this.form.id = id;
-            this.type = type;
+            this.form.request_id = request_id;
+            this.form.type = type;
             this.showModal = true;
         },  
         submit(){

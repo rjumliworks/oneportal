@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('request_signatories', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->bigIncrements('id');     
+            $table->bigIncrements('id');    
+            $table->unsignedTinyInteger('status_id');
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade'); 
             $table->tinyInteger('division_id')->unsigned()->index();
             $table->foreign('division_id')->references('id')->on('list_dropdowns')->onDelete('cascade');    
             $table->unsignedInteger('recommended_id')->nullable();

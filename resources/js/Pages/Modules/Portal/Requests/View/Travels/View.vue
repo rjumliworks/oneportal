@@ -33,18 +33,6 @@
                                                     <i class="ri-close-circle-fill fs-16"></i> Close
                                                 </div>
                                             </Link>
-                                            <template v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44">
-                                                <div class="vr" style="width: 1px;"></div>
-                                                <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" class="me-n3" @click="openDisapprove(information.request_key,information.type)">  
-                                                    <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
-                                                </div>
-                                                <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" @click="openRecommend(information.request_key,information.type)">  
-                                                    <b-button variant="secondary" block><i class="ri-checkbox-circle-fill me-1"></i>Recommend</b-button>
-                                                </div>
-                                                <div v-if="information.status.name == 'Recommended'" @click="openApprove(information.request_key,information.type)">  
-                                                    <b-button variant="success" block><i class="ri-checkbox-circle-fill me-1"></i>Approve</b-button>
-                                                </div>
-                                            </template>
                                         </div>
                                     </BCol>
                                 </BRow>

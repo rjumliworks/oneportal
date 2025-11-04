@@ -6,6 +6,7 @@ use Hashids\Hashids;
 use App\Models\Request;
 use App\Models\RequestReport;
 use App\Models\RequestOvertime;
+use App\Models\RequestTravelCode;
 use App\Models\OrgSignatory;
 use App\Models\OrgSignatorySchedule;
 use App\Models\RequestSignatory;
@@ -14,62 +15,191 @@ use Illuminate\Support\Str;
 
 class SaveClass
 {
-    public function status($request){
-        $hashids = new Hashids('krad',10);
-        $id = $hashids->decode($request->id);
+    public function status($request)
+    {
+        try {
+            $hashids = new Hashids('krad', 10);
+            $signatoryId = $hashids->decode($request->id)[0] ?? null;
+            $requestId   = $hashids->decode($request->request_id)[0] ?? null;
 
-        $data = Request::find($id[0]);
-        $data->status_id = $request->status_id;
-        if($data->save()){
-            $user = OrgSignatorySchedule::where('user_id', \Auth::user()->id)->where('is_ongoing',1)->first();
-            $division = OrgSignatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
-            $division = $division?->designationable?->assigned;
-            if($request->status_id == 25){
-               
-                $signatory = RequestSignatory::where('division_id',$division->id)->where('request_id',$data->id)->where('is_approval_only',0)->first();
-        
-                $signatory->recommended_id = $user->id;
-                $signatory->recommended_date = now();
-                $signatory->recommended_by = $this->image($request,$id[0]);
-                $signatory->save();
-                $this->updateSignatory($data->id,'recommended',$user->is_designated,$division->others);
-            }else if($request->status_id == 26){
-                $signatory = RequestSignatory::where('request_id',$data->id)->update([
-                    'approved_id' => $user->id,
-                    'approved_date' => now(),
-                    'approved_by' => $this->image($request,$id[0]),
-                    'is_completed' => 1
+            if (!$requestId) {
+                return [
+                    'data' => null,
+                    'message' => 'Invalid request ID',
+                    'info' => 'The request ID provided could not be verified. Please try again or contact your administrator.',
+                ];
+            }
+
+            $data = Request::find($requestId);
+
+            if (!$data) {
+                return [
+                    'data' => null,
+                    'message' => 'Request not found',
+                    'info' => 'The request record could not be found. It may have been deleted or is no longer accessible.',
+                ];
+            }
+
+            if ($request->type !== 'Travel Order') {
+                $data->status_id = $request->status_id;
+                $data->statusable()->create([
+                    'user_id'   => auth()->id(),
+                    'status_id' => $request->status_id,
                 ]);
-                if($signatory){
-                   
-                    $this->updateSignatory($data->id,'approved',$user->is_designated);
+            }
 
-                    if($data->type_id == 165){
+            $data->save();
+
+            $user = OrgSignatorySchedule::where('user_id', auth()->id())
+                ->where('is_ongoing', 1)
+                ->first();
+
+            $division = OrgSignatory::where(function ($q) {
+                    $q->where('user_id', auth()->id())
+                    ->orWhere('oic_id', auth()->id());
+                })
+                ->where('is_active', 1)
+                ->first()?->designationable?->assigned;
+
+            if (!$division) {
+                return [
+                    'data' => $data,
+                    'message' => 'No active division found',
+                    'info' => 'The system could not find your active division assignment. Please check your signatory status or contact HR/Admin.',
+                ];
+            }
+
+            $query = RequestSignatory::where('id', $signatoryId)->where('request_id', $data->id);
+            ($request->status_id != 26) ? $query->where('division_id', $division->id) : '';
+            $signatory = $query->first();
+
+            if (!$signatory) {
+                return [
+                    'data' => $data,
+                    'message' => 'Signatory record not found',
+                    'info' => 'Unable to locate the corresponding signatory record for this request. Please refresh or check your permissions.',
+                ];
+            }
+
+            switch ($request->status_id) {
+                case 25:
+                    $signatory->update([
+                        'recommended_id'   => $user?->id,
+                        'recommended_date' => now(),
+                        'recommended_by'   => $this->image($request, $signatoryId),
+                        'status_id'        => $request->status_id,
+                    ]);
+                break;
+                case 26:
+                    $signatory->update([
+                        'approved_id'   => $user?->id,
+                        'approved_date' => now(),
+                        'approved_by'   => $this->image($request, $signatoryId),
+                        'status_id'     => $request->status_id,
+                        'is_completed'  => 1,
+                    ]);
+
+                    if ($data->type_id == 165) {
                         $this->overtime($data->id);
                     }
-                }
-            }else if($request->status_id == 30){
-                $signatory = RequestSignatory::where('request_id',$data->id)->update([
-                    'is_disapproved' => 1
-                ]);
-                if($signatory){
-                    if($data->type_id == 158){
+                break;
+                case 30: 
+                    $signatory->update([
+                        'is_disapproved' => 1,
+                        'status_id'      => $request->status_id,
+                    ]);
+
+                    if ($data->type_id == 158) {
                         $this->leave($data->id);
                     }
-                }
+                break;
             }
-            $data->statuses()->create([
-                'user_id' => \Auth::user()->id,
-                'status_id' => $request->status_id
-            ]);
-        }
 
-        return [
-            'data' => $data,
-            'message' => 'Request Status Updated',
-            'info' => "The status of this request has been successfully updated. Please check your notifications for the latest details and next steps."
-        ];
+            $signatory->statusable()->create([
+                'user_id'   => auth()->id(),
+                'status_id' => $request->status_id,
+            ]);
+
+            return [
+                'data' => $data,
+                'message' => 'Request Status Updated',
+                'info' => 'The status of this request has been successfully updated. Please check your notifications for the latest details and next steps.',
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'data' => null,
+                'message' => 'Update Failed',
+                'info' => 'An error occurred while updating the request status. Please try again later or contact your administrator. (' . $e->getMessage() . ')',
+            ];
+        }
     }
+
+
+    // public function status($request){
+    //     $hashids = new Hashids('krad',10);
+    //     $id = $hashids->decode($request->id);
+    //     $request_id = $hashids->decode($request->request_id);
+
+    //     $data = Request::find($request_id[0]);
+    //     if($request->type != 'Travel Order'){
+    //         $data->status_id = $request->status_id;
+
+    //          $data->statuses()->create([
+    //             'user_id' => \Auth::user()->id,
+    //             'status_id' => $request->status_id
+    //         ]);
+    //     }
+    //     if($data->save()){
+    //         $user = OrgSignatorySchedule::where('user_id', \Auth::user()->id)->where('is_ongoing',1)->first();
+    //         $division = OrgSignatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
+    //         $division = $division?->designationable?->assigned;
+        
+    //         if($request->status_id == 25){
+               
+    //             $signatory = RequestSignatory::where('id',$id[0])->where('division_id',$division->id)->where('request_id',$data->id)->where('is_approval_only',0)->first();
+        
+    //             $signatory->recommended_id = $user->id;
+    //             $signatory->status_id = $request->status_id;
+    //             $signatory->recommended_date = now();
+    //             $signatory->recommended_by = $this->image($request,$id[0]);
+    //             $signatory->save();
+    //             // $this->updateSignatory($data->id,'recommended',$user->is_designated,$division->others);
+    //         }else if($request->status_id == 26){
+    //             $signatory = RequestSignatory::where('id',$id[0])->where('request_id',$data->id)->update([
+    //                 'approved_id' => $user->id,
+    //                 'approved_date' => now(),
+    //                 'status_id' => $request->status_id,
+    //                 'approved_by' => $this->image($request,$id[0]),
+    //                 'is_completed' => 1
+    //             ]);
+    //             if($signatory){
+                   
+    //                 // $this->updateSignatory($data->id,'approved',$user->is_designated);
+
+    //                 if($data->type_id == 165){
+    //                     $this->overtime($data->id);
+    //                 }
+    //             }
+    //         }else if($request->status_id == 30){
+    //             $signatory = RequestSignatory::where('id',$id[0])->where('request_id',$data->id)->update([
+    //                 'is_disapproved' => 1,
+    //                 'status_id' => $request->status_id
+    //             ]);
+    //             if($signatory){
+    //                 if($data->type_id == 158){
+    //                     $this->leave($data->id);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return [
+    //         'data' => $data,
+    //         'message' => 'Request Status Updated',
+    //         'info' => "The status of this request has been successfully updated. Please check your notifications for the latest details and next steps."
+    //     ];
+    // }
 
     public function overtime($id){
         $data = new RequestOvertime;

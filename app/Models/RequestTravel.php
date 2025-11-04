@@ -10,7 +10,7 @@ class RequestTravel extends Model
 {
     use LogsActivity;
     
-    protected $table = 'travels';
+    protected $table = 'request_travels';
 
     protected $fillable = [
         'code',
@@ -28,7 +28,7 @@ class RequestTravel extends Model
 
     public function codes()
     {
-        return $this->hasMany('App\Models\TravelCode', 'travel_id');
+        return $this->hasMany('App\Models\RequestTravelCode', 'travel_id');
     }
 
     public function mode()

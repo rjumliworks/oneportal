@@ -11,4 +11,9 @@ class RequestTravelCode extends Model
         'division_id',
         'travel_id'
     ];
+
+    public function travel()
+    {
+        return $this->belongsTo('App\Models\RequestTravel', 'travel_id', 'id');
+    }
 }
