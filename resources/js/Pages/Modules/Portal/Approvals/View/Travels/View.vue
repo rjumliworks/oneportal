@@ -28,12 +28,12 @@
                                     </BCol>
                                     <BCol md="auto">
                                         <div class="hstack gap-4 flex-wrap mt-2">
-                                            <Link href="/travels">
-                                                <div class="text-muted" @click="hide()">  
+                                            <Link href="/approvals">
+                                                <div class="text-muted">  
                                                     <i class="ri-close-circle-fill fs-16"></i> Close
                                                 </div>
                                             </Link>
-                                             <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designationable.designation_id == 44">
+                                            <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designationable.designation_id == 44">
                                                 <div class="vr" style="width: 1px;"></div>
                                                 <div class="me-n3" @click="openDisapprove(information.key,information.type,information.request_key)">  
                                                     <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
@@ -104,7 +104,7 @@ export default {
         },
         openDisapprove(id,type,request_id){
             this.$refs.disapprove.show(id,type,request_id);
-        },
+        }
     }
 }
 </script>

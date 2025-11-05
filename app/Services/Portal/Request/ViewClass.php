@@ -24,15 +24,14 @@ class ViewClass
         $user_id = \Auth::user()->id;
         $data = Request::with([
             'tags.user:id',
-            'tags.user.profile:user_id,firstname,middlename,lastname,avatar',
-            'status',
+            'tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
             'type',
             'dates',
             'detail',
             // 'leave:id,request_id,type_id',
             // 'leave.type:id,name',
         ])
-        ->when($request->status, fn($q, $status) => $q->where('status_id', $status))
+        // ->when($request->status, fn($q, $status) => $q->where('status_id', $status))
         ->when($request->type, fn($q, $expense) => $q->where('type_id', $expense))
         ->when($request->keyword, function ($query, $keyword) {
             $query->whereHas('user.profile', function ($q) use ($keyword) {

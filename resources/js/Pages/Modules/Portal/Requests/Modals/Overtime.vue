@@ -46,6 +46,25 @@
                     </BCol>
                 </template> -->
                 <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
+                <BCol lg="12" class="mt-n2 mb-3">
+                    <InputLabel for="role" value="Employees" :message="form.errors.tags"/>
+                    <Multiselect
+                        v-model="form.tags"
+                        :options="employees"
+                        mode="tags"
+                        @search-change="checkSearchStr"
+                        :multiple="true"
+                        :searchable="true"
+                        :loading="isLoading"
+                        label="name"
+                        object
+                         @input="handleInput('tags')"
+                        :preserve-search="true"
+                        :filter-results="false"
+                        placeholder="Select Employee"
+                        ref="multiselect2"
+                        />
+                </BCol>
                 <BCol lg="12" class="mt-1">
                     <Textarea id="name" v-model="form.purpose" type="text" rows="3" placeholder="Add purpose of the request" class="form-control" :class="{ 'is-invalid': form.errors.purpose }" @input="handleInput('purpose')" :light="true"/>
                 </BCol>
@@ -58,6 +77,7 @@
     </b-modal>
 </template>
 <script>
+import _ from 'lodash';
 import { useForm } from '@inertiajs/vue3';
 import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
@@ -75,6 +95,7 @@ export default {
                 purpose: null,
                 document: null,
                 date_type: null,
+                tags: [],
                 option: 'cto'
             }),
             date: null,
@@ -109,6 +130,7 @@ export default {
                     }
                 ]
             },
+            employees:[],
             dateType: null,
             showModal: false
         }
@@ -218,6 +240,21 @@ export default {
             const weekday = date.toLocaleString('en-US', { weekday: 'long' });
             return `${month} ${day}, ${year} (${weekday})`;
         },
+        checkSearchStr: _.debounce(function(string) {
+            (string) ? this.searchUser(string) : '';
+        }, 300),
+        searchUser(string){
+            axios.get('/search',{
+                params: {
+                    option: 'users',
+                    keyword: string
+                }
+            })
+            .then(response => {
+                this.employees = response.data;
+            })
+            .catch(err => console.log(err));
+        }, 
         openDates(){
             this.$refs.dates.show(this.form.dates);
         },

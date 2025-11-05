@@ -42,46 +42,46 @@
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.signatories.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                            <div v-if="information.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
                                 <i class=" ri-close-circle-fill"></i>
                             </div>
-                            <div v-else-if="!information.signatories.recommended" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                            <div v-else-if="!information.recommended" class="avatar-title bg-light rounded-circle fs-16 text-warning">
                                 <i class="ri-close-circle-fill"></i>
                             </div>
-                            <div v-else-if="information.signatories.recommended" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                            <div v-else-if="information.recommended" class="avatar-title bg-light rounded-circle fs-16 text-success">
                                 <i class="ri-checkbox-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Recommended by :</p>
-                            <h6 v-if="!information.signatories.recommended" class="text-truncate fw-semibold fs-12 mb-0">
+                            <h6 v-if="!information.recommended" class="text-truncate fw-semibold fs-12 mb-0">
                                 <span v-if="information.status.name == 'Disapproved'">-</span>
                                 <span v-else>Pending</span>
                             </h6>
-                            <h6 v-else class="fw-semibold fs-12 mb-0">{{information.signatories.recommended}}</h6>
+                            <h6 v-else class="fw-semibold fs-12 mb-0">{{information.recommended.name}}</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.signatories.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                            <div v-if="information.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
                                 <i class=" ri-close-circle-fill"></i>
                             </div>
-                            <div v-else-if="!information.signatories.approved" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                            <div v-else-if="!information.approved" class="avatar-title bg-light rounded-circle fs-16 text-warning">
                                 <i class=" ri-close-circle-fill"></i>
                             </div>
-                            <div v-else-if="information.signatories.approved" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                            <div v-else-if="information.approved" class="avatar-title bg-light rounded-circle fs-16 text-success">
                                 <i class=" ri-checkbox-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Approved by :</p>
-                            <h6 v-if="!information.signatories.approved" class="text-truncate fw-semibold fs-12 mb-0">
+                            <h6 v-if="!information.approved" class="text-truncate fw-semibold fs-12 mb-0">
                                 <span v-if="information.status.name == 'Disapproved'">-</span>
                                 <span v-else>Pending</span>
                             </h6>
-                            <h6 v-else class="text-truncate fw-semibold fs-12 mb-0">{{information.signatories.approved}}</h6>
+                            <h6 v-else class="text-truncate fw-semibold fs-12 mb-0">{{information.approved.name}}</h6>
                         </div>
                     </div>
                 </div>

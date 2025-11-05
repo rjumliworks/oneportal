@@ -40,16 +40,6 @@ class SaveClass
                 ];
             }
 
-            if ($request->type !== 'Travel Order') {
-                $data->status_id = $request->status_id;
-                $data->statusable()->create([
-                    'user_id'   => auth()->id(),
-                    'status_id' => $request->status_id,
-                ]);
-            }
-
-            $data->save();
-
             $user = OrgSignatorySchedule::where('user_id', auth()->id())
                 ->where('is_ongoing', 1)
                 ->first();
@@ -74,11 +64,18 @@ class SaveClass
             $signatory = $query->first();
 
             if (!$signatory) {
-                return [
-                    'data' => $data,
-                    'message' => 'Signatory record not found',
-                    'info' => 'Unable to locate the corresponding signatory record for this request. Please refresh or check your permissions.',
-                ];
+                $query = RequestSignatory::where('id', $signatoryId)->where('request_id', $data->id);
+                $query->where('division_id', 1);
+                $signatory = $query->first();
+
+                if(!$signatory){
+                    return [
+                        'data' => $data,
+                        'message' => 'Signatory record not found',
+                        'info' => 'Unable to locate the corresponding signatory record for this request. Please refresh or check your permissions.',
+                        'status' => false
+                    ];
+                }
             }
 
             switch ($request->status_id) {

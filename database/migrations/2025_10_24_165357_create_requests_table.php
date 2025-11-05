@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('code',30)->unique()->index();
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedTinyInteger('status_id');
-            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');
             $table->unsignedSmallInteger('type_id');
             $table->foreign('type_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->boolean('is_sender_viewed')->default(0);

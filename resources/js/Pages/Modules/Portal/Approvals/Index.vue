@@ -79,14 +79,10 @@
                                 <tr class="fs-11">
                                     <th style="width: 3%;" class="text-center">#</th>
                                     <th></th>
-                                    <th v-if="!filter.type" style="width: 14%;" class="text-center">Type</th>
-                                    <th v-else-if="filter.type == 156" style="width: 14%;" class="text-center">Mode</th>
-                                    <th v-else-if="filter.type == 158" style="width: 14%;" class="text-center">Type</th>
-                                    <th v-else-if="filter.type == 157" style="width: 14%;" class="text-center">Vehicle</th>
-                                    <th style="width: 10%;" class="text-center">Personnel</th>
-                                    <th style="width: 15%;" class="text-center">Dates</th>
-                                    <th style="width: 15%;" class="text-center">Date Filed</th>
-                                    <th style="width: 7%;" class="text-center">Status</th>
+                                    <th style="width: 15%;" class="text-center">Personnel</th>
+                                    <th style="width: 17%;" class="text-center">Dates</th>
+                                    <th style="width: 17%;" class="text-center">Date Filed</th>
+                                    <th style="width: 10%;" class="text-center">Status</th>
                                     <th style="width: 5%;"></th>
                                 </tr>
                             </thead>
@@ -94,17 +90,8 @@
                                 <tr v-for="(list,index) in lists" v-bind:key="index" >
                                     <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                     <td>
-                                        <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.code }}</h5>
-                                        <!-- <p class="fs-12 text-muted mb-0">{{list.code}}</p> -->
-                                    </td>
-                                    <td class="text-center" v-if="!filter.type">
-                                        <span v-if="list.type == 'Vehicle Reservation'" class="badge bg-secondary-subtle text-secondary">{{list.type}}</span>
-                                        <span v-else-if="list.type == 'Travel Order'" class="badge bg-success-subtle text-success">{{list.type}}</span>
-                                        <span v-else-if="list.type == 'Leave Form'" class="badge bg-danger-subtle text-danger">{{list.type}}</span>
-                                        <span v-else-if="list.type == 'Render Overtime Service'" class="badge bg-info-subtle text-info">{{list.type}}</span>
-                                    </td>
-                                    <td class="text-center" v-else>
-                                        <span :class="'badge bg-primary'">{{list.subtype}}</span>
+                                        <h5 class="fs-13 mb-0 fw-semibold text-uppercase text-primary">{{list.type }} "{{ list.code }}"</h5>
+                                        <p class="fs-12 text-muted mb-0">{{list.request_code}}</p>
                                     </td>
                                     <td class="text-center align-middle">
                                         <div class="avatar-group  d-inline-flex justify-content-center">

@@ -4,7 +4,7 @@ namespace App\Services\Portal\Request;
 
 use App\Models\Request;
 use App\Models\RequestTravel;
-use App\Models\RequestTravelCode;
+use App\Models\RequestSignatory;
 
 class TravelClass
 {
@@ -12,7 +12,6 @@ class TravelClass
         $data = Request::create([
             'code' => $this->generateCode(),
             'type_id' => 156,
-            'status_id' => 24,
             'user_id' => \Auth::user()->id
         ]);
         if($data){
@@ -29,6 +28,7 @@ class TravelClass
                 if(!empty($user['signatory'])) {
                     $signatory = $data->signatories()->create([
                         'division_id' => $divisionId,
+                        'code' => $this->generateTravelSoloCode($divisionId,$data->type_id),
                         'status_id' => 25,
                         'is_approval_only' => 1
                     ]);
@@ -46,6 +46,7 @@ class TravelClass
                         }
                     }elseif(!$signatory) {
                         $signatory = $data->signatories()->create([
+                            'code' => $this->generateTravelSoloCode($divisionId,$data->type_id),
                             'division_id' => $divisionId,
                             'status_id' => ($isApprovalOnly) ? 25 : 24,
                             'is_approval_only' => $isApprovalOnly
@@ -90,12 +91,7 @@ class TravelClass
                 'expenses' => array_map('intval', $request->expenses)
             ];
             $travel = $data->travel()->create($travelData);
-            foreach($divisions as $div){
-                $travel->codes()->create([
-                    'code' => $this->generateTravelSoloCode(),
-                    'division_id' => $div
-                ]);
-            }
+          
             if($request->mode_id == 150){
                 $data->reservation()->create([
                     'vehicle_id' => $request->vehicle['value'],
@@ -104,15 +100,12 @@ class TravelClass
                 $signatory = $data->signatories()->where('division_id', $divisionId)->first();
                 if(!$signatory) {
                     $signatory = $data->signatories()->create([
+                        'code' => $this->generateTravelSoloCode($divisionId,$data->type_id),
                         'division_id' => $divisionId,
                         'status_id' => 24,
                         'is_approval_only' => 0
                     ]);
                 }
-               $a = $travel->codes()->create([
-                    'code' => $this->generateTravelSoloCode(),
-                    'division_id' => $divisionId
-                ]);
                 $data->tags()->create([
                     'user_id' => $request->vehicle['driver_id'],
                     'division_id' => 3,
@@ -167,10 +160,13 @@ class TravelClass
         });
     }
 
-    private function generateTravelSoloCode()
+    private function generateTravelSoloCode($divisionId,$type)
     {
-        return \DB::transaction(function () {
-            $latest = RequestTravelCode::lockForUpdate()
+        return \DB::transaction(function () use ($divisionId,$type) {
+            $latest = RequestSignatory::lockForUpdate()
+                ->whereHas('request', function ($query) use ($type){
+                    $query->where('type_id',$type);
+                })
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->orderByDesc('id')

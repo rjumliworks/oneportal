@@ -41,7 +41,6 @@ class IndexResource extends JsonResource
             'remarks' => $this->detail->remarks,
             'start' => $this->dates[0]->start,
             'end' => $this->dates[0]->end,
-            'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

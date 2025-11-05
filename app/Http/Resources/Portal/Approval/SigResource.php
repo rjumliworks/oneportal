@@ -17,7 +17,7 @@ class SigResource extends JsonResource
         return [
             'name' => $this->user->profile->name,
             'role' => $this->signatory ? $this->signatory->designationable->designation->name : null,
-            'oic' => $this->is_designated,
+            'oic' => ($this->is_designated) ? '' : 'OIC - ',
         ];
     }
 }

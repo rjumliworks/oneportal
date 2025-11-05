@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RequestSignatory extends Model
 {
     protected $fillable = [
+        'code',
         'is_completed',
         'is_disapproved',
         'is_approval_only',

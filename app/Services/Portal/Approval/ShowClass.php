@@ -18,16 +18,13 @@ class ShowClass
         $id = $hashids->decode($code);
 
         $data = RequestSignatory::with([
+            'status',
+            'statusable',
             'request.travel.mode',
             'request.travel.expense',
-            'request.travel.codes',
             'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id','request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'request.statusable.user:id',
-            'request.statusable.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'request.statusable.status',
-            'request.status',
             'request.type',
             'request.dates',
             'request.detail',
@@ -46,24 +43,22 @@ class ShowClass
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($code);
 
-        $data = Request::with([
-            'tags.user:id',
-            'tags.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
-            'statuses.user:id',
-            'statuses.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
-            'statuses.status',
+        $data = RequestSignatory::with([
             'status',
-            'type',
-            'dates',
-            'detail',
-            'user:id',
-            'overtime.status',
-            'comments.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
-            'comments.replies.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
-            'user.profile:user_id,firstname,middlename,lastname,suffix_id',
-            'signatories.division',
-            'signatories.approved.user.profile','signatories.approved.signatory.designationable.designation',
-            'signatories.recommended.user.profile','signatories.recommended.signatory.designationable.designation'
+            'statusable',
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.type',
+            'request.dates',
+            'request.detail',
+            'request.user:id',
+            'request.overtime.status',
+            'request.comments.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'request.comments.replies.user.profile:user_id,firstname,middlename,lastname,suffix_id,avatar',
+            'request.user.profile:user_id,firstname,middlename,lastname,suffix_id',
+            'request.signatories.division','request.signatories.approved','request.signatories.recommended'
         ])
         ->where('id',$id)
         ->first();
@@ -75,18 +70,16 @@ class ShowClass
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($code);
 
-        $data = RequestLeave::with([
-            'detail',
-            'type',
-            'credits.log','credits.credit.leave',
+        $data = RequestSignatory::with([
+            'status',
+            'statusable',
+            'request.leave.detail',
+            'request.leave.type',
+            'request.leave.credits.log','request.leave.credits.credit.leave',
             'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
             'request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,avatar,suffix_id',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'request.statuses.user:id',
-            'request.statuses.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'request.statuses.status',
-            'request.status',
             'request.type',
             'request.dates',
             'request.detail',

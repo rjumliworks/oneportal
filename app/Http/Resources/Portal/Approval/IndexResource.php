@@ -34,7 +34,8 @@ class IndexResource extends JsonResource
         return [
             'id' => $this->id,
             'key' => $key,
-            'code' => $this->request->code,
+            'code' => $this->code,
+            'request_code' => $this->request->code,
             'type' => $this->request->type->name,
             'link' => Crypt::encryptString($link),
             'purpose' => $this->request->detail->purpose,

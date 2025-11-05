@@ -16,14 +16,8 @@ class Request extends Model
         'is_sender_viewed',
         'is_receiver_viewed',
         'type_id',
-        'user_id',
-        'status_id'
+        'user_id'
     ];
-
-    public function statusable()
-    {
-        return $this->morphMany('App\Models\RequestStatus', 'statusable');
-    }
 
     public function overtime()
     {
@@ -48,16 +42,6 @@ class Request extends Model
     public function type()
     {
         return $this->belongsTo('App\Models\ListData', 'type_id', 'id');
-    }
-
-    public function status()
-    {
-        return $this->belongsTo('App\Models\ListStatus', 'status_id', 'id');
-    }
-
-    public function statuses()
-    {
-        return $this->hasMany('App\Models\RequestStatus', 'request_id')->orderBy('created_at','DESC');
     }
 
     public function tags()
@@ -120,8 +104,7 @@ class Request extends Model
             'is_sender_viewed',
             'is_receiver_viewed',
             'type_id',
-            'user_id',
-            'status_id'
+            'user_id'
         ])
         ->setDescriptionForEvent(fn(string $eventName) => "{$eventName}")
         ->useLogName('Request')

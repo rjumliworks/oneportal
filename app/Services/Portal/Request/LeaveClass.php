@@ -5,6 +5,7 @@ namespace App\Services\Portal\Request;
 use Carbon\Carbon;
 use App\Models\Request;
 use App\Models\RequestLeave;
+use App\Models\RequestSignatory;
 use App\Models\RequestReport;
 use App\Models\UserCredit;
 
@@ -13,14 +14,15 @@ class LeaveClass
     public function store($request){
         $division_id = \Auth::user()->organization->division_id;
         $data = Request::create([
-            'code' => $this->generateCode(),
+            'code' => $this->generateRequestCode(),
             'type_id' => 158,
-            'status_id' => ($division_id == 2) ? 25 : 24,
             'user_id' => \Auth::user()->id
         ]);
         if($data){
             $signatory = $data->signatories()->create([
                 'division_id' => $division_id,
+                'code' => $this->generateCode($data->type_id),
+                'status_id' => ($division_id == 2) ? 25 : 24,
                 'is_approval_only' => ($division_id == 2) ? 1 : 0
             ]);
 
@@ -166,7 +168,7 @@ class LeaveClass
                     }
                 }
             }
-            $this->report($data->id);
+            // $this->report($data->id);
         }
 
         return [
@@ -175,8 +177,31 @@ class LeaveClass
             'info' => "Your leave request has been submitted. Keep an eye on your notifications for any approvals or updates."
         ];
     }
+    
+    private function generateCode($type)
+    {
+        return \DB::transaction(function () use ($type) {
+            $latest = RequestSignatory::lockForUpdate()
+                ->whereHas('request', function ($query) use ($type){
+                    $query->where('type_id',$type);
+                })
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->orderByDesc('id')
+                ->first();
 
-    private function generateCode()
+            $count = $latest
+                ? (int) substr($latest->code, -4) + 1
+                : 1;
+
+            $code = now()->format('Y') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
+
+            return $code;
+        });
+    }
+
+
+    private function generateRequestCode()
     {
         return \DB::transaction(function () {
             $latest = Request::lockForUpdate()

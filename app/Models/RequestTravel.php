@@ -26,11 +26,6 @@ class RequestTravel extends Model
         'expenses' => 'array'
     ];
 
-    public function codes()
-    {
-        return $this->hasMany('App\Models\RequestTravelCode', 'travel_id');
-    }
-
     public function mode()
     {
         return $this->belongsTo('App\Models\ListData', 'mode_id', 'id');

@@ -35,7 +35,7 @@
                                             </Link>
                                             <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designationable.designation_id == 44">
                                                 <div class="vr" style="width: 1px;"></div>
-                                                <div class="me-n3" @click="openDisapprove(information.key,information.type)">  
+                                                <div class="me-n3" @click="openDisapprove(information.key,information.type,information.request_key)">  
                                                     <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
                                                 </div>
                                                 <div @click="openRecommend(information.key,information.type,information.request_key)">  
