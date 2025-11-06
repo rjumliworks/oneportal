@@ -15,7 +15,7 @@ class ReservationResource extends JsonResource
 
         $userDivisionId = \Auth::user()->organization->division_id ?? null;
 
-        $divisionSignatory = $this->signatories()
+        $divisionSignatory = $this->request->signatories()
         ->where('division_id', $userDivisionId)
         ->first();
 
@@ -31,9 +31,10 @@ class ReservationResource extends JsonResource
             'time' => $this->request->dates[0]->time,
             'signatory' => new SignatoryResource($divisionSignatory),
             'statuses' => StatusResource::collection($divisionSignatory?->statusable),
-            'signatories' => SignatoryResource::collection($this->signatories),
+            'signatories' => SignatoryResource::collection($this->request->signatories),
             'employee' => $this->request->user->profile->firstname.' '.$this->request->user->profile->lastname,
             'tags' => TagResource::collection($this->request->tags),
+            'comments' => CommentResource::collection($this->request->comments),
             'approved' => $this->approved,
             'vehicle' => $this->vehicle,
             'location' => new LocationResource($this->request->location),

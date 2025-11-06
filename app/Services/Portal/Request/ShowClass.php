@@ -118,9 +118,8 @@ class ShowClass
             'request.signatories.approved.user.profile','request.signatories.approved.signatory.designationable.designation',
             'request.signatories.recommended.user.profile','request.signatories.recommended.signatory.designationable.designation'
         ])
-        ->where('id',$id)
+        ->where('request_id',$id)
         ->first();
-        dd($data);
 
         return new ReservationResource($data);
     }
