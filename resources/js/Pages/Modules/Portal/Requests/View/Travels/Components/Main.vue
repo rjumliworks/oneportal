@@ -20,43 +20,62 @@
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                            <div v-if="information.signatory.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16 text-warning">
                                 <i class="ri-record-circle-fill"></i>
                             </div>
-                            <div v-else-if="information.status.name == 'Recommended'" class="avatar-title bg-light rounded-circle fs-16 text-secondary">
+                            <div v-else-if="information.signatory.status.name == 'Recommended'" class="avatar-title bg-light rounded-circle fs-16 text-secondary">
                                 <i class="ri-record-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.signatory.status.name == 'Approved'" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                                <i class="ri-checkbox-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.signatory.status.name == 'Disapproved'" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                                <i class="ri-close-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Status :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.status.name}} </h6>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.signatory.status.name}} </h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16" :class="crc === rc ? 'text-success' : 'text-warning'">
-                                <i class="ri-emotion-happy-fill"></i>
+                            <div v-if="information.signatory.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                                <i class=" ri-close-circle-fill"></i>
+                            </div>
+                            <div v-if="!information.signatory.recommended" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                                <i class="ri-close-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.signatory.recommended" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                                <i class="ri-checkbox-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Recommending :</p>
-                            <h6  class="text-truncate fw-semibold fs-12 mb-0">{{crc}} of {{ rc }} signed</h6>
+                            <p class="mb-0 text-muted fs-12">Recommended by :</p>
+                            <h6 v-if="!information.signatory.recommended" class="text-truncate fw-semibold fs-12 mb-0">Pending</h6>
+                            <h6 v-else class="fw-semibold fs-12 mb-0">{{information.signatory.recommended}}</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16" :class="approvalStatus ? 'text-success' : 'text-warning'">
-                                <i class="ri-emotion-fill"></i>
+                            <div v-if="information.signatory.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                                <i class=" ri-close-circle-fill"></i>
+                            </div>
+                            <div v-else-if="!information.signatory.approved" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                                <i class=" ri-close-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.signatory.approved" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                                <i class=" ri-checkbox-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Approval :</p>
-                            <h6 v-if="!approvalStatus" class="text-truncate fw-semibold fs-12 mb-0">Pending</h6>
-                            <h6 v-else class="text-truncate fw-semibold fs-12 mb-0">Completed</h6>
+                            <p class="mb-0 text-muted fs-12">Approved by :</p>
+                            <h6 v-if="!information.signatory.approved" class="text-truncate fw-semibold fs-12 mb-0">Pending</h6>
+                            <h6 v-else class="text-truncate fw-semibold fs-12 mb-0">{{information.signatory.approved}}</h6>
                         </div>
                     </div>
                 </div>
@@ -114,10 +133,8 @@
                                             </div>
                                         </div>
                                     </template>
-                                    <Signatories :information="information" v-if="menu == 'Signatories'" />
+                                     <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Signatories'" />
                                     <Attachment :information="information" v-if="menu == 'Attachment'" />
-                                    <Status :information="information" v-if="menu == 'Statuses'" />
-                                    <Detail :information="information" v-if="menu == 'Details'" />
                                 </div>
                             </transition>
                         </div>
@@ -167,15 +184,12 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { useForm } from '@inertiajs/vue3';
-import Home from './Pages/Home.vue';
-import Status from './Pages/Status.vue';
-import Detail from './Pages/Detail.vue';
-import Attachment from '../../../Components/Pages/Attachment.vue';
-import Signatories from '../../../Components/Pages/Signatories.vue';
+import Attachment from '../../../Pages/Attachment.vue';
+import Signatories from '../../../Pages/Signatories.vue';
 import simplebar from "simplebar-vue";
 import Multiselect from "@vueform/multiselect";
 export default {
-    components: { simplebar, Multiselect, Home, Signatories, Attachment, Status, Detail },
+    components: { simplebar, Multiselect, Signatories, Attachment },
     props: ['information'],
     data(){
         return {
@@ -186,7 +200,7 @@ export default {
                 option: 'comment'
             }),
             menus: [
-                'Home','Signatories','Details','Attachment','Statuses'
+                'Home','Signatories','Attachment'
             ],
             menu: 'Home',
             replyuser: null,

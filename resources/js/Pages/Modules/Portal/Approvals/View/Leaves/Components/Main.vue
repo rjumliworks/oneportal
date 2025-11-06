@@ -142,9 +142,8 @@
                                            <p class="text-muted text-center mt-5">There are no comments for this request yet</p>
                                         </div>
                                     </template>
-                                    <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Activities'" />
+                                    <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Signatories'" />
                                     <Attachment :information="information" v-if="menu == 'Attachment'" />
-                                    <Detail :information="information" v-if="menu == 'Details'" />
                                 </div>
                             </transition>
                         </div>
@@ -211,7 +210,7 @@ export default {
                 option: 'comment'
             }),
             menus: [
-                'Home','Activities','Details','Attachment'
+                'Home','Signatories','Attachment'
             ],
             menu: 'Home',
             replyuser: null,

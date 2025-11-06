@@ -29,6 +29,7 @@ class LeaveClass
             $data->tags()->create([
                 'user_id' => \Auth::user()->id,
                 'division_id' => $division_id,
+                'status_id' => 37,
                 'signatory_id' => $signatory->id,
             ]);
 

@@ -19,6 +19,11 @@ class Request extends Model
         'user_id'
     ];
 
+    public function reservation()
+    {
+        return $this->hasOne('App\Models\RequestReservation', 'request_id');
+    }
+
     public function overtime()
     {
         return $this->hasOne('App\Models\RequestOvertime', 'request_id');

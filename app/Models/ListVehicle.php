@@ -8,7 +8,7 @@ class ListVehicle extends Model
 {
     public function reservations()
     {
-       return $this->hasMany('App\Models\Reservation', 'vehicle_id');
+       return $this->hasMany('App\Models\RequestReservation', 'vehicle_id');
     }
 
     public function driver()

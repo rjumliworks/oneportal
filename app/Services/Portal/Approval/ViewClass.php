@@ -40,10 +40,14 @@ class ViewClass
                     $query->whereHas('approved', function ($q){
                         $q->where('user_id', \Auth::user()->id);
                     });
-                } else {
+                }elseif($request->status == 25){
                     $query->whereHas('recommended', function ($q){
                         $q->where('user_id', \Auth::user()->id);
                     });
+                }else{
+                    $query->whereHas('disapproved', function ($q){
+                        $q->where('user_id', \Auth::user()->id);
+                    })->where('is_disapproved',1);
                 }
             } else {
                 // if ($signatory['designationable']['designation_id'] == 44) {
@@ -83,8 +87,15 @@ class ViewClass
 
     public function count(){
         return [
-            Request::whereHas('signatories', function ($query) { $query->where('recommended_id', \Auth::user()->id); })->count(),
-            Request::whereHas('signatories', function ($query) { $query->where('approved_id', \Auth::user()->id); })->count(),
+            Request::whereHas('signatories', function ($query) { $query->whereHas('recommended', function ($q){
+                $q->where('user_id', \Auth::user()->id);
+            }); })->count(),
+            Request::whereHas('signatories', function ($query) { $query->whereHas('approved', function ($q){
+                $q->where('user_id', \Auth::user()->id);
+            }); })->count(),
+            Request::whereHas('signatories', function ($query) { $query->whereHas('disapproved', function ($q){
+                $q->where('user_id', \Auth::user()->id);
+            }); })->count(),
         ];
     }
 }

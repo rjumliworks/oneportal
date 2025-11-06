@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreign('approved_id')->references('id')->on('org_signatory_schedules')->onDelete('cascade');
             $table->datetime('approved_date')->nullable();
             $table->string('approved_by', 200)->nullable();
+            $table->unsignedInteger('disapproved_id')->nullable();
+            $table->foreign('disapproved_id')->references('id')->on('org_signatory_schedules')->onDelete('cascade');
             $table->unsignedTinyInteger('status_id');
             $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade'); 
             $table->tinyInteger('division_id')->unsigned()->index();

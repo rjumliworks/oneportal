@@ -17,8 +17,7 @@
                             <h5 class="mb-0 fs-14"><span class="text-body">For Approval</span></h5>
                             <p class="text-muted text-truncate-two-lines fs-12">A detailed list of submitted travel order requests including destination, purpose, schedule, and status.</p>
                         </div>
-                        <div class="flex-shrink-0" style="width: 45%;">
-                            
+                        <div class="flex-shrink-0" style="width: 15%;">
                         </div>
                     </div>
                 </div>
@@ -52,14 +51,26 @@
                                     <i class="ri-apps-2-line me-1 align-bottom"></i> For Approval
                                     </BLink>
                                 </li>
-                                 <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <BLink @click="viewStatus(25)" class="nav-link py-3" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                    <i class="ri-apps-2-line me-1 align-bottom"></i> Recommended <span v-if="count[0] > 0">({{ count[0] }})</span>
+                                    <i class="ri-record-circle-fill me-1 align-bottom"></i>
+                                        Recommended <BBadge v-if="count[0] > 0" class="text-secondary align-middle ms-1">{{count[0]}}</BBadge>
                                     </BLink>
                                 </li>
                                 <li class="nav-item">
                                     <BLink @click="viewStatus(26)" class="nav-link py-3" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                    <i class="ri-apps-2-line me-1 align-bottom"></i> Approved <span v-if="count[1] > 0">({{ count[1] }})</span>
+                                    <i class="ri-checkbox-circle-fill me-1 align-bottom"></i> Approved <BBadge v-if="count[2] > 0" class="bg-success align-middle ms-1">{{count[2]}}</BBadge>
+                                    </BLink>
+                                </li>
+                                <li class="nav-item">
+                                    <BLink @click="viewStatus(30)" class="nav-link py-3" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                    <i class="ri-close-circle-fill me-1 align-bottom"></i> Disapproved <BBadge v-if="count[2] > 0" class="bg-danger align-middle ms-1">{{count[2]}}</BBadge>
+                                    </BLink>
+                                </li> -->
+                                <li class="nav-item" v-for="(list,index) in tabs" v-bind:key="index">
+                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? list.text+' active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
+                                        <i :class="list.icon" class="me-1 align-bottom"></i>
+                                        {{ list.name }} <BBadge v-if="count[index] > 0" :class="list.bg" class="align-middle ms-1">{{count[index]}}</BBadge>
                                     </BLink>
                                 </li>
                             </ul>
@@ -162,7 +173,12 @@ export default {
             designation: this.$page.props.user.data.signatory.designationable.designation_id,
             icons: ['ri-flight-takeoff-fill','ri-car-fill','ri-calendar-2-fill'],
             index: null,
-            units: []
+            units: [],
+            tabs: [
+                { value: 25, name: 'Recommended', bg: 'bg-secondary', text: 'text-secondary', icon: 'ri-record-circle-line'},
+                { value: 26, name: 'Approved', bg: 'bg-success', text: 'text-success', icon: 'ri-checkbox-circle-line'},
+                { value: 30, name: 'Disapproved', bg: 'bg-danger', text: 'text-danger', icon: 'ri-close-circle-line'}
+            ]
         }
     },
     watch: {
@@ -220,7 +236,8 @@ export default {
             const year = startDate.getFullYear(); // assume same year
             return `${startStr}-${endStr}, ${year}`;
         },
-        viewStatus(status){
+        viewStatus(index,status){
+            this.index = index;
             this.filter.status = status;
             this.fetch();
         },

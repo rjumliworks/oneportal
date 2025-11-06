@@ -22,7 +22,7 @@ class CtoClass
 
             $signatory = $data->signatories()->create([
                 'code' => $this->generateCode($data->type_id),
-                'division_id' => 1,
+                'division_id' => $division_id,
                 'status_id' => 24,
                 'is_approval_only' => 0
             ]);
@@ -33,6 +33,7 @@ class CtoClass
                 $data->tags()->create([
                     'user_id' => intval($user['value']),
                     'division_id' => $divisionId,
+                    'status_id' => 37,
                     'signatory_id' => $signatory->id
                 ]);
             }

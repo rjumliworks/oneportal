@@ -13,6 +13,11 @@ class LeaveResource extends JsonResource
         $hashids = new Hashids('krad',10);
         $key = $hashids->encode($this->request->id);
 
+        $userDivisionId = \Auth::user()->organization->division_id ?? null;
+
+   
+
+
         return [
             'id' => $this->id,
             'request_key' => $key,
@@ -28,13 +33,13 @@ class LeaveResource extends JsonResource
             'start' => $this->request->dates[0]->start,
             'end' => $this->request->dates[0]->end,
             'time' => $this->request->dates[0]->time,
-            'status' => $this->request->status,
+            'signatory' => new SignatoryResource($this->request->signatories[0]),
+            'statuses' => StatusResource::collection($this->request->signatories[0]->statusable),
             'employee' => $this->request->user->profile->firstname.' '.$this->request->user->profile->lastname,
             'comments' => CommentResource::collection($this->request->comments),
             'signatories' => count($this->request->signatories) === 1 
                     ? new SignatoryResource($this->request->signatories[0]) 
                     : SignatoryResource::collection($this->request->signatories),
-            'statuses' => StatusResource::collection($this->request->statuses),
             'tags' => TagResource::collection($this->request->tags),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

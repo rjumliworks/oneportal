@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreign('division_id')->references('id')->on('list_dropdowns')->onDelete('cascade');  
             $table->unsignedBigInteger('signatory_id');
             $table->foreign('signatory_id')->references('id')->on('request_signatories')->onDelete('cascade');  
+            $table->unsignedTinyInteger('status_id');
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade'); 
             $table->unsignedBigInteger('request_id');
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();

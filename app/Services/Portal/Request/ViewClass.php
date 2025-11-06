@@ -3,6 +3,7 @@
 namespace App\Services\Portal\Request;
 
 use App\Models\Request;
+use App\Models\RequestSignatory;
 use App\Models\ListLeave;
 use App\Models\UserCredit;
 use App\Http\Resources\Portal\Request\IndexResource;
@@ -22,24 +23,28 @@ class ViewClass
 
     public function lists($request){
         $user_id = \Auth::user()->id;
-        $data = Request::with([
-            'tags.user:id',
-            'tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'type',
-            'dates',
-            'detail',
+        $data = RequestSignatory::with([
+            'status',
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.type',
+            'request.dates',
+            'request.detail',
             // 'leave:id,request_id,type_id',
             // 'leave.type:id,name',
         ])
-        // ->when($request->status, fn($q, $status) => $q->where('status_id', $status))
-        ->when($request->type, fn($q, $expense) => $q->where('type_id', $expense))
+        ->when($request->status, fn($q, $status) => $q->where('status_id', $status))
+        ->when($request->type, fn($q, $type) =>
+            $q->whereHas('request', function ($query) use ($type) {
+                $query->where('type_id', $type);
+            })
+        )
         ->when($request->keyword, function ($query, $keyword) {
-            $query->whereHas('user.profile', function ($q) use ($keyword) {
-                $q->whereRaw('LOWER(CONCAT(firstname, " ", lastname)) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                ->orWhereRaw('LOWER(CONCAT(lastname, " ", firstname)) LIKE ?', ['%' . strtolower($keyword) . '%']);
+            $query->whereHas('request.user.profile', function ($q) use ($keyword) {
+                $q->whereRaw('LOWER(lastname) LIKE ?', ['%' . strtolower($keyword) . '%']);
             });
         })
-        ->whereHas('tags', function ($query) use ($user_id) {
+        ->whereHas('request.tags', function ($query) use ($user_id) {
             $query->where('user_id', $user_id);
         })
         ->latest() 

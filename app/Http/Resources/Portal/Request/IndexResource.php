@@ -15,35 +15,36 @@ class IndexResource extends JsonResource
         $hashids = new Hashids('krad',10);
         $key = $hashids->encode($this->id);
 
-        switch($this->type->name){
+        switch($this->request->type->name){
             case 'Travel Order':
-                $subtype = $this->travel->mode->name;
+                $subtype = $this->request->travel->mode->name;
             break;
             case 'Leave Form':
-                $subtype = $this->leave->type->name;
+                $subtype = $this->request->leave->type->name;
             break;
             case 'Render Overtime Service':
-                $subtype = $this->type->name;
+                $subtype = $this->request->type->name;
             break;
             default:
-                $subtype = $this->reservation->vehicle->name;
+                $subtype = $this->request->reservation->vehicle->name;
         }
 
-        $link = Str::slug($this->type->name) . 'krad' . $key;
+        $link = Str::slug($this->request->type->name) . 'krad' . $key;
 
         return [
             'id' => $this->id,
             'key' => $key,
-            'code' => $this->code,
-            'type' => $this->type->name,
+            'code' => $this->request->code,
+            'type' => $this->request->type->name,
+            'status' => $this->status,
             'link' => Crypt::encryptString($link),
-            'purpose' => $this->detail->purpose,
-            'remarks' => $this->detail->remarks,
-            'start' => $this->dates[0]->start,
-            'end' => $this->dates[0]->end,
-            'tags' => TagResource::collection($this->tags),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'purpose' => $this->request->detail->purpose,
+            'remarks' => $this->request->detail->remarks,
+            'start' => $this->request->dates[0]->start,
+            'end' => $this->request->dates[0]->end,
+            'tags' => TagResource::collection($this->request->tags),
+            'created_at' => $this->request->created_at,
+            'updated_at' => $this->request->updated_at,
             'subtype' => $subtype
         ];
     }

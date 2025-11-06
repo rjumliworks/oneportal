@@ -87,7 +87,7 @@
                 </div>
             </div>
         </div>
-         <div class="card bg-white rounded-bottom shadow-none mb-0">
+        <div class="card bg-white rounded-bottom shadow-none mb-0">
             <div class="step-arrow-nav mt-0">
                 <ul class="nav nav-pills nav-justified custom-nav" role="tablist">
                     <li @click="openMenu(menu)" class="nav-item" role="presentation" v-for="(menu, index) in menus" v-bind:key="index">

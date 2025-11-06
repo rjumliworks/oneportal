@@ -43,7 +43,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12" v-if="information.status.name == 'Pending' || information.status.name == 'Recommended'">
+                <!-- <div class="col-md-12" v-if="information.status.name == 'Pending' || information.status.name == 'Recommended'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-file-text-fill"></i>
@@ -54,10 +54,10 @@
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.purpose }} </h6>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
-            <template v-if="information.status.name == 'Approved'">
+            <!-- <template v-if="information.status.name == 'Approved'">
                 <hr class="text-muted mt-0"/>
                     <div class="d-flex mb-n2 ms-3 me-3">
                     <div class="flex-shrink-0 me-3">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <hr class="text-muted mb-0"/>
-            </template>
+            </template> -->
 
             <div v-if="information.overtime" class="row g-3 p-3">
                 <div class="col-md-4">

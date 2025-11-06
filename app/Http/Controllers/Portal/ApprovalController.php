@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Crypt;
 use App\Services\Portal\Approval\ShowClass;
 use App\Services\Portal\Approval\ViewClass;
 use App\Services\Portal\Approval\SaveClass;
+use App\Http\Requests\Portal\Approval\StatusRequest;
 
 class ApprovalController extends Controller
 {
@@ -47,7 +48,7 @@ class ApprovalController extends Controller
                 ]);
             break;
             case 'vehicle-reservation':
-                return inertia('Modules/Employee/Approvals/View/Reservations/View',[
+                return inertia('Modules/Portal/Approvals/View/Reservations/View',[
                     'information_data' => $this->show->reservation($code)
                 ]);
             break;
@@ -64,7 +65,7 @@ class ApprovalController extends Controller
         }
     }
 
-    public function update(Request $request){
+    public function update(StatusRequest $request){
         $result = $this->handleTransaction(function () use ($request) {
             switch($request->option){
                 case 'status':

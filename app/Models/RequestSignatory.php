@@ -11,6 +11,7 @@ class RequestSignatory extends Model
         'is_completed',
         'is_disapproved',
         'is_approval_only',
+        'disapproved_id',
         'approved_id',
         'approved_date',
         'approved_by',
@@ -40,6 +41,11 @@ class RequestSignatory extends Model
     public function approved()
     {
         return $this->belongsTo('App\Models\OrgSignatorySchedule', 'approved_id', 'id');
+    }
+
+    public function disapproved()
+    {
+        return $this->belongsTo('App\Models\OrgSignatorySchedule', 'disapproved_id', 'id');
     }
 
     public function division()

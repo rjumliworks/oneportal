@@ -7,6 +7,9 @@ use App\Models\Request;
 use App\Models\RequestReport;
 use App\Models\RequestOvertime;
 use App\Models\RequestTravelCode;
+use App\Models\CreditLog;
+use App\Models\UserCredit;
+use App\Models\RequestLeave;
 use App\Models\OrgSignatory;
 use App\Models\OrgSignatorySchedule;
 use App\Models\RequestSignatory;
@@ -103,7 +106,13 @@ class SaveClass
                 case 30: 
                     $signatory->update([
                         'is_disapproved' => 1,
+                        'disapproved_id' => $user?->id,
                         'status_id'      => $request->status_id,
+                    ]);
+
+                    $data->comments()->create([
+                        'user_id' => auth()->id(),
+                        'content' => $request->reason,
                     ]);
 
                     if ($data->type_id == 158) {
@@ -132,71 +141,37 @@ class SaveClass
         }
     }
 
+    public function leave($id){
+        $data = RequestLeave::with('credits.log')->where('request_id',$id)->first();
+        $credits = $data->credits;
+        foreach($credits as $credit){
+            $log = CreditLog::where('id',$credit->log_id)->first();
+            $user = UserCredit::where('id',$log->credit_id)->first();
+            $old_balance = $user->balance;
+            $user->balance += $log->amount;
+            $user->used -= $log->amount;
+            if($user->save()){
+                $log = $user->logs()->create([
+                    'amount' => $log->amount,
+                    'old_balance' => $old_balance,
+                    'new_balance' => $user->balance,
+                    'remarks' => 'Return of leave credits for cancelled/disapproved leave.',
+                    'is_automated' => 1,
+                    'user_id' => 1,
+                    'type_id' => 164
+                ]);
 
-    // public function status($request){
-    //     $hashids = new Hashids('krad',10);
-    //     $id = $hashids->decode($request->id);
-    //     $request_id = $hashids->decode($request->request_id);
-
-    //     $data = Request::find($request_id[0]);
-    //     if($request->type != 'Travel Order'){
-    //         $data->status_id = $request->status_id;
-
-    //          $data->statuses()->create([
-    //             'user_id' => \Auth::user()->id,
-    //             'status_id' => $request->status_id
-    //         ]);
-    //     }
-    //     if($data->save()){
-    //         $user = OrgSignatorySchedule::where('user_id', \Auth::user()->id)->where('is_ongoing',1)->first();
-    //         $division = OrgSignatory::where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->first(); 
-    //         $division = $division?->designationable?->assigned;
-        
-    //         if($request->status_id == 25){
-               
-    //             $signatory = RequestSignatory::where('id',$id[0])->where('division_id',$division->id)->where('request_id',$data->id)->where('is_approval_only',0)->first();
-        
-    //             $signatory->recommended_id = $user->id;
-    //             $signatory->status_id = $request->status_id;
-    //             $signatory->recommended_date = now();
-    //             $signatory->recommended_by = $this->image($request,$id[0]);
-    //             $signatory->save();
-    //             // $this->updateSignatory($data->id,'recommended',$user->is_designated,$division->others);
-    //         }else if($request->status_id == 26){
-    //             $signatory = RequestSignatory::where('id',$id[0])->where('request_id',$data->id)->update([
-    //                 'approved_id' => $user->id,
-    //                 'approved_date' => now(),
-    //                 'status_id' => $request->status_id,
-    //                 'approved_by' => $this->image($request,$id[0]),
-    //                 'is_completed' => 1
-    //             ]);
-    //             if($signatory){
-                   
-    //                 // $this->updateSignatory($data->id,'approved',$user->is_designated);
-
-    //                 if($data->type_id == 165){
-    //                     $this->overtime($data->id);
-    //                 }
-    //             }
-    //         }else if($request->status_id == 30){
-    //             $signatory = RequestSignatory::where('id',$id[0])->where('request_id',$data->id)->update([
-    //                 'is_disapproved' => 1,
-    //                 'status_id' => $request->status_id
-    //             ]);
-    //             if($signatory){
-    //                 if($data->type_id == 158){
-    //                     $this->leave($data->id);
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     return [
-    //         'data' => $data,
-    //         'message' => 'Request Status Updated',
-    //         'info' => "The status of this request has been successfully updated. Please check your notifications for the latest details and next steps."
-    //     ];
-    // }
+                if($log){
+                    $data->credits()->create([
+                        'is_borrowed' => $credit->is_borrowed,
+                        'is_returned' => 1,
+                        'log_id' => $log->id,
+                        'credit_id' => $credit->credit_id
+                    ]);
+                }
+            }
+        }
+    }
 
     public function overtime($id){
         $data = new RequestOvertime;

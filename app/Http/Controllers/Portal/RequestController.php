@@ -14,13 +14,14 @@ use App\Services\Portal\Request\ShowClass;
 use App\Services\Portal\Request\LeaveClass;
 use App\Services\Portal\Request\PrintClass;
 use App\Services\Portal\Request\TravelClass;
+use App\Services\Portal\Request\ReservationClass;
 use App\Http\Requests\Portal\MyrequestRequest;
 
 class RequestController extends Controller
 {
     use HandlesTransaction;
 
-    public $view,$save,$dropdown,$show,$cto,$leave,$print,$travel;
+    public $view,$save,$dropdown,$show,$cto,$leave,$print,$travel,$reservation;
 
     public function __construct(
         CtoClass $cto,
@@ -30,6 +31,7 @@ class RequestController extends Controller
         LeaveClass $leave,
         PrintClass $print,
         TravelClass $travel,
+        ReservationClass $reservation,
         DropdownClass $dropdown
     ){
         $this->cto = $cto;
@@ -39,6 +41,7 @@ class RequestController extends Controller
         $this->leave = $leave;
         $this->print = $print;
         $this->travel = $travel;
+        $this->reservation = $reservation;
         $this->dropdown = $dropdown;
     }
 
@@ -90,6 +93,9 @@ class RequestController extends Controller
                 break;
                 case 'travel':
                     return $this->travel->store($request);
+                break;
+                case 'reservation':
+                    return $this->reservation->store($request);
                 break;
             }
         });

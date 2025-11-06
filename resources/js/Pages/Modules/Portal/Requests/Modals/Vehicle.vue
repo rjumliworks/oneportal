@@ -124,7 +124,8 @@ export default {
                 municipality_code: null,
                 barangay_code: null,
                 latitude: null,
-                longitude: null
+                longitude: null,
+                option: 'reservation'
             }),
             config: {
                 enableTime: false,
@@ -154,7 +155,7 @@ export default {
             this.showModal = true;
         },
         submit(){
-            this.form.post('/reservations',{
+            this.form.post('/requests',{
                 preserveScroll: true,
                 forceFormData: true, 
                 onSuccess: (response) => {

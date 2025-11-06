@@ -27,10 +27,27 @@
                                         </BRow>
                                     </BCol>
                                     <BCol md="auto">
-                                        <div class="hstack gap-1 flex-wrap">
-                                            <button @click="back()" type="button" class="btn py-0 fs-16 text-body">
-                                                <i class="ri-share-line"></i>
-                                            </button>
+                                        <div class="hstack gap-4 flex-wrap mt-2">
+                                            <Link href="/approvals">
+                                                <div class="text-muted">  
+                                                    <i class="ri-close-circle-fill fs-16"></i> Close
+                                                </div>
+                                            </Link>
+                                            <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designationable.designation_id == 44">
+                                                <div class="vr" style="width: 1px;"></div>
+                                                <div class="me-n3" @click="openDisapprove(information.key,information.type,information.request_key)">  
+                                                    <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
+                                                </div>
+                                                <div @click="openRecommend(information.key,information.type,information.request_key)">  
+                                                    <b-button variant="secondary" block><i class="ri-checkbox-circle-fill me-1"></i>Recommend</b-button>
+                                                </div>
+                                            </template>
+                                            <template  v-if="information_data.data.status.name == 'Recommended' && $page.props.user.data.signatory.designationable.designation_id == 43">
+                                                <div class="vr" style="width: 1px;"></div>
+                                                <div @click="openApprove(information.key,information.type,information.request_key)">  
+                                                    <b-button variant="success" block><i class="ri-checkbox-circle-fill me-1"></i>Approve</b-button>
+                                                </div>
+                                            </template>
                                         </div>
                                     </BCol>
                                 </BRow>
@@ -47,21 +64,33 @@
             </BRow>
         </div>
     </div>
+     <Approved ref="approve"/>
+    <Recommend ref="recommend"/>
+    <Disapproved ref="disapprove"/>
 </template>
 <script>
+import Approved from '../../Modals/Approved.vue';
+import Recommend from '../../Modals/Recommend.vue';
+import Disapproved from '../../Modals/Disapproved.vue';
 import Main from './Components/Main.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
     props: ['information_data'],
-    components: { Main, Sidebar },
+    components: { Main, Sidebar, Approved, Disapproved, Recommend },
     data(){
         return {
             information: this.information_data.data
         }
     },
     methods: {
-        back(){
-            this.$inertia.visit('/travels');
+        openApprove(id,type,request_id){
+            this.$refs.approve.show(id,type,request_id);
+        },
+        openRecommend(id,type,request_id){
+            this.$refs.recommend.show(id,type,request_id);
+        },
+        openDisapprove(id,type,request_id){
+            this.$refs.disapprove.show(id,type,request_id);
         }
     }
 }

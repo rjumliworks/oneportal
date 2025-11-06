@@ -13,6 +13,12 @@ class OvertimeResource extends JsonResource
         $hashids = new Hashids('krad',10);
         $key = $hashids->encode($this->id);
 
+        $userDivisionId = \Auth::user()->organization->division_id ?? null;
+
+        $divisionSignatory = $this->signatories()
+        ->where('division_id', $userDivisionId)
+        ->first();
+
         return [
             'id' => $this->id,
             'request_key' => $key,
@@ -24,14 +30,12 @@ class OvertimeResource extends JsonResource
             'start' => $this->dates[0]->start,
             'end' => $this->dates[0]->end,
             'time' => $this->dates[0]->time,
-            'status' => $this->status,
-            'signatories' => count($this->signatories) === 1 
-                    ? new SignatoryResource($this->signatories[0]) 
-                    : SignatoryResource::collection($this->signatories),
-            'employee' => $this->user->profile->firstname.' '.$this->user->profile->lastname,
+            'signatory' => new SignatoryResource($divisionSignatory),
+            'statuses' => StatusResource::collection($divisionSignatory?->statusable),
+            'signatories' => SignatoryResource::collection($this->signatories),
+            'employee' => $this->user->profile->fullname,
             'tags' => TagResource::collection($this->tags),
             'comments' => CommentResource::collection($this->comments),
-            'statuses' => StatusResource::collection($this->statuses),
             'overtime' => $this->overtime,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

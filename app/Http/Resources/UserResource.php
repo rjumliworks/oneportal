@@ -26,6 +26,7 @@ class UserResource extends JsonResource
             'mobile' => $this->profile->mobile,
             'profile_id' => $this->profile->id,
             'position' => $this->organization->position->name ?? 'Employee',
+            'division' => $this->organization->division_id ?? '',
             'type' => $this->organization->type->name,
             'signatory' => $this->signatory,
             'is_active' => $this->is_active,

@@ -87,7 +87,6 @@ export default {
             this.$refs.approve.show(id,type,request_id);
         },
         openRecommend(id,type,request_id){
-            alert(requset_id);
             this.$refs.recommend.show(id,type,request_id);
         },
         openDisapprove(id,type,request_id){

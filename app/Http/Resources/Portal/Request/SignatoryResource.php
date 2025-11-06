@@ -10,6 +10,9 @@ class SignatoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'status' => $this->status,
+            'division' => $this->division,
+            'statuses' => StatusResource::collection($this->statusable),
             'recommended' => $this->recommended ? ($this->recommended->user->profile->name) : null,
             'recommended_role' => $this->recommended ? $this->recommended->signatory->designationable->designation->name : null,
             'recommended_oic' => $this->recommended ? ($this->recommended->is_designated) ? '' : '(OIC)' : null,
