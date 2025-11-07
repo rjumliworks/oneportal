@@ -27,7 +27,7 @@
                         <b-col lg>
                             <div class="input-group mb-1">
                                 <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                                <input type="text" v-model="filter.keyword" placeholder="Search Travel Order" class="form-control" style="width: 40%;">
+                                <input type="text" v-model="filter.keyword" placeholder="Search Request" class="form-control" style="width: 40%;">
                                 <template v-if="filter.type == 156">
                                     <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
                                     <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
@@ -60,7 +60,7 @@
                                     </BLink>
                                 </li>
                                 <li class="nav-item" v-for="(list,index) in dropdowns.requests" v-bind:key="index">
-                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? list.others+' active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
+                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? 'text-secondary active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
                                         <i :class="icons[index]" class="me-1 align-bottom"></i>
                                         {{ list.name }} <BBadge v-if="counts[index] > 0" :class="list.color" class="align-middle ms-1">{{counts[index]}}</BBadge>
                                     </BLink>

@@ -133,7 +133,7 @@
                                             </div>
                                         </div>
                                     </template>
-                                     <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Signatories'" />
+                                     <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Activities'" />
                                     <Attachment :information="information" v-if="menu == 'Attachment'" />
                                 </div>
                             </transition>
@@ -200,7 +200,7 @@ export default {
                 option: 'comment'
             }),
             menus: [
-                'Home','Signatories','Attachment'
+                'Home','Activities','Attachment'
             ],
             menu: 'Home',
             replyuser: null,

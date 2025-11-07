@@ -136,7 +136,7 @@
                                            <p class="text-muted text-center mt-5">There are no comments for this request yet</p>
                                         </div>
                                     </template>
-                                    <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Signatories'" />
+                                    <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Activities'" />
                                     <Attachment :information="information" v-if="menu == 'Attachment'" />
                                 </div>
                             </transition>
@@ -203,7 +203,7 @@ export default {
                 option: 'comment'
             }),
             menus: [
-                'Home','Signatories','Attachment'
+                'Home','Activities','Attachment'
             ],
             menu: 'Home',
             replyuser: null,
