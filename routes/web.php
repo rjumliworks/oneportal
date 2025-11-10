@@ -7,6 +7,7 @@ Route::get('/verification', [App\Http\Controllers\WelcomeController::class, 'ver
 Route::post('/verify', [App\Http\Controllers\WelcomeController::class, 'verify']);
 Route::get('/attendance', [App\Http\Controllers\AttendanceController::class, 'index']);
 Route::post('/attendance', [App\Http\Controllers\AttendanceController::class, 'store']);
+Route::post('/rekognition/detect', [RekognitionController::class, 'detect']);
 
 Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
