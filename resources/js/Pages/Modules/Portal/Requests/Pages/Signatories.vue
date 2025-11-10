@@ -1,6 +1,6 @@
 <template>
     <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
-        <div class="d-flex justify-content-between border border-dashed rounded p-3">
+        <!-- <div class="d-flex justify-content-between border border-dashed rounded p-3">
             <div class="text-start">
                 <div class="d-flex" v-if="!list.is_approval_only">
                    
@@ -9,7 +9,7 @@
                         <h5 class="mb-0 mt-n2 fs-14">{{(list.recommended) ? list.recommended.name : '-'}}</h5>
                         <p v-if="list.recommended" class="mb-0 mt-0 text-muted fs-11">{{list.recommended.oic}}{{list.recommended.role}}</p>
                         <p v-else class="mb-0 mt-0 text-muted fs-11">-</p>
-                        <!-- <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.recommended_date}}</p> -->
+                        <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.recommended_date}}</p>
                     </div>
                 </div>
             </div>
@@ -20,13 +20,13 @@
                         <h5 class="mb-0 mt-n2 fs-14">{{(list.approved) ? list.approved.name : '-'}}</h5>
                         <p v-if="list.approved" class="mb-0 mt-0 text-muted fs-11">{{list.approved.oic}}{{list.approved.role}}</p>
                         <p v-else class="mb-0 mt-0 text-muted fs-11">-</p>
-                        <!-- <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.approved_date}}</p> -->
+                        <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.approved_date}}</p>
                     </div>
                    
                 </div>
             </div>
-        </div>
-        <div class="border border-dashed rounded p-1 mt-2">
+        </div> -->
+        <div class="border border-dashed rounded p-1">
             <div class="profile-timeline" v-if="statuses.length > 0">
                 <div class="accordion accordion-flush" id="accordionFlushExample">
                     <div class="accordion-item border-0" v-for="(list,index) in statuses" v-bind:key="index">

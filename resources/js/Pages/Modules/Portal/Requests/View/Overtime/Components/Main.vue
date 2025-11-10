@@ -46,7 +46,7 @@
                             <div v-if="information.signatory.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
                                 <i class=" ri-close-circle-fill"></i>
                             </div>
-                            <div v-if="!information.signatory.recommended" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                            <div v-else-if="!information.signatory.recommended" class="avatar-title bg-light rounded-circle fs-16 text-warning">
                                 <i class="ri-close-circle-fill"></i>
                             </div>
                             <div v-else-if="information.signatory.recommended" class="avatar-title bg-light rounded-circle fs-16 text-success">
@@ -205,7 +205,7 @@ export default {
                 option: 'comment'
             }),
             menus: [
-                'Home','Attachment','Activities'
+                'Home','Activities','Attachment'
             ],
             menu: 'Home',
             replyuser: null,

@@ -16,7 +16,7 @@ class AttendanceController extends Controller
     use HandlesTransaction;
 
     public function index(){
-        return inertia('Public/Dtr/Index');
+        return inertia('Public/Dtr/Face');
     }
 
     public function store(Request $request){
