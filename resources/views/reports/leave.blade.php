@@ -342,7 +342,8 @@
                                                 >
                                             @endif
                                             <input type="text"
-                                                value="{{ ($data['recommended']) ? $data['recommended']['name'] : $signatory['recommended'][0]['name']}}"
+                                                {{-- value="{{ ($data['recommended']) ? $data['recommended']['name'] : $signatory['recommended'][0]['name']}}" --}}
+                                                value="{{ $signatory['recommended'][0]['name']}}"
                                                 style="
                                                 text-align: center;
                                                 font-size: 13px;
@@ -402,7 +403,8 @@
                                     >
                                 @endif
                                 <input type="text"
-                                    value="{{ ($data['approved']) ? $data['approved']['name'] : $signatory['approved']['name']}}"
+                                    {{-- value="{{ ($data['approved']) ? $data['approved']['name'] : $signatory['approved']['name']}}" --}}
+                                    value="{{ $signatory['approved']['name']}}"
                                     style="
                                     margin-top: 0px;
                                     text-align: center;

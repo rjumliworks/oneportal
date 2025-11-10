@@ -78,6 +78,8 @@ class LeaveClass
 
             $leave = $data->leave()->create([
                 'count' => $request->need_credits,
+                'pay' => $request->pay,
+                'nopay' => $request->nopay,
                 'detail_id' => $request->detail_id,
                 'type_id' => $request->type_id
             ]);
@@ -169,7 +171,7 @@ class LeaveClass
                     }
                 }
             }
-            // $this->report($data->id);
+            $this->report($data->id);
         }
 
         return [
@@ -230,10 +232,7 @@ class LeaveClass
             'request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar,avatar,suffix_id',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,signature,suffix_id',
-            'request.statuses.user:id',
-            'request.statuses.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
-            'request.statuses.status',
-            'request.status',
+            'request.tags.user.organization.position','request.tags.user.organization.salary','request.tags.user.organization.type',
             'request.type',
             'request.dates',
             'request.detail',
@@ -320,6 +319,8 @@ class LeaveClass
         $information = [
             'code' => $data->request->code,
             'count' => $data->count,
+            'pay' => $data->pay,
+            'nopay' => $data->nopay,
             'detail' => $data->detail,
             'type' => $data->type,
             'credits' => $data->credits,
@@ -329,6 +330,8 @@ class LeaveClass
             'approved' => $approved,
             'recommended' => $recommended,
             'divisions' => $divisions,
+            'withpay' => $this->pay(true,$user->organization->type_id,$data->count,$data->type),
+            'withoutpay' => $this->pay(false,$user->organization->type_id,$data->count,$data->type),
             'created_by' => $data->request->user->profile->fullname,
             'created_at' => Carbon::parse($data->request->created_at)->format('d F Y')
         ];

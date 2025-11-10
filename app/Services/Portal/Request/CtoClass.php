@@ -142,20 +142,21 @@ class CtoClass
         $users = $data->tags;
         foreach ($users as $tag) {
             $user = $tag->user;
-            $division = $user->organization->division->name ?? 'n/a';
+            $division = $user->organization->division ?? 'n/a';
             $division_id = $user->organization->division->id ?? null;
 
             $employees[] = [
-                'name' => $user->profile->name,
+                'name' => $user->profile->fullname,
                 'position' => $user->organization->position->name ?? 'n/a',
                 'position_short' => $user->organization->position->short ?? 'n/a',
                 'unit' => $user->organization->unit->name ?? 'n/a',
                 'unit_short' => $user->organization->unit->short ?? 'n/a',
-                'division' => $division,
-                'division_id' => $division_id,
+                'division' => $division->name,
+                'division_short' => $division->others,
+                'division_id' => $division->id,
             ];
 
-            $divisions[] = $division;
+            $divisions[] = $division->name;
         }
 
         $start = Carbon::parse($data->dates[0]->start);

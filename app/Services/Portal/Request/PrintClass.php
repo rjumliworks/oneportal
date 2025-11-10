@@ -33,6 +33,12 @@ class PrintClass
 
         switch($request->type){
             case 'Render Overtime Service':
+                $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',48)->where('is_active',1)->first(); 
+
+                $array['signatory']['cto'] = [
+                    'name' => ($a->is_oic) ? $a->oic->profile->fullname : $a->user->profile->fullname,    
+                    'role' => 'Human Resource Management Officer'
+                ];
                 $pdf = \PDF::loadView('reports.overtime', $array)->setPaper('a4', 'portrait');
             break;
             case 'Leave Form':

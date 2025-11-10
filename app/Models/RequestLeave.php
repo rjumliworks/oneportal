@@ -12,6 +12,8 @@ class RequestLeave extends Model
 
     protected $fillable = [
         'count',
+        'pay',
+        'nopay',
         'detail_id',
         'type_id',
         'request_id',

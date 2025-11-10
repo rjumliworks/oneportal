@@ -15,6 +15,8 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->decimal('count', 4, 1);
+            $table->decimal('pay', 4, 1);
+            $table->decimal('nopay', 4, 1);
             $table->unsignedInteger('certified_id')->nullable();
             $table->foreign('certified_id')->references('id')->on('org_signatory_schedules')->onDelete('cascade');
             $table->datetime('certified_date')->nullable();

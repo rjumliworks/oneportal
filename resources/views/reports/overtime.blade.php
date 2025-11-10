@@ -104,7 +104,7 @@
     </div>
 
     <div class="content">
-        @foreach ($data['divisions'] as $division)
+        
             <div style="font-family:Arial;">
                 <img src="{{ public_path('images/logo-sm.png') }}" alt="tag" style="position: absolute; top: -4; left: 60; width: 50px; height: 50px;">
                 <center style="font-size: 10px; margin-bottom: 0px; text-transform: uppercase;">Republic of the Philippines</center>
@@ -112,8 +112,26 @@
                 <center style="font-size: 11px;">Pettit Baracks, Zamboanga City | (062) 991-1024 | dost9info@gmail.com</center>
             
                 <br/>
-                <center style="margin-top: 15px; font-size: 11px;  color:#000; font-weight: bold; padding: 2px;">RENDER OVERTIME SERVICE</center>
-                <center style="font-size: 11px; background-color: #097eeb; color:#fff; font-weight: bold; padding: 2px; text-transform: uppercase; ">{{$division}}</center>
+                {{-- <center style="margin-top: 15px; font-size: 11px;  color:#000; font-weight: bold; padding: 2px;">RENDER OVERTIME SERVICE</center> --}}
+            
+            <div style="
+                font-size: 11px;
+                font-weight: bold;
+                text-transform: uppercase;
+                text-align: center;
+                letter-spacing: 1px;
+                color: #097eeb;
+                border-bottom: 2px solid #097eeb;
+                padding-top: 4px;
+                border-top: 2px solid #097eeb;
+                padding-bottom: 4px;
+                margin-bottom: 10px;
+                margin-top: 10px;
+            ">
+                RENDER OVERTIME SERVICE
+            </div>
+
+
             </div>
             <table style="border: 1px solid black;">
                 <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
@@ -134,15 +152,17 @@
             <table style="border: 1px solid black; margin-top: -22px;">
                 <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
                     <tr>    
-                        <th style="vertical-align: middle;" width="50%">NAME</th>
-                        <th style="vertical-align: middle;" width="50%">POSITION</th>
+                        <th style="vertical-align: middle;" width="33%">NAME</th>
+                        <th style="vertical-align: middle;" width="33%">POSITION</th>
+                        <th style="vertical-align: middle;" width="33%">DIVISION</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($data['employees'] as $employee)
                         <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
                             <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['name']}}</td>
-                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position_short']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['division_short']}}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -181,7 +201,9 @@
                 <tbody>
                     <tr>
                         <td style="min-height: 50px; border-bottom-style: hidden;">
-                            @if($division != 'Office of the Regional Director')<span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>@endif
+                            {{-- @if($division != 'Office of the Regional Director') --}}
+                            <span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>
+                            {{-- @endif --}}
                         </td>
                         <td style="min-height: 50px; border-bottom-style: hidden;">
                             <span style="font-size:9px; color: #606060;">APPROVED:</span>
@@ -193,31 +215,30 @@
                     </tr>
                     <tr style="text-align: center;">
                         <td width="33.3%" style="vertical-align: bottom; position: relative; height: 50px; text-align: center;">
-                            @if($division != 'Office of the Regional Director')
                             <div style="position: relative; height:50px;">
                                 {{-- Signature container --}}
                                 <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                    @if(!empty($data['recommended']['signature']))
+                                    {{-- @if(!empty($data['recommended']['signature']))
                                         <img 
                                             src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
                                             alt="Signature" 
                                             style="height: 60px; width: auto;"
                                         >
-                                    @endif
+                                    @endif --}}
                                 </div>
 
                                 {{-- Name and designation --}}
-                                <div style="position: absolute; bottom: 0; width: 100%;">
+                              <div style="position: absolute; bottom: 0; width: 100%;">
                                     <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
-                                        {{ ($data['recommended']) ? $data['recommended']['name'] : $signatory['recommended'][$loop->index]['name']}}
+                                        {{  ($signatory['cto']['name']) }}
                                     </span>
                                     <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
                                     <div style="font-size: 10px;">
-                                        {{  ($data['recommended']) ? $data['recommended']['role'] : $signatory['recommended'][$loop->index]['role']}}
+                                        {{  ($signatory['cto']['role']) }}
                                     </div>
                                 </div>
                             </div>
-                            @endif
+                            {{-- @endif --}}
                         </td>
                         <td width="33.3%" style="vertical-align: bottom; position: relative; height: 50px; text-align: center;">
                             <div style="position: relative; height: 50px;">
@@ -235,11 +256,11 @@
                                 {{-- Name and designation --}}
                                 <div style="position: absolute; bottom: 0; width: 100%;">
                                     <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
-                                        {{ ($data['approved']) ? $data['approved']['name'] : $signatory['approved']['name']}}
+                                        {{ $signatory['approved']['name']}}
                                     </span>
                                     <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
                                     <div style="font-size: 10px;">
-                                       {{  ($data['approved']) ? $data['approved']['role'] : $signatory['approved']['role'] }}
+                                       {{  $signatory['approved']['role'] }}
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +269,7 @@
                     </tr>
                 </tbody>
             </table>
-        @endforeach
+        
     </div>
 </body>
 </html>

@@ -82,8 +82,9 @@
                     </BCol>
                 </template>
             </BRow>
+
         </form>
-        <template v-if="form.type && form.dates && form.dates.length > 0 && this.$page.props.user.data.type == 'Regular'">
+        <template v-if="form.type && form.dates && form.dates.length > 0 && this.$page.props.user.data.type == 'Plantilla'">
             <form>
                 <BRow>
                     <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
@@ -143,6 +144,25 @@
                             </table>
                         </div>
                     </BCol>
+                    <BCol lg="12">
+                    <div class="table-responsive bg-white">
+                        <table class="table align-middle table-bordered table-centered mb-0">
+                            
+                            <thead class="table-light thead-fixed">
+                                <tr class="fs-11">
+                                    <th style="width: 50%;" class="text-center">Days with pay</th>
+                                    <th style="width: 5ch;" class="text-center">Days with no pay</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-white fs-12">
+                                <tr>
+                                    <td class="text-center">{{ form.pay }}</td>
+                                    <td class="text-center">{{ form.nopay }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </BCol>
                 </BRow>
             </form>
         </template>
@@ -151,7 +171,7 @@
             <template v-if="form.type?.required_document">
                 <b-button v-if="form.type.max_days >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
             </template>
-            <template v-else-if="this.$page.props.user.data.type == 'Regular'">
+            <template v-else-if="this.$page.props.user.data.type == 'Plantilla'">
                 <b-button v-if="(totalBalance+totalBorrowed) >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
             </template>
             <template v-else>
@@ -192,6 +212,8 @@ export default {
                 my_credits: 0,
                 need_credits: 0,
                 date_type: null,
+                pay: 0,
+                nopay: 0,
                 option: 'leave'
             }),
             date: null,
@@ -419,6 +441,12 @@ export default {
         'form.timeOfDay'(val) {
             if (this.dateType === 'Single Day' && this.form.dates?.length === 1) {
                 this.form.dates[0].timeOfDay = val;
+            }
+        },
+        totalDays(newVal) {
+            if (this.$page.props.user.data.type != 'Regular' && this.form.type?.name != 'CTO Leave') {
+                this.form.pay = 0;
+                this.form.nopay = newVal;
             }
         }
     },
