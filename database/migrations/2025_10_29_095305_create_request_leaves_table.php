@@ -17,10 +17,11 @@ return new class extends Migration
             $table->decimal('count', 4, 1);
             $table->decimal('pay', 4, 1);
             $table->decimal('nopay', 4, 1);
+            $table->decimal('borrowed', 4, 1);
             $table->unsignedInteger('certified_id')->nullable();
             $table->foreign('certified_id')->references('id')->on('org_signatory_schedules')->onDelete('cascade');
             $table->datetime('certified_date')->nullable();
-            $table->string('recommended_by', 200)->nullable();
+            $table->string('certified_by', 200)->nullable();
             $table->unsignedTinyInteger('detail_id');
             $table->foreign('detail_id')->references('id')->on('list_dropdowns')->onDelete('cascade');   
             $table->unsignedTinyInteger('type_id');

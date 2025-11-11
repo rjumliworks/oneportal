@@ -3,6 +3,7 @@
 namespace App\Services\Portal\Request;
 
 use Carbon\Carbon;
+use App\Models\OrgChart;
 use App\Models\Request;
 use App\Models\RequestLeave;
 use App\Models\RequestSignatory;
@@ -80,6 +81,7 @@ class LeaveClass
                 'count' => $request->need_credits,
                 'pay' => $request->pay,
                 'nopay' => $request->nopay,
+                'borrowed' => $request->borrowed,
                 'detail_id' => $request->detail_id,
                 'type_id' => $request->type_id
             ]);
@@ -87,9 +89,33 @@ class LeaveClass
                 if(\Auth::user()->organization->type_id == 15){
                     $types = $request->types;
                     foreach($types as $type){
-                        if($type['required_document']){
+                        if($type['required_credits']){
+                            $credit = UserCredit::where('id',$type['value'])->first();
+                            $old_balance = $credit->balance;
+                            $credit->balance -= $type['borrow'];
+                            $credit->used += $type['borrow'];
+                            $credit->save();
+                            if($credit){
+                                $log = $credit->logs()->create([
+                                    'amount' => $type['borrow'],
+                                    'old_balance' => $old_balance,
+                                    'new_balance' => $credit->balance,
+                                    'remarks' => 'Deduction of leave credits for filed leave',
+                                    'is_automated' => 1,
+                                    'user_id' => 1,
+                                    'type_id' => 163
+                                ]);
+                                if($log){
+                                    $leave->credits()->create([
+                                        'is_borrowed' => 0,
+                                        'log_id' => $log->id,
+                                        'credit_id' => $type['value']
+                                    ]);
+                                }
+                            }
+                        }else{
                             $credit = new UserCredit;
-                            $credit->balance = $type['max_days'] - $request->need_credits;;
+                            $credit->balance = $type['max_days'] - $request->need_credits;
                             $credit->used = $request->need_credits;
                             $credit->earned = $type['max_days'];
                             $credit->year = date('Y');
@@ -111,30 +137,6 @@ class LeaveClass
                                         'is_borrowed' => 0,
                                         'log_id' => $log->id,
                                         'credit_id' => $credit->id
-                                    ]);
-                                }
-                            }
-                        }else{
-                            $credit = UserCredit::where('id',$type['value'])->first();
-                            $old_balance = $credit->balance;
-                            $credit->balance -= $type['borrow'];
-                            $credit->used += $type['borrow'];
-                            $credit->save();
-                            if($credit){
-                                $log = $credit->logs()->create([
-                                    'amount' => $type['borrow'],
-                                    'old_balance' => $old_balance,
-                                    'new_balance' => $credit->balance,
-                                    'remarks' => 'Deduction of leave credits for filed leave',
-                                    'is_automated' => 1,
-                                    'user_id' => 1,
-                                    'type_id' => 163
-                                ]);
-                                if($log){
-                                    $leave->credits()->create([
-                                        'is_borrowed' => 0,
-                                        'log_id' => $log->id,
-                                        'credit_id' => $type['value']
                                     ]);
                                 }
                             }
@@ -171,7 +173,7 @@ class LeaveClass
                     }
                 }
             }
-            $this->report($data->id);
+            $this->report($data->id,$division_id);
         }
 
         return [
@@ -223,7 +225,7 @@ class LeaveClass
         });
     }
 
-    private function report($id){
+    private function report($id,$division){
         $data = RequestLeave::with([
             'detail',
             'type',
@@ -321,6 +323,7 @@ class LeaveClass
             'count' => $data->count,
             'pay' => $data->pay,
             'nopay' => $data->nopay,
+            'borrowed' => $data->borrowed,
             'detail' => $data->detail,
             'type' => $data->type,
             'credits' => $data->credits,
@@ -330,10 +333,9 @@ class LeaveClass
             'approved' => $approved,
             'recommended' => $recommended,
             'divisions' => $divisions,
-            'withpay' => $this->pay(true,$user->organization->type_id,$data->count,$data->type),
-            'withoutpay' => $this->pay(false,$user->organization->type_id,$data->count,$data->type),
+            'signatory' => $this->signatory($division),
             'created_by' => $data->request->user->profile->fullname,
-            'created_at' => Carbon::parse($data->request->created_at)->format('d F Y')
+            'created_at' => Carbon::parse($data->request->created_at)->format('F d, Y')
         ];
 
         if(RequestReport::where('request_id',$id)->count() > 0){
@@ -347,5 +349,34 @@ class LeaveClass
             ]);
         }
         return true;
+    }
+
+    private function signatory($division){
+        $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',43)->where('is_active',1)->first(); 
+        $approved = [
+            'name' => ($a->is_oic) ? $a->oic->profile->fullname : $a->user->profile->fullname,    
+            'role' => ($a->is_oic) ? 'OIC - Regional Director' : 'Regional Director'
+        ];
+        $c = OrgChart::with('user.profile','oic.profile')->where('designation_id',48)->where('is_active',1)->first(); 
+        $hrmo = [
+            'name' => ($c->is_oic) ? $c->oic->profile->fullname : $c->user->profile->fullname,    
+            'role' => 'Human Resource Management Officer'
+        ];
+        $d = OrgChart::with('user.profile','oic.profile','assigned')
+            ->whereHas('assigned', function ($query) use ($division){
+                $query->where('id', $division);
+            })
+            ->where('designation_id',44)->where('is_active',1)->first(); 
+            // dd($d);
+        $assigned = $d->assigned->others ?? '';
+        $recommended = [
+            'name' => ($d->is_oic) ? $d->oic->profile->fullname : $d->user->profile->fullname,
+            'role' => ($d->is_oic) ? 'OIC - Assistant Regional Director (' . $assigned . ')' : 'Assistant Regional Director (' . $assigned . ')'
+        ];
+        return [
+            'approved' => $approved,
+            'recommended' => $recommended,
+            'certified' => $hrmo
+        ];
     }
 }

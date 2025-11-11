@@ -15,7 +15,7 @@ class ViewClass
         $hasRecommendationRole = $signatories->contains(fn($s) => $s->designationable->designation_id == 44);
         $hasApprovalRole = $signatories->contains(fn($s) => $s->designationable->designation_id == 43);
         $hasHRMORole = $signatories->contains(fn($s) => $s->designationable->designation_id == 48);
-
+        
         $status = $request->status ?? ($hasRecommendationRole || $hasHRMORole ? 24 : 25);
         // $status = $request->status ?? (($signatory['designationable']['designation_id'] == 44) ? 24 : 25);
         $data = RequestSignatory::with([
@@ -55,7 +55,13 @@ class ViewClass
                 //           ->where('is_approval_only', 0);
                 // }
                 $query->where(function ($q) use ($signatories, $hasRecommendationRole, $hasApprovalRole, $hasHRMORole) {
-                
+                    // 🔹 HRMO recommending role (designation 48)
+                    if ($hasHRMORole) {
+                        $q->orWhere(function ($sub) {
+                            $sub->where('division_id', 48)
+                                ->where('is_approval_only', 0);
+                        });
+                    }
                     // 🔹 Recommending role (designation 44)
                     if ($hasRecommendationRole) {
                         $divisionIds = $signatories
@@ -64,15 +70,6 @@ class ViewClass
 
                         $q->orWhere(function ($sub) use ($divisionIds) {
                             $sub->whereIn('division_id', $divisionIds)
-                                ->where('is_approval_only', 0);
-                        });
-                    }
-
-       
-                    // 🔹 HRMO recommending role (designation 48)
-                    if ($hasHRMORole) {
-                        $q->orWhere(function ($sub) {
-                            $sub->where('division_id', 1)
                                 ->where('is_approval_only', 0);
                         });
                     }

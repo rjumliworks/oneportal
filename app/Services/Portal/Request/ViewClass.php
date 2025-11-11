@@ -23,6 +23,7 @@ class ViewClass
 
     public function lists($request){
         $user_id = \Auth::user()->id;
+        $division_id = \Auth::user()->organization->division_id;
         $data = RequestSignatory::with([
             'status',
             'request.tags.user:id',
@@ -34,7 +35,7 @@ class ViewClass
             // 'leave.type:id,name',
         ])
         ->when($request->status, fn($q, $status) => $q->where('status_id', $status))
-        ->when($request->type, fn($q, $type) =>
+        ->when($request->type, fn($q, $type                                                                                                                                                                                                                                                                                                                                                                                                             ) =>
             $q->whereHas('request', function ($query) use ($type) {
                 $query->where('type_id', $type);
             })
@@ -47,6 +48,7 @@ class ViewClass
         ->whereHas('request.tags', function ($query) use ($user_id) {
             $query->where('user_id', $user_id);
         })
+        ->whereIn('division_id',[$division_id,48])
         ->latest() 
         ->paginate($request->count ?? 10);
 
@@ -81,6 +83,7 @@ class ViewClass
                             'others' => $item->leave->others,
                             'balance' => $item->balance,
                             'disabled'   => ($item->balance == 0 || $item->balance == 0.00),
+                            'required_credits' => true,
                             'required_document' =>  $item->leave->requires_document
                         ]
                     ];
@@ -105,6 +108,7 @@ class ViewClass
                         'others' => $item->others,
                         'max_days' => $item->max_days,
                         'renewal' => $item->renewal_period,
+                        'required_credits' => false,
                         'required_document' =>  $item->requires_document
                     ]
                 ]);
@@ -133,6 +137,7 @@ class ViewClass
                         'others' => $item->leave->others,
                         'balance' => $item->balance,
                         'disabled'   => ($item->balance == 0 || $item->balance == 0.00),
+                        'required_credits' => true,
                         'required_document' => false
                     ]
                 ]);
@@ -157,6 +162,7 @@ class ViewClass
                         'others' => $item->others,
                         'max_days' => $item->max_days,
                         'renewal' => $item->renewal_period,
+                        'required_credits' => false,
                         'required_document' =>  $item->requires_document
                     ]
                 ]);
@@ -179,6 +185,7 @@ class ViewClass
                         'is_after' => $item->is_after,
                         'type' => $item->type,
                         'others' => $item->others,
+                        'required_credits' => false,
                         'required_document' => false
                     ]
                 ]);

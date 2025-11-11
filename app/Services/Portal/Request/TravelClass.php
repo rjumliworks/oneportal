@@ -2,8 +2,11 @@
 
 namespace App\Services\Portal\Request;
 
+use Carbon\Carbon;
+use App\Models\OrgChart;
 use App\Models\Request;
 use App\Models\RequestTravel;
+use App\Models\RequestReport;
 use App\Models\RequestSignatory;
 
 class TravelClass
@@ -114,6 +117,7 @@ class TravelClass
                     'is_driver' => 1
                 ]);
             }
+            $this->report($data->id);
         }
 
         return [
@@ -181,5 +185,119 @@ class TravelClass
 
             return $code;
         });
+    }
+
+    public function report($id){
+        $data = Request::with([
+            'travel.mode',
+            'travel.expense',
+            'reservation.vehicle',
+            'type',
+            'dates',
+            'detail',
+            'tags.user:id','tags.user.profile:user_id,firstname,middlename,lastname,avatar','tags.user.organization.division','tags.user.organization.position','tags.user.organization.unit',
+            'signatories.division','signatories.approved.user.profile:user_id,firstname,middlename,lastname','signatories.recommended.user.profile:user_id,firstname,middlename,lastname',
+            'location.region:code,name,region','location.province:code,name','location.municipality:code,name','location.barangay:code,name'
+        ])
+        ->where('id',$id)
+        ->first();
+
+        $users = $data->tags;
+        foreach ($users as $tag) {
+            $user = $tag->user;
+
+            $profile = $user->profile;
+            $middleInitial = $profile->middlename ? strtoupper(substr($profile->middlename, 0, 1)) . '.' : '';
+            $fullName = "{$profile->firstname} {$middleInitial} {$profile->lastname}";
+
+            $division = $user->organization->division->name ?? 'n/a';
+            $division_id = $user->organization->division->id ?? null;
+
+            $employees[] = [
+                'name' => $fullName,
+                'position' => $user->organization->position->name ?? 'n/a',
+                'position_short' => $user->organization->position->short ?? 'n/a',
+                'unit' => $user->organization->unit->name ?? 'n/a',
+                'unit_short' => $user->organization->unit->short ?? 'n/a',
+                'division' => $division,
+                'division_id' => $division_id,
+                'is_driver' => $tag->is_driver
+            ];
+        }
+
+        $start = Carbon::parse($data->dates[0]->start);
+        $end = Carbon::parse($data->dates[0]->end);
+
+        if ($start->format('F Y') === $end->format('F Y')) {
+            $formattedDateRange = $start->format('F j') . '–' . $end->format('j, Y');
+        } else {
+            $formattedDateRange = $start->format('F j, Y') . ' – ' . $end->format('F j, Y');
+        }
+
+        $information = [
+            'code' => $data->code,
+            'travel_code' => $data->travel->code,
+            'purpose' => $data->detail->purpose,
+            'remarks' => $data->detail->remarks,
+            'mode' => $data->travel->mode->name,
+            'vehicle' => ($data->travel->mode_id == 150) ? $data->reservation->vehicle->name.' ('.$data->reservation->vehicle->plate.')' : null, 
+            'expense' => $data->travel->expense->name,
+            'transpo' => $data->travel->transpo?->name ?? '-',
+            'time' => $data->dates[0]->time,
+            'date' => $formattedDateRange,
+            'duration' => $dayDuration = ($start->diffInDays($end) + 1) . ' ' . (($start->diffInDays($end) + 1) === 1 ? 'day' : 'days'),
+            'expenses' => $data->travel->expense_items, 
+            'destination' => $data->location->barangay->name.', '.$data->location->municipality->name,
+            'venue' => $data->location->address,
+            'employees' => $employees,
+            'signatories' => $data->signatories,
+            'signatory' => $this->signatory($data->signatories),
+            'approved' => null,
+            'recommended' => null,
+            'created_at' => $data->created_at
+        ];
+
+        if(RequestReport::where('request_id',$id)->count() > 0){
+            $data = RequestReport::where('request_id',$id)->first();
+            $data->information = json_encode($information);
+            $data->save();
+        }else{
+            $data = RequestReport::create([
+                'information' => json_encode($information,true),
+                'request_id' => $id
+            ]);
+        }
+        return true;
+    }
+
+    private function signatory($divisions){
+        $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',43)->where('is_active',1)->first(); 
+        $approved = [
+            'name' => ($a->is_oic) ? $a->oic->profile->fullname : $a->user->profile->fullname,    
+            'role' => ($a->is_oic) ? 'OIC - Regional Director' : 'Regional Director'
+        ];
+        foreach($divisions as $division){
+            $d = OrgChart::with('user.profile','oic.profile','assigned')
+            ->whereHas('assigned', function ($query) use ($division){
+                $query->where('id', $division->division_id);
+            })
+            ->where('designation_id',44)->where('is_active',1)->first(); 
+            if ($d) {
+                $assigned = $d->assigned->others ?? '';
+                $recommended[] = [
+                    'name' => ($d->is_oic) ? $d->oic->profile->fullname : $d->user->profile->fullname,
+                    'role' => ($d->is_oic) ? 'OIC - Assistant Regional Director (' . $assigned . ')' : 'Assistant Regional Director (' . $assigned . ')'
+                ];
+            } else {
+                $recommended[] = [
+                    'name' => '',
+                    'role' => ''
+                ];
+            }
+        }
+        return [
+            'approved' => $approved,
+            'recommended' => $recommended
+        ];
     }
 }

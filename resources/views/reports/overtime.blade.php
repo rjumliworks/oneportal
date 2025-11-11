@@ -162,7 +162,10 @@
                         <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
                             <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['name']}}</td>
                             <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position_short']}}</td>
-                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['division_short']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">
+                                {{-- {{$employee['division_short']}} --}}
+                                {{ strlen($employee['division']) > 37 ? $employee['division_short'] : $employee['division'] }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -218,23 +221,23 @@
                             <div style="position: relative; height:50px;">
                                 {{-- Signature container --}}
                                 <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                    {{-- @if(!empty($data['recommended']['signature']))
+                                    @if(!empty($data['recommended']['signature']))
                                         <img 
                                             src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
                                             alt="Signature" 
                                             style="height: 60px; width: auto;"
                                         >
-                                    @endif --}}
+                                    @endif
                                 </div>
 
                                 {{-- Name and designation --}}
                               <div style="position: absolute; bottom: 0; width: 100%;">
                                     <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
-                                        {{  ($signatory['cto']['name']) }}
+                                        {{  ($data['signatory']['cto']['name']) }}
                                     </span>
                                     <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
                                     <div style="font-size: 10px;">
-                                        {{  ($signatory['cto']['role']) }}
+                                        {{  ($data['signatory']['cto']['role']) }}
                                     </div>
                                 </div>
                             </div>
@@ -256,11 +259,11 @@
                                 {{-- Name and designation --}}
                                 <div style="position: absolute; bottom: 0; width: 100%;">
                                     <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
-                                        {{ $signatory['approved']['name']}}
+                                        {{ $data['signatory']['approved']['name']}}
                                     </span>
                                     <hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
                                     <div style="font-size: 10px;">
-                                       {{  $signatory['approved']['role'] }}
+                                       {{  $data['signatory']['approved']['role'] }}
                                     </div>
                                 </div>
                             </div>

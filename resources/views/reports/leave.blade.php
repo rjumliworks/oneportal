@@ -165,7 +165,7 @@
                     </tr>
                     <tr>
                         <td style="width: 55%; border-right: 1.3px solid black; border-left: 1.3px solid black; border-bottom: 1.3px solid black;">
-                            <input type="text" value="{{$data['count']}} {{($data['count'] > 1) ? 'days' : 'day'}}" style="margin-left: 16px; font-weight: bold; width: 90%; outline: 0;border-width: 0 0 1px; border-color: black; font-size: 10px;">
+                            <input type="text" value="{{ fmod($data['count'], 1) == 0 ? (int)$data['count'] : $data['count'] }} {{($data['count'] > 1) ? 'days' : 'day'}}" style="margin-left: 16px; font-weight: bold; width: 90%; outline: 0;border-width: 0 0 1px; border-color: black; font-size: 10px;">
                             <p style="margin-left: 16px;">INCLUSIVE DATES </p>
                             <input type="text" value="{{$data['date']}}" style="font-weight: bold; font-size: 10px; margin-left: 16px; width: 90%; outline: 0;border-width: 0 0 1px; border-color: black; font-size: 10px;">
                         </td>
@@ -235,35 +235,43 @@
                     </tr>
                     <tr>
                         <td style="width: 55%; border-right: 1.3px solid black; border-left: 1.3px solid black; border-bottom: none;">
-                            <p style="text-align: center; margin-top: -2px;">As of <input type="text" value="November 3, 2025" style="width: 40%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;"></p>
+                            <p style="text-align: center; margin-top: -2px;">As of <input type="text" value="{{$data['created_at']}}" style="width: 40%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;"></p>
                             <table class="wew" style="width: 90%; margin-left: 20px;">
                                 <tbody>
                                     <tr>
                                         <td style="width: 33%;"></td>
-                                        <td style="text-align: center; width: 33%;">Vacation Leave</td>
-                                        <td style="text-align: center; width: 33%;">Sick Leave</td>
+                                        {{-- <td style="text-align: center; width: 33%;">Vacation Leave</td>
+                                        <td style="text-align: center; width: 33%;">Sick Leave</td> --}}
+                                        @foreach($data['credits'] as $leave)
+                                            <th style="text-align: center; width: {{ 100 / (count($data['credits']) + 1) }}%;">
+                                                {{ $leave['credit']['leave']['name'] }}
+                                            </th>
+                                        @endforeach
                                     </tr>
                                     <tr>
                                         <td>Total Earned</td>
-                                        <td></td>
-                                        <td></td>
+                                        @foreach($data['credits'] as $values)
+                                            <td style="text-align: center;">
+                                                {{ $values['log']['old_balance'] ?? 0 }}
+                                            </td>
+                                        @endforeach
                                     </tr>
                                     <tr>
                                         <td>Less this application</td>
-                                        <td></td>
-                                        <td></td>
+                                        @foreach($data['credits'] as $values)
+                                            <td style="text-align: center;">
+                                                {{ $values['log']['amount'] ?? 0 }}
+                                            </td>
+                                        @endforeach
                                     </tr>
                                     <tr>
                                         <td>Balance</td>
-                                        <td></td>
-                                        <td></td>
+                                        @foreach($data['credits'] as $values)
+                                            <td style="text-align: center;">
+                                                {{ $values['log']['new_balance'] ?? 0 }}
+                                            </td>
+                                        @endforeach
                                     </tr>
-                                    {{-- <tr>
-                                        <td colspan="3">
-                                            <input type="text" style="width: 97%; height: 8px; outline: 0;border-width: 0 0 1px; border-color: black; margin-top: 30px;">
-                                            <p style="text-align: center; margin-top: -1px; margin-bottom: 0px;">(Authorized Officer)</p>
-                                        </td>
-                                    </tr> --}}
                                 </tbody>
                             </table>
                             {{-- <h3 style="text-align:center; margin-top: 33px;"></h3>
@@ -302,7 +310,7 @@
                                 <tr>
                                 <td style="text-align: center; padding-top: 20px;">
                                     <input type="text"
-                                        value="{{ $signatory['certified']['name']}}"
+                                        value="{{ $data['signatory']['certified']['name']}}"
                                         style="
                                         text-align: center;
                                         text-transform: uppercase;
@@ -326,6 +334,7 @@
                                 <tr>
                                     <td style="text-align: center; padding-top: 20px;">
                                         <div style="position: relative; display: inline-block; width: 100%;">
+                                  
                                             @if(!empty($data['recommended']['signature']))
                                                 <img 
                                                     src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
@@ -343,7 +352,7 @@
                                             @endif
                                             <input type="text"
                                                 {{-- value="{{ ($data['recommended']) ? $data['recommended']['name'] : $signatory['recommended'][0]['name']}}" --}}
-                                                value="{{ $signatory['recommended'][0]['name']}}"
+                                                value="{{ $data['signatory']['recommended']['name']}}"
                                                 style="
                                                 text-align: center;
                                                 font-size: 13px;
@@ -374,8 +383,8 @@
                     </tr>
                     <tr>
                         <td style="width: 55%; border-left: 1.3px solid black; font-size: 10px;">
-                            <p style="margin-top: -2px;"><input type="text" value="" style="text-align: center; margin-left: 20px; width: 12%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;"> days with pay</p>
-                            <p style="margin-top: -10px;"><input type="text" value="" style="text-align: center; margin-left: 20px; width: 12%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;"> days without pay</p>
+                            <p style="margin-top: -2px;"><input type="text" value="{{ fmod($data['pay'], 1) == 0 ? (int)$data['pay'] : $data['pay'] }}" style="text-align: center; margin-left: 20px; width: 12%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;">{{($data['pay'] > 1) ? 'days' : 'day'}} with pay</p>
+                            <p style="margin-top: -10px;"><input type="text" value="{{ fmod($data['nopay'], 1) == 0 ? (int)$data['nopay'] : $data['nopay'] }}" style="text-align: center; margin-left: 20px; width: 12%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;"> {{($data['nopay'] > 1) ? 'days' : 'day'}} without pay</p>
                             <p style="margin-top: -10px;"><input type="text" value="" style="text-align: center; margin-left: 20px; width: 12%; height: 10px; outline: 0;border-width: 0 0 1px; border-color: black; margin-bottom: -2px;"> others (Specify)</p>
                         </td>
                         <td style="width: 45%; border-right: 1.3px solid black; font-size: 10px;">
@@ -404,7 +413,7 @@
                                 @endif
                                 <input type="text"
                                     {{-- value="{{ ($data['approved']) ? $data['approved']['name'] : $signatory['approved']['name']}}" --}}
-                                    value="{{ $signatory['approved']['name']}}"
+                                    value="{{ $data['signatory']['approved']['name']}}"
                                     style="
                                     margin-top: 0px;
                                     text-align: center;

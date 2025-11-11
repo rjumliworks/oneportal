@@ -14,12 +14,19 @@ class RequestLeave extends Model
         'count',
         'pay',
         'nopay',
+        'borrowed',
         'detail_id',
         'type_id',
         'request_id',
         'certified_by',
         'certified_id',
         'certified_date'
+    ];
+
+    protected $casts = [
+        'count' => 'float',
+        'pay' => 'float',
+        'nopay' => 'float',
     ];
 
     public function certified()
@@ -45,6 +52,21 @@ class RequestLeave extends Model
     public function request()
     {
         return $this->belongsTo('App\Models\Request', 'request_id', 'id');
+    }
+
+    public function getCountAttribute($value)
+    {
+        return fmod($value, 1) == 0 ? (int)$value : (float)$value;
+    }
+
+    public function getNopayAttribute($value)
+    {
+        return fmod($value, 1) == 0 ? (int)$value : (float)$value;
+    }
+
+    public function getPayAttribute($value)
+    {
+        return fmod($value, 1) == 0 ? (int)$value : (float)$value;
     }
 
     public function getUpdatedAtAttribute($value)

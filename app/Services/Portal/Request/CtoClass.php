@@ -3,6 +3,7 @@
 namespace App\Services\Portal\Request;
 
 use Carbon\Carbon;
+use App\Models\OrgChart;
 use App\Models\Request;
 use App\Models\RequestSignatory;
 use App\Models\RequestReport;
@@ -10,7 +11,6 @@ use App\Models\RequestReport;
 class CtoClass
 {
     public function store($request){
-        $division_id = \Auth::user()->organization->division_id;
         $data = Request::create([
             'code' => $this->generateRequestCode(),
             'type_id' => 165,
@@ -22,7 +22,7 @@ class CtoClass
 
             $signatory = $data->signatories()->create([
                 'code' => $this->generateCode($data->type_id),
-                'division_id' => $division_id,
+                'division_id' => 48,
                 'status_id' => 24,
                 'is_approval_only' => 0
             ]);
@@ -198,6 +198,7 @@ class CtoClass
             'divisions' => $divisions,
             'approved' => $approved,
             'recommended' => $recommended,
+            'signatory' => $this->signatory(),
             'created_by' => $data->user->profile->fullname,
             'created_at' => $data->created_at
         ];
@@ -213,5 +214,22 @@ class CtoClass
             ]);
         }
         return true;
+    }
+
+    private function signatory(){
+        $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',43)->where('is_active',1)->first(); 
+        $approved = [
+            'name' => ($a->is_oic) ? $a->oic->profile->fullname : $a->user->profile->fullname,    
+            'role' => ($a->is_oic) ? 'OIC - Regional Director' : 'Regional Director'
+        ];
+        $c = OrgChart::with('user.profile','oic.profile')->where('designation_id',48)->where('is_active',1)->first(); 
+        $cto = [
+            'name' => ($c->is_oic) ? $c->oic->profile->fullname : $c->user->profile->fullname,    
+            'role' => 'Human Resource Management Officer'
+        ];
+        return [
+            'approved' => $approved,
+            'cto' => $cto
+        ];
     }
 }

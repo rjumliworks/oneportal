@@ -27,8 +27,7 @@ class PrintClass
 
         $array = [
             'qrCodeImage' => $base64Image,
-            'data' => $data,
-            'signatory' => $this->signatory($data['divisions'])
+            'data' => $data
         ];
 
         switch($request->type){
@@ -59,7 +58,7 @@ class PrintClass
                 $pdf = \PDF::loadView('reports.leave', $array)->setPaper('a4', 'portrait');
             break;
             case 'Travel Order':
-
+                $pdf = \PDF::loadView('reports.travel', $array)->setPaper('a4', 'portrait');
             break;
             case 'Vehicle Reservation':
 
@@ -96,34 +95,34 @@ class PrintClass
              ->header('Content-Disposition', 'inline; filename="' . $data['code'] . '.pdf"');
     }
 
-    private function signatory($divisions){
-        $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',43)->where('is_active',1)->first(); 
-        $approved = [
-            'name' => ($a->is_oic) ? $a->oic->profile->fullname : $a->user->profile->fullname,    
-            'role' => ($a->is_oic) ? 'OIC - Regional Director' : 'Regional Director'
-        ];
-        foreach($divisions as $division){
-            $d = OrgChart::with('user.profile','oic.profile','assigned')
-            ->whereHas('assigned', function ($query) use ($division){
-                $query->where('name', $division);
-            })
-            ->where('designation_id',44)->where('is_active',1)->first(); 
-            if ($d) {
-                $assigned = $d->assigned->others ?? '';
-                $recommended[] = [
-                    'name' => ($d->is_oic) ? $d->oic->profile->fullname : $d->user->profile->fullname,
-                    'role' => ($d->is_oic) ? 'OIC - Assistant Regional Director (' . $assigned . ')' : 'Assistant Regional Director (' . $assigned . ')'
-                ];
-            } else {
-                $recommended[] = [
-                    'name' => '',
-                    'role' => ''
-                ];
-            }
-        }
-        return [
-            'approved' => $approved,
-            'recommended' => $recommended
-        ];
-    }
+    // private function signatory($divisions){
+    //     $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',43)->where('is_active',1)->first(); 
+    //     $approved = [
+    //         'name' => ($a->is_oic) ? $a->oic->profile->fullname : $a->user->profile->fullname,    
+    //         'role' => ($a->is_oic) ? 'OIC - Regional Director' : 'Regional Director'
+    //     ];
+    //     foreach($divisions as $division){
+    //         $d = OrgChart::with('user.profile','oic.profile','assigned')
+    //         ->whereHas('assigned', function ($query) use ($division){
+    //             $query->where('name', $division);
+    //         })
+    //         ->where('designation_id',44)->where('is_active',1)->first(); 
+    //         if ($d) {
+    //             $assigned = $d->assigned->others ?? '';
+    //             $recommended[] = [
+    //                 'name' => ($d->is_oic) ? $d->oic->profile->fullname : $d->user->profile->fullname,
+    //                 'role' => ($d->is_oic) ? 'OIC - Assistant Regional Director (' . $assigned . ')' : 'Assistant Regional Director (' . $assigned . ')'
+    //             ];
+    //         } else {
+    //             $recommended[] = [
+    //                 'name' => '',
+    //                 'role' => ''
+    //             ];
+    //         }
+    //     }
+    //     return [
+    //         'approved' => $approved,
+    //         'recommended' => $recommended
+    //     ];
+    // }
 }

@@ -68,7 +68,7 @@ class SaveClass
 
             if (!$signatory) {
                 $query = RequestSignatory::where('id', $signatoryId)->where('request_id', $data->id);
-                $query->where('division_id', 1);
+                $query->where('division_id', 48);
                 $signatory = $query->first();
 
                 if(!$signatory){
@@ -89,6 +89,7 @@ class SaveClass
                         'recommended_by'   => $this->image($request, $signatoryId),
                         'status_id'        => $request->status_id,
                     ]);
+                    $type = 'recommended';
                 break;
                 case 26:
                     $signatory->update([
@@ -102,6 +103,7 @@ class SaveClass
                     if ($data->type_id == 165) {
                         $this->overtime($data->id);
                     }
+                    $type = 'approved';
                 break;
                 case 30: 
                     $signatory->update([
@@ -118,6 +120,7 @@ class SaveClass
                     if ($data->type_id == 158) {
                         $this->leave($data->id);
                     }
+                    $type = 'disapproved';
                 break;
             }
 
@@ -125,6 +128,8 @@ class SaveClass
                 'user_id'   => auth()->id(),
                 'status_id' => $request->status_id,
             ]);
+
+            $this->updateSignatory($data->id,$type,$user->is_designated);
 
             return [
                 'data' => $data,

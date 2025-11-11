@@ -13,7 +13,7 @@ class IndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         $hashids = new Hashids('krad',10);
-        $key = $hashids->encode($this->id);
+        $key = $hashids->encode($this->request_id);
 
         switch($this->request->type->name){
             case 'Travel Order':

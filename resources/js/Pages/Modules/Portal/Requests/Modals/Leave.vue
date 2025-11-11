@@ -84,11 +84,12 @@
             </BRow>
 
         </form>
-        <template v-if="form.type && form.dates && form.dates.length > 0 && this.$page.props.user.data.type == 'Plantilla'">
+        <template v-if="form.type && form.dates && form.dates.length > 0">
             <form>
                 <BRow>
                     <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
-                    <BCol lg="12" v-if="!form.type.required_document">
+                    <!-- <BCol lg="12" v-if="!form.type.required_document && this.$page.props.user.data.type == 'Plantilla'"> -->
+                    <BCol lg="12" v-if="form.type.required_credits">
                          <div v-if="(totalBalance+totalBorrowed) < totalDays" class="alert alert-warning alert-dismissible alert-label-icon label-arrow" role="alert">
                             <i @click="openTypes" class="ri-add-circle-fill label-icon" style="cursor: pointer;"></i>Please borrow from another leave type to proceed.
                         </div>
@@ -123,7 +124,7 @@
                             </table>
                         </div>
                     </BCol>
-                    <BCol lg="12" v-else>
+                    <!-- <BCol lg="12" v-else>
                         <div class="table-responsive bg-white">
                             <table class="table align-middle table-bordered table-centered mb-0">
                                 
@@ -143,38 +144,40 @@
                                 </tbody>
                             </table>
                         </div>
-                    </BCol>
+                    </BCol> -->
                     <BCol lg="12">
-                    <div class="table-responsive bg-white">
-                        <table class="table align-middle table-bordered table-centered mb-0">
-                            
-                            <thead class="table-light thead-fixed">
-                                <tr class="fs-11">
-                                    <th style="width: 50%;" class="text-center">Days with pay</th>
-                                    <th style="width: 5ch;" class="text-center">Days with no pay</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-white fs-12">
-                                <tr>
-                                    <td class="text-center">{{ form.pay }}</td>
-                                    <td class="text-center">{{ form.nopay }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </BCol>
+                        <div class="table-responsive bg-white mt-3">
+                            <table class="table align-middle table-bordered table-centered mb-0">
+                                <thead class="table-light thead-fixed">
+                                    <tr class="fs-11">
+                                        <th style="width: 33%;" class="text-center">Total Days</th>
+                                        <th style="width: 33%;" class="text-center">Days With Pay</th>
+                                        <th style="width: 33%;" class="text-center">Days Wihtout Pay</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-white fs-12">
+                                    <tr>
+                                        <td class="text-center">{{ totalDays }}</td>
+                                        <td class="text-center">{{ form.pay }}</td>
+                                        <td class="text-center">{{ form.nopay }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </BCol>
                 </BRow>
             </form>
         </template>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
-            <template v-if="form.type?.required_document">
+            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+            <!-- <template v-if="form.type?.required_document">
                 <b-button v-if="form.type.max_days >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
-            </template>
-            <template v-else-if="this.$page.props.user.data.type == 'Plantilla'">
+            </template> -->
+            <!-- <template v-else-if="this.$page.props.user.data.type == 'Plantilla'">
                 <b-button v-if="(totalBalance+totalBorrowed) >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
-            </template>
-            <template v-else>
+            </template> -->
+            <template>
                 <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
             </template>
         </template>
@@ -214,6 +217,7 @@ export default {
                 date_type: null,
                 pay: 0,
                 nopay: 0,
+                borrowed: 0,
                 option: 'leave'
             }),
             date: null,
@@ -444,9 +448,28 @@ export default {
             }
         },
         totalDays(newVal) {
-            if (this.$page.props.user.data.type != 'Regular' && this.form.type?.name != 'CTO Leave') {
-                this.form.pay = 0;
-                this.form.nopay = newVal;
+            if (!this.form.type) return;
+            const mainBalance = Number(this.form.type.balance || 0);
+            const borrowedTotal = this.form.borrowers.reduce((sum, b) => sum + Number(b.borrow || 0), 0);
+            this.form.borrowed = borrowedTotal;
+            const totalAvailable = mainBalance + borrowedTotal;
+            const withPay = Math.min(newVal, totalAvailable);
+            const noPay = Math.max(newVal - totalAvailable, 0);
+            this.form.pay = withPay;
+            this.form.nopay = noPay;
+        },
+        'form.borrowers': {
+            deep: true,
+            handler() {
+                if (!this.form.type) return;
+
+                const newVal = this.totalDays; // re-use computed totalDays
+                const mainBalance = Number(this.form.type.balance || 0);
+                const borrowedTotal = this.form.borrowers.reduce((sum, b) => sum + Number(b.borrow || 0), 0);
+                const totalAvailable = mainBalance + borrowedTotal;
+
+                this.form.pay = Math.min(newVal, totalAvailable);
+                this.form.nopay = Math.max(newVal - totalAvailable, 0);
             }
         }
     },
