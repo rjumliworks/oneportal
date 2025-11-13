@@ -1,5 +1,6 @@
 <?php
 
+use Aws\Rekognition\RekognitionClient;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\WelcomeController::class, 'index'])->middleware('guest')->name('welcome');
@@ -7,7 +8,6 @@ Route::get('/verification', [App\Http\Controllers\WelcomeController::class, 'ver
 Route::post('/verify', [App\Http\Controllers\WelcomeController::class, 'verify']);
 Route::get('/attendance', [App\Http\Controllers\AttendanceController::class, 'index']);
 Route::post('/attendance', [App\Http\Controllers\AttendanceController::class, 'store']);
-Route::post('/rekognition/detect', [RekognitionController::class, 'detect']);
 
 Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
@@ -34,4 +34,72 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::post('/comment', [App\Http\Controllers\Portal\CommentController::class, 'store']);
 });
 
+Route::post('/recognize', [App\Http\Controllers\AttendanceController::class, 'recognize']);
+Route::get('/rekognition-test', function () {
+    $rekognition = new RekognitionClient([
+        'version' => 'latest',
+        'region'      => config('services.rekognition.region'),
+            'credentials' => [
+                'key'    => config('services.rekognition.key'),
+                'secret' => config('services.rekognition.secret'),
+            ],
+    ]);
+
+    
+
+    // List collections
+    try {
+     $result = $rekognition->listCollections();
+    
+    // Convert to array
+    $resultArray = $result->toArray();
+
+    return response()->json($resultArray);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
+Route::get('/aws-account-check', function () {
+    $sts = new \Aws\Sts\StsClient([
+        'version' => 'latest',
+        'region' => 'ap-southeast-1',
+        'credentials' => [
+            'key' => config('services.rekognition.key'),
+            'secret' => config('services.rekognition.secret'),
+        ],
+    ]);
+
+    $identity = $sts->getCallerIdentity();
+    dd($identity);
+});
+
+Route::get('/rekognition-create', function () {
+    try {
+        $rekognition = new RekognitionClient([
+            'version' => 'latest',
+            'region' => 'ap-southeast-1',
+            'credentials' => [
+                'key' => config('services.rekognition.key'),
+                'secret' => config('services.rekognition.secret'),
+            ],
+        ]);
+
+        $result = $rekognition->createCollection([
+            'CollectionId' => 'dost9-users',
+        ]);
+
+        return response()->json([
+            'message' => 'Collection created successfully!',
+            'result' => $result,
+        ]);
+    } catch (\Aws\Exception\AwsException $e) {
+        return response()->json([
+            'error' => $e->getAwsErrorMessage(),
+            'type'  => $e->getAwsErrorCode(),
+        ], 500);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
 require __DIR__.'/auth.php';

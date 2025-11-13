@@ -334,10 +334,9 @@
                                 <tr>
                                     <td style="text-align: center; padding-top: 20px;">
                                         <div style="position: relative; display: inline-block; width: 100%;">
-                                  
-                                            @if(!empty($data['recommended']['signature']))
+                                            @if(!empty($data['signatories'][0]['recommended']['signature']))
                                                 <img 
-                                                    src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
+                                                    src="{{ public_path('storage/profile-signatures/' . $data['signatories'][0]['recommended']['signature']) }}" 
                                                     alt="Signature" 
                                                     style="
                                                         position: absolute;
@@ -347,8 +346,7 @@
                                                         height: 60px;
                                                         width: auto;
                                                         opacity: 1; /* slightly transparent if you want */
-                                                    "
-                                                >
+                                                    ">
                                             @endif
                                             <input type="text"
                                                 {{-- value="{{ ($data['recommended']) ? $data['recommended']['name'] : $signatory['recommended'][0]['name']}}" --}}
@@ -396,9 +394,9 @@
                     <tr>
                         <td colspan="2" style="width: 55%; border-bottom: 1.3px solid black; border-left: 1.3px solid black; border-right: 1.3px solid black; text-align:center;">
                             <div style="position: relative; display: inline-block; width: 100%;">
-                                @if(!empty($data['approved']['signature']))
+                               @if(!empty($data['signatories'][0]['approved']['signature']))
                                     <img 
-                                        src="{{ public_path('storage/profile-signatures/' . $data['approved']['signature']) }}" 
+                                        src="{{ public_path('storage/profile-signatures/' . $data['signatories'][0]['approved']['signature']) }}" 
                                         alt="Signature" 
                                         style="
                                             position: absolute;

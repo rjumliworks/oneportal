@@ -28,6 +28,9 @@ class UserController extends Controller
             case 'authentication-logs':
                 return $this->user->authentication($request);
             break;
+            case 'files':
+                return $this->user->files($request);
+            break;
             case 'activity-logs':
                 return $this->user->activity($request);
             break;
@@ -51,6 +54,23 @@ class UserController extends Controller
                 break;
                 case 'role':
                     return $this->user->role($request);
+                break;
+            }
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function store(UserRequest $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            switch($request->option){
+                case 'file':
+                    return $this->user->file($request);
                 break;
             }
         });

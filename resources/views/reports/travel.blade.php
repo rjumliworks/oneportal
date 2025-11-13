@@ -248,9 +248,9 @@
                 <tbody>
                     <tr>
                         <td style="min-height: 50px; border-bottom-style: hidden;">
-                            {{-- @if($division != 'Office of the Regional Director') --}}
+                            @if($sign['division'] != 'Office of the Regional Director')
                             <span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>
-                            {{-- @endif --}}
+                            @endif
                         </td>
                         <td style="min-height: 50px; border-bottom-style: hidden;">
                             <span style="font-size:9px; color: #606060;">APPROVED:</span>
@@ -265,17 +265,19 @@
                             <div style="position: relative; height:50px;">
                                 {{-- Signature container --}}
                                 <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                    @if(!empty($data['recommended']['signature']))
-                                        <img 
-                                            src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
-                                            alt="Signature" 
-                                            style="height: 60px; width: auto;"
-                                        >
+                                    @if($sign['division'] != 'Office of the Regional Director')
+                                        @if(!empty($sign['recommended']['signature']))
+                                            <img 
+                                                src="{{ public_path('storage/profile-signatures/' . $sign['recommended']['signature']) }}" 
+                                                alt="Signature" 
+                                                style="height: 60px; width: auto;"
+                                            >
+                                        @endif
                                     @endif
                                 </div>
 
                                 {{-- Name and designation --}}
-                                @if($sign['division']['name'] != 'Office of the Regional Director')
+                                @if($sign['division'] != 'Office of the Regional Director')
                                     <div style="position: absolute; bottom: 0; width: 100%;">
                                         <span style="font-weight: bold; font-size: 11px; color: #072388; text-transform: uppercase;">
                                             {{  ($data['signatory']['recommended'][$loop->index]['name']) }}
@@ -293,9 +295,9 @@
                             <div style="position: relative; height: 50px;">
                                 {{-- Signature container --}}
                                 <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                    @if(!empty($data['approved']['signature']))
+                                     @if(!empty($sign['approved']['signature']))
                                         <img 
-                                            src="{{ public_path('storage/profile-signatures/' . $data['approved']['signature']) }}" 
+                                            src="{{ public_path('storage/profile-signatures/' . $sign['approved']['signature']) }}" 
                                             alt="Signature" 
                                             style="height: 60px; width: auto;"
                                         >

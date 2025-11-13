@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Hr\TimeResource;
 use Illuminate\Http\Request;
 use App\Traits\HandlesTransaction;
+use Aws\Rekognition\RekognitionClient;
+
 
 class AttendanceController extends Controller
 {
@@ -290,5 +292,53 @@ class AttendanceController extends Controller
         Storage::disk('public')->put($path, $imageData);
 
         return $path;
+    }
+
+    public function recognize(Request $request)
+    {
+        $request->validate(['image' => 'required|image']);
+
+        $file = $request->file('image');
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+        // Store temporarily in S3 (or local)
+        $s3Path = $file->storeAs('oneportal/temp', $filename, 's3');
+
+        $rekognition = new \Aws\Rekognition\RekognitionClient([
+            'version'     => 'latest',
+            'region'      => config('services.rekognition.region'),
+            'credentials' => [
+                'key'    => config('services.rekognition.key'),
+                'secret' => config('services.rekognition.secret'),
+            ],
+        ]);
+
+        try {
+            $matches = $rekognition->searchFacesByImage([
+                'CollectionId' => config('services.rekognition.collection_id'),
+                'Image' => [
+                    'S3Object' => [
+                        'Bucket' => config('services.rekognition.bucket'),
+                        'Name' => $s3Path,
+                    ],
+                ],
+                'FaceMatchThreshold' => 90,
+                'MaxFaces' => 1,
+            ]);
+
+            if (!empty($matches['FaceMatches'])) {
+                $externalId = $matches['FaceMatches'][0]['Face']['ExternalImageId'];
+                $user = User::find($externalId); // your user table
+                return response()->json([
+                    'user_id' => $user->id,
+                    'user_name' => $user->name,
+                    'similarity' => $matches['FaceMatches'][0]['Similarity'],
+                ]);
+            } else {
+                return response()->json(['message' => 'No match found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

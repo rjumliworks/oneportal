@@ -297,26 +297,7 @@ class LeaveClass
             // Join multiple ranges with comma
             $formattedDateRange = implode(', ', $ranges);
         }
-        if($data->request->signatories[0]->approved){
-            $approved = [
-                'name' => $data->signatories[0]->approved->user->profile->fullname,
-                'signature' => $data->signatories[0]->approved->user->profile->signature,
-                'role' => ($data->signatories[0]->approved->is_designated) ? 'Regional Director' : 'OIC - Regional Director'
-            ];
-        }else{
-            $approved = null;
-        }
-
-        if($data->request->signatories[0]->recommended){
-            $recommended = [
-                'name' => $data->signatories[0]->recommended->user->profile->fullname,
-                'signature' => $data->signatories[0]->recommended->user->profile->signature,
-                'role' => ($data->signatories[0]->recommended->is_designated) ? 'Assistant Regional Director' : 'OIC - Assistant Regional Director',
-                'division' => $data->signatories[0]->division->others
-            ];
-        }else{
-            $recommended = null;
-        }
+    
 
         $information = [
             'code' => $data->request->code,
@@ -330,10 +311,9 @@ class LeaveClass
             'purpose' => $data->request->detail->purpose,
             'date' => $formattedDateRange,
             'employee' => $employee,
-            'approved' => $approved,
-            'recommended' => $recommended,
             'divisions' => $divisions,
             'signatory' => $this->signatory($division),
+            'signatories' => $this->sign($data->request->signatories),
             'created_by' => $data->request->user->profile->fullname,
             'created_at' => Carbon::parse($data->request->created_at)->format('F d, Y')
         ];
@@ -378,5 +358,30 @@ class LeaveClass
             'recommended' => $recommended,
             'certified' => $hrmo
         ];
+    }
+
+    public function sign($signatories){
+        $signatoriesFormatted = [];
+        foreach ($signatories as $signatory) {
+            $signatoriesFormatted[] = [
+                'code' => $signatory->code,
+                'division' => $signatory->division->name ?? 'n/a',
+                'division_id' => $signatory->division->id ?? null,
+                'recommended' => [
+                    'name' => $signatory->recommended?->user->profile->fullname,
+                    'signature' => $signatory->recommended?->user->profile->signature,
+                    'date' =>  $signatory->recommended_date,
+                    'role' => null
+                ],
+                'approved' => [
+                    'name' => $signatory->approved?->user->profile->fullname,
+                    'signature' => $signatory->approved?->user->profile->signature,
+                    'date' => $signatory->approved_date,
+                    'role' => null
+                ]
+            ];
+        }
+
+        return $signatoriesFormatted;
     }
 }

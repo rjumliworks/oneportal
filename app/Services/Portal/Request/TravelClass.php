@@ -196,7 +196,7 @@ class TravelClass
             'dates',
             'detail',
             'tags.user:id','tags.user.profile:user_id,firstname,middlename,lastname,avatar','tags.user.organization.division','tags.user.organization.position','tags.user.organization.unit',
-            'signatories.division','signatories.approved.user.profile:user_id,firstname,middlename,lastname','signatories.recommended.user.profile:user_id,firstname,middlename,lastname',
+            'signatories.division','signatories.approved.user.profile:user_id,firstname,middlename,lastname,suffix_id,signature','signatories.recommended.user.profile:user_id,firstname,middlename,lastname,suffix_id,signature',
             'location.region:code,name,region','location.province:code,name','location.municipality:code,name','location.barangay:code,name'
         ])
         ->where('id',$id)
@@ -250,10 +250,8 @@ class TravelClass
             'destination' => $data->location->barangay->name.', '.$data->location->municipality->name,
             'venue' => $data->location->address,
             'employees' => $employees,
-            'signatories' => $data->signatories,
+            'signatories' => $this->sign($data->signatories),
             'signatory' => $this->signatory($data->signatories),
-            'approved' => null,
-            'recommended' => null,
             'created_at' => $data->created_at
         ];
 
@@ -299,5 +297,31 @@ class TravelClass
             'approved' => $approved,
             'recommended' => $recommended
         ];
+    }
+
+    public function sign($signatories){
+        $signatoriesFormatted = [];
+
+        foreach ($signatories as $signatory) {
+            $signatoriesFormatted[] = [
+                'code' => $signatory->code,
+                'division' => $signatory->division->name ?? 'n/a',
+                'division_id' => $signatory->division->id ?? null,
+                'recommended' => [
+                    'name' => $signatory->recommended?->user->profile->fullname,
+                    'signature' => $signatory->recommended?->user->profile->signature,
+                    'date' =>  $signatory->recommended_date,
+                    'role' => null
+                ],
+                'approved' => [
+                    'name' => $signatory->approved?->user->profile->fullname,
+                    'signature' => $signatory->approved?->user->profile->signature,
+                    'date' => $signatory->approved_date,
+                    'role' => null
+                ]
+            ];
+        }
+
+        return $signatoriesFormatted;
     }
 }

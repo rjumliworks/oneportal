@@ -29,7 +29,7 @@ class PrintClass
             'qrCodeImage' => $base64Image,
             'data' => $data
         ];
-
+// dd($array);
         switch($request->type){
             case 'Render Overtime Service':
                 $a = OrgChart::with('user.profile','oic.profile')->where('designation_id',48)->where('is_active',1)->first(); 

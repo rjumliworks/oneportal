@@ -39,6 +39,7 @@
                                 <div :key="index" class="tab-content">
                                    <Authentication :code="user.code" v-if="menu == 'Authentication'" />
                                    <Activity :code="user.code" v-if="menu == 'Activities'" />
+                                   <Reference :code="user.code" v-if="menu == 'References'"/>
                                 </div>
                             </transition>
                         </div>
@@ -52,14 +53,15 @@
 <script>
 import simplebar from "simplebar-vue";
 import Activity from  './Pages/Activity.vue';
+import Reference from './Pages/Reference.vue';
 import Authentication from './Pages/Authentication.vue';
 export default {
-    components: { simplebar, Activity, Authentication },
+    components: { simplebar, Activity, Reference, Authentication },
     props: ['user','dropdowns'],
     data(){
         return {
             menus: [
-                'Overview','Authentication','Activities'
+                'Overview','Authentication','Activities','References'
             ],
             index: null,
         }

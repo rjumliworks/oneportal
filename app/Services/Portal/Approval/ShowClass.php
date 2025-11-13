@@ -17,7 +17,7 @@ class ShowClass
     public function reservation($code){
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($code);
-
+        
         $data = RequestSignatory::with([
             'status',
             'statusable',
@@ -45,6 +45,7 @@ class ShowClass
         $id = $hashids->decode($code);
 
         $data = RequestSignatory::with([
+            'division',
             'status',
             'statusable',
             'request.travel.mode',
@@ -94,8 +95,9 @@ class ShowClass
     }
 
     public function leave($code){
+
         $hashids = new Hashids('krad',10);
-        $id = $hashids->decode($code);
+        $id = $hashids->decode($code)[0];
 
         $data = RequestSignatory::with([
             'status',
@@ -114,7 +116,7 @@ class ShowClass
             'request.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
             'request.signatories.division','request.signatories.approved','request.signatories.approved.signatory.designationable.designation','request.signatories.recommended','request.signatories.recommended.signatory.designationable.designation'
         ])
-        ->where('request_id',$id)
+        ->where('id',$id)
         ->first();
 
         return new LeaveResource($data);

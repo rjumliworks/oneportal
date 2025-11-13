@@ -31,8 +31,13 @@ return [
         ],
     ],
 
-    'face' => [
-        'api' => env('FACE_API', 'http://127.0.0.1:5001'),
+    'rekognition' => [
+        'key'    => env('AWS_ACCESS_KEY_ID'),
+        'bucket'    => env('AWS_BUCKET'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'ap-southeast-1'),
+        'collection_id' => env('REKOGNITION_COLLECTION_ID', 'dost_users'),
     ],
+
 
 ];

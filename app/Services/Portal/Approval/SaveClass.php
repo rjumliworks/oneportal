@@ -129,8 +129,8 @@ class SaveClass
                 'status_id' => $request->status_id,
             ]);
 
-            $this->updateSignatory($data->id,$type,$user->is_designated);
-
+            $this->updateSignatory($requestId,$signatoryId,$type,$user->is_designated);
+ 
             return [
                 'data' => $data,
                 'message' => 'Request Status Updated',
@@ -234,21 +234,43 @@ class SaveClass
         });
     }
 
-    private function updateSignatory($requestId,$type,$is_designated,$division = null)
+    private function updateSignatory($requestId,$id,$type,$is_designated)
     {
         $report = RequestReport::where('request_id', $requestId)->first();
         $information = json_decode($report->information, true);
-    
-        if($type == 'recommended'){
-            $role = ($is_designated) ? 'Assistant Regional Director ('.$division.')' : 'OIC - '.'Assistant Regional Director ('.$division.')';
-        }else{
-            $role = ($is_designated) ? '' : 'OIC - '.'Regional Director';
+
+        $signatory = RequestSignatory::
+        with('division','approved.user.profile:user_id,firstname,middlename,lastname,suffix_id,signature','recommended.user.profile:user_id,firstname,middlename,lastname,suffix_id,signature')
+        ->where('id',$id)->first();
+     
+        foreach ($information['signatories'] as $key => $sign) {
+            if ($sign['code'] === $signatory->code ) {
+                $signatoriesFormatted = [
+                    'code' => $signatory->code,
+                    'division' => $signatory->division->name ?? 'n/a',
+                    'division_id' => $signatory->division->id ?? null,
+                    'recommended' => [
+                        'name' => $signatory->recommended?->user?->profile?->fullname,
+                        'signature' => $signatory->recommended?->user?->profile?->signature,
+                        'date' => ($signatory->recommended_date) ? $signatory->recommended_date : null
+                    ],
+                    'approved' => [
+                        'name' => $signatory->approved?->user?->profile?->fullname,
+                        'signature' => $signatory->approved?->user?->profile?->signature,
+                        'date' => ($signatory->approved_date) ? $signatory->approved_date : null
+                    ]
+                ];
+                if($type == 'recommended'){
+                    $role = ($is_designated) ? 'Assistant Regional Director ('.$signatory->division->others.')' : 'OIC - '.'Assistant Regional Director ('.$signatory->division->others.')';
+                    $signatoriesFormatted['recommended']['role'] = $role;
+                }else{
+                    $role = ($is_designated) ? '' : 'OIC - '.'Regional Director';
+                    $signatoriesFormatted['approved']['role'] = $role;
+                }
+                $information['signatories'][$key] = $signatoriesFormatted;
+                break; 
+            }
         }
-        $information[$type] = [
-            'name' => \Auth::user()->profile->fullname,
-            'signature' => \Auth::user()->profile->signature,
-            'role' => $role
-        ];
         $report->information = json_encode($information);
         $report->save();
 

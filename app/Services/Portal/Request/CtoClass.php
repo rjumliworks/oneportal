@@ -198,6 +198,7 @@ class CtoClass
             'divisions' => $divisions,
             'approved' => $approved,
             'recommended' => $recommended,
+            'signatories' => $this->sign($data->signatories),
             'signatory' => $this->signatory(),
             'created_by' => $data->user->profile->fullname,
             'created_at' => $data->created_at
@@ -231,5 +232,31 @@ class CtoClass
             'approved' => $approved,
             'cto' => $cto
         ];
+    }
+
+    public function sign($signatories){
+        $signatoriesFormatted = [];
+
+        foreach ($signatories as $signatory) {
+            $signatoriesFormatted[] = [
+                'code' => $signatory->code,
+                'division' => $signatory->division->name ?? 'n/a',
+                'division_id' => $signatory->division->id ?? null,
+                'recommended' => [
+                    'name' => $signatory->recommended?->user->profile->fullname,
+                    'signature' => $signatory->recommended?->user->profile->signature,
+                    'date' =>  $signatory->recommended_date,
+                    'role' => null
+                ],
+                'approved' => [
+                    'name' => $signatory->approved?->user->profile->fullname,
+                    'signature' => $signatory->approved?->user->profile->signature,
+                    'date' => $signatory->approved_date,
+                    'role' => null
+                ]
+            ];
+        }
+
+        return $signatoriesFormatted;
     }
 }

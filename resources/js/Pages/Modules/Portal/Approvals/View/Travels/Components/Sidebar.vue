@@ -169,10 +169,10 @@ export default {
             return chunks;
         },
         matchingTags() {
-            return this.information.tags.filter(tag => tag.division === this.$page.props.user.data.signatory.designationable.assigned_id);
+            return this.information.tags.filter(tag => tag.division === this.information.division.id);
         },
         nonMatchingTags() {
-            return this.information.tags.filter(tag => tag.division !== this.$page.props.user.data.signatory.designationable.assigned_id);
+            return this.information.tags.filter(tag => tag.division !== this.information.division.id);
         } 
     },
     methods: {

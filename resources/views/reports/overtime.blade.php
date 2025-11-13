@@ -161,7 +161,10 @@
                     @foreach($data['employees'] as $employee)
                         <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
                             <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['name']}}</td>
-                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position_short']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">
+                                {{$employee['position_short']}}
+                                 {{ strlen($employee['position']) > 37 ? $employee['position_short'] : $employee['position'] }}
+                            </td>
                             <td style="text-align: center; padding: 5px; font-size: 10x;">
                                 {{-- {{$employee['division_short']}} --}}
                                 {{ strlen($employee['division']) > 37 ? $employee['division_short'] : $employee['division'] }}
@@ -221,9 +224,9 @@
                             <div style="position: relative; height:50px;">
                                 {{-- Signature container --}}
                                 <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                    @if(!empty($data['recommended']['signature']))
+                                    @if(!empty($data['signatories'][0]['recommended']['signature']))
                                         <img 
-                                            src="{{ public_path('storage/profile-signatures/' . $data['recommended']['signature']) }}" 
+                                            src="{{ public_path('storage/profile-signatures/' . $data['signatories'][0]['recommended']['signature']) }}" 
                                             alt="Signature" 
                                             style="height: 60px; width: auto;"
                                         >
@@ -247,9 +250,9 @@
                             <div style="position: relative; height: 50px;">
                                 {{-- Signature container --}}
                                 <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);">
-                                    @if(!empty($data['approved']['signature']))
+                                    @if(!empty($data['signatories'][0]['approved']['signature']))
                                         <img 
-                                            src="{{ public_path('storage/profile-signatures/' . $data['approved']['signature']) }}" 
+                                            src="{{ public_path('storage/profile-signatures/' . $data['signatories'][0]['approved']['signature']) }}" 
                                             alt="Signature" 
                                             style="height: 60px; width: auto;"
                                         >
