@@ -11,7 +11,7 @@ use App\Http\Resources\Hr\TimeResource;
 use Illuminate\Http\Request;
 use App\Traits\HandlesTransaction;
 use Aws\Rekognition\RekognitionClient;
-
+use Illuminate\Support\Facades\Http;
 
 class AttendanceController extends Controller
 {
@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         return inertia('Public/Dtr/Python');
     }
 
-    public function store(Request $request){
+    public function store($request){
         $result = $this->handleTransaction(function () use ($request) {
             $date = Carbon::now();
             $time = Carbon::now();
@@ -66,7 +66,7 @@ class AttendanceController extends Controller
                 'changes' => []
             ];
             $user = User::with('profile','organization.division')->where('username',$request->username)->first();
-        
+     
             if($user){
                 $dtr = Dtr::whereDate('date',$date)->where('user_id',$user->id)->first();
                 $status = null;
@@ -158,12 +158,7 @@ class AttendanceController extends Controller
             }
         });
 
-        return back()->with([
-            'data' => $result['data'],
-            'message' => $result['message'],
-            'info' => $result['info'],
-            'status' => $result['status'],
-        ]);
+        return $result;
     }
 
     private function messages($type,$status,$name){
@@ -294,51 +289,75 @@ class AttendanceController extends Controller
         return $path;
     }
 
+    // public function recognize(Request $request) //AWS REKOGNITION
+    // {
+    //     $request->validate(['image' => 'required|image']);
+
+    //     $file = $request->file('image');
+    //     $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+    //     // Store temporarily in S3 (or local)
+    //     $s3Path = $file->storeAs('oneportal/temp', $filename, 's3');
+
+    //     $rekognition = new \Aws\Rekognition\RekognitionClient([
+    //         'version'     => 'latest',
+    //         'region'      => config('services.rekognition.region'),
+    //         'credentials' => [
+    //             'key'    => config('services.rekognition.key'),
+    //             'secret' => config('services.rekognition.secret'),
+    //         ],
+    //     ]);
+
+    //     try {
+    //         $matches = $rekognition->searchFacesByImage([
+    //             'CollectionId' => config('services.rekognition.collection_id'),
+    //             'Image' => [
+    //                 'S3Object' => [
+    //                     'Bucket' => config('services.rekognition.bucket'),
+    //                     'Name' => $s3Path,
+    //                 ],
+    //             ],
+    //             'FaceMatchThreshold' => 90,
+    //             'MaxFaces' => 1,
+    //         ]);
+
+    //         if (!empty($matches['FaceMatches'])) {
+    //             $externalId = $matches['FaceMatches'][0]['Face']['ExternalImageId'];
+    //             $user = User::find($externalId); // your user table
+    //             return response()->json([
+    //                 'user_id' => $user->id,
+    //                 'user_name' => $user->name,
+    //                 'similarity' => $matches['FaceMatches'][0]['Similarity'],
+    //             ]);
+    //         } else {
+    //             return response()->json(['message' => 'No match found'], 404);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
     public function recognize(Request $request)
     {
-        $request->validate(['image' => 'required|image']);
-
-        $file = $request->file('image');
-        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-        // Store temporarily in S3 (or local)
-        $s3Path = $file->storeAs('oneportal/temp', $filename, 's3');
-
-        $rekognition = new \Aws\Rekognition\RekognitionClient([
-            'version'     => 'latest',
-            'region'      => config('services.rekognition.region'),
-            'credentials' => [
-                'key'    => config('services.rekognition.key'),
-                'secret' => config('services.rekognition.secret'),
-            ],
+        $image = $request->file('image');
+        $type = $request->type;
+        $response = Http::attach(
+            'image',
+            fopen($image->getPathname(), 'r'),
+            $image->getClientOriginalName()
+        )->post('http://3.0.197.61:5001/recognize'); // Flask HTTP endpoint
+        // dd($response->json());
+        $data = $response->json();
+        // dd($data['faces'][0]['name']);
+$request['type'] = $type;
+$request['username'] = $data['faces'][0]['name'];
+       $result = $this->store($request);
+       return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
         ]);
-
-        try {
-            $matches = $rekognition->searchFacesByImage([
-                'CollectionId' => config('services.rekognition.collection_id'),
-                'Image' => [
-                    'S3Object' => [
-                        'Bucket' => config('services.rekognition.bucket'),
-                        'Name' => $s3Path,
-                    ],
-                ],
-                'FaceMatchThreshold' => 90,
-                'MaxFaces' => 1,
-            ]);
-
-            if (!empty($matches['FaceMatches'])) {
-                $externalId = $matches['FaceMatches'][0]['Face']['ExternalImageId'];
-                $user = User::find($externalId); // your user table
-                return response()->json([
-                    'user_id' => $user->id,
-                    'user_name' => $user->name,
-                    'similarity' => $matches['FaceMatches'][0]['Similarity'],
-                ]);
-            } else {
-                return response()->json(['message' => 'No match found'], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // return $response->json();
     }
 }
