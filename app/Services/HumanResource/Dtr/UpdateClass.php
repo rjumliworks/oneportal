@@ -100,7 +100,8 @@ class UpdateClass
             break;
         }
         $timeData = json_decode($data->$column, true);
-        $timeData['time'] = $request->to_time;
+        $toTime = Carbon::parse($request->to_time)->format('H:i:s');
+        $timeData['time'] = $toTime;
 
         if($request->type == 'Time In (am)' || $request->type == 'Time In (pm)'){
             $tardiness = $timeData['minutes'];

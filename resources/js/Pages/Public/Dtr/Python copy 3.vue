@@ -1,6 +1,8 @@
 <template>
+
     <Head title="Human Resource - Date Time Record" />
-    <body>
+
+   <body>
     <div class="account-pages my-4 pt-sm-1">
         <div class="container" style="max-width: 1400px;">
                 
@@ -28,12 +30,35 @@
                                     </video>
                                 </div>
                                 <div class="col-md-7">
+                                    <!-- <div class="d-flex w-100 justify-content-center align-items-center" v-if="error">
+                                        <div class="p-4 w-100 border rounded bg-danger-subtle text-center">
+                                            <p class="mb-0 text-danger fw-semibold">Hi, {{ error.name }}</p>
+                                            <p class="mb-0 text-danger fs-11" v-if="error.type == 'not'">You are <b>not registered</b> as a participant. Please go to the <b>Sessions tab</b> to complete your registration</p>
+                                            <p class="mb-0 text-danger fs-11" v-else>Your attendance has already been recorded</p>
+                                        </div>
+                                    </div> -->
+                                    <!-- <div v-if="employee" class="pt-1 ps-1 profile-wrapper">
+                                        <div class="row g-4">
+                                            <div class="col-auto">
+                                                <div>
+                                                    <img :src="employee.avatar" alt="user-img" class="avatar-lg">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="">
+                                                    <p class="text-primary text-opacity-75 mb-1">Welcome, and thank you..</p>
+                                                    <h3 class="text-primary mb-1">{{ employee.name }}</h3>
+                                                    <p class="text-primary text-muted fs-14">Attendance confirmed on <b class="text-primary">{{employee.time}}</b></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
                                     <div v-if="status == 'New'" class="d-flex w-100 justify-content-center align-items-center mb-2">
                                         <div class="p-4 w-100 border rounded bg-success-subtle">
                                             <div class="d-flex mb-n3">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div style="height:2.5rem;width:2.5rem;">
-                                                        <img :src="employee.avatar" alt="user-img" class="avatar-sm rounded-circle mt-n2">
+                                                        <img :src="employee.avatar" alt="user-img" class="avatar-sm mt-n2">
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
@@ -41,11 +66,23 @@
                                                     <p class="text-muted text-truncate-two-lines fs-12">{{employee.division}}</p>
                                                 </div>
                                                 <div class="flex-0">
-                                                    <!-- <div class="mb-4">{{ employee.time }}</div> -->
-                                                    <h5 class="mb-0 fs-14"><span class="text-body">{{employee.time}}</span></h5>
-                                                    <p class="text-muted text-truncate-two-lines float-end fs-12">{{employee.type}}</p>
+                                                    <div class="mb-4">{{ employee.time }}</div>
                                                 </div>
                                             </div>
+                                            <!-- <div class="row g-1">
+                                                <div class="col-auto">
+                                                    <div>
+                                                        <img src="/images/logo-sm.png" alt="user-img" class="avatar-md">
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="">
+                                                        <p class="text-primary text-opacity-75 mb-0">Welcome, and thank you..</p>
+                                                        <h3 class="text-primary mb-0">Ra-ouf Jumli</h3>
+                                                        <p class="text-primary text-muted fs-14">Attendance confirmed on <b class="text-primary">November 17, 2025</b></p>
+                                                    </div>
+                                                </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                     <div v-else-if="status == 'Duplicate'" class="d-flex w-100 justify-content-center align-items-center mb-2">
@@ -60,18 +97,26 @@
                                             <p class="mb-0 text-muted fs-11">No matching employee was found based on the QR code or face data. Please verify your credentials or seek assistance.</p>
                                         </div>
                                     </div>
-                                     <div v-else-if="status == 'Disabled'" class="d-flex w-100 justify-content-center align-items-center mb-2">
-                                        <div class="p-4 w-100 border rounded bg-danger-subtle text-center">
-                                            <p class="mb-0 text-dark fs-12">Time-in (AM) is only available before 12:00 PM.</p>
-                                            <p class="mb-0 text-muted fs-11">Please use Time-in (PM) instead.</p>
-                                        </div>
-                                    </div>
                                     <div v-else class="d-flex w-100 justify-content-center align-items-center mb-2">
                                         <div class="p-4 w-100 border rounded bg-dark-subtle text-center">
                                             <p class="mb-0 text-dark fs-12"> Please face the camera to begin.</p>
                                             <p class="mb-0 text-muted fs-11"> Make sure your face is clearly visible for accurate recognition.</p>
                                         </div>
                                     </div>
+                                    <!-- <h1 style="font-size: 120px; margin-top: -10px; margin-bottom: 5px;" class="text-primary text-center dfw-medium" v-text="currentTime"></h1> -->
+                                    <!-- <div class="p-2">
+                                        <div class="text-center">
+                                        <div class=" mt-n2 mb-n2">
+                                                <b-tabs v-model="activebutton" pills nav-class="bg-light rounded nav-justified fw-bold" content-class="mt-3">
+                                                    <b-tab title="AM IN" v-on:click="captureFrame()"></b-tab>
+                                                    <b-tab title="AM OUT" v-on:click="swap('Time Out (am)','1')"></b-tab>
+                                                    <b-tab title="PM IN" v-on:click="swap('Time In (pm)','2')"></b-tab>
+                                                    <b-tab title="PM OUT" v-on:click="swap('Time Out (pm)','3')"></b-tab>
+                                                </b-tabs>
+                                            </div>
+                                            <input @keyup.enter="find" v-model="form.username" autofocus type="text" class="form-control form-control-lg text-center" style="font-size: 30px; text-transform: uppercase; background-color: #eff2f7;">
+                                        </div>
+                                    </div> -->
                                     <div class="card bg-light-subtle shadow-none border">
                                         <div class="card-header bg-light-subtle">
                                             <div class="d-flex mb-n3">
@@ -96,28 +141,22 @@
                                                 <table class="table table-nowrap align-middle mb-0">
                                                     <thead class="bg-light thead-fixed">
                                                         <tr class="fs-11">
-                                                            <th style="width: 7%;" class="text-center">#</th>
+                                                            <th class="text-center">#</th>
                                                             <th>Name</th>
-                                                            <th style="width: 18%;" class="text-center">Type</th>
-                                                            <th style="width: 15%;" class="text-center">Time</th>
+                                                            <th class="text-center">Time</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-if="lists.length">
                                                         <tr v-for="(list,index) in lists"
                                                             :key="index"
-                                                            :class="['fs-12',{ 'bg-success-subtle': list.subtype === 'in',
-                                                                'bg-danger-subtle': list.subtype === 'out'
-                                                            }]">
-                                                            <td class="text-center">
-                                                                <img :src="list.avatar" alt="user-img" class="avatar-xs rounded-circle">
-                                                            </td>
+                                                            :class="['fs-12',{ 'fw-semibold bg-success-subtle': index === 0 }]">
+                                                            <td class="text-center">{{ index + 1 }}</td>
                                                             <td>{{ list.name }}</td>
-                                                            <td class="text-center">{{ list.type }}</td>
                                                             <td class="text-center">{{ list.time }}</td>
                                                         </tr>
                                                     </tbody>
                                                     <tbody v-else>
-                                                        <tr><td colspan="4" class="text-center text-muted">No employees found.</td></tr>
+                                                        <tr><td colspan="3" class="text-center text-muted">No employees found.</td></tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -133,6 +172,32 @@
                                             <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time Out (pm)')">PM OUT</button>
                                         </div>
                                     </div>
+                                    <!-- <template v-if="user">
+                                        <div v-if="status == 'New' || status == 'Success'" class="alert alert-success alert-dismissible alert-additional mt-3 mb-n1" role="alert">
+                                            <div class="alert-body">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <img :src="form.image" alt="" class="rounded-circle" style="height: 2.5rem; width: 2.5rem;">
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="alert-heading mb-0">{{user.name}}</h5>
+                                                        <p class="mb-0"> {{user.division}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="alert-content">
+                                                <p class="mb-0" v-html="user.message.message"></p>
+                                            </div>
+                                        </div>
+                                        <div v-else :class="'alert alert-'+user.message.status+' alert-dismissible bg-'+user.message.status+' mt-3 text-white alert-label-icon mb-xl-0'" role="alert">
+                                            <i class="ri-error-warning-line label-icon"></i><span v-html="user.message.message"></span>
+                                        </div>
+                                    </template>
+                                    <template v-if="status == 'Error'">
+                                        <div class="alert alert-danger alert-dismissible bg-danger mt-3 text-white alert-label-icon mb-xl-0" role="alert">
+                                            <i class="ri-error-warning-line label-icon"></i><strong>Danger</strong> - Your record could not be found. Please contact the administrator for assistance.
+                                        </div>
+                                    </template> -->
                                 </div>
                             </div>
                         </div>
@@ -177,6 +242,10 @@ import { isError } from 'lodash';
                 lists: []
             };
         },
+
+        // created(){
+        //     this.filter();
+        // },
         mounted() {
             setInterval(() => {
                 this.currentSecond = new Date().toLocaleTimeString([],{seconds: '2-digit'});
@@ -191,22 +260,7 @@ import { isError } from 'lodash';
         beforeUnmount() {
             clearInterval(this.keepAliveInterval);
         },
-        created(){
-            this.fetch();
-        },
         methods: {
-            fetch(page_url){
-                page_url = page_url || '/attendance';
-                return axios.get(page_url,{
-                    params : {
-                        option: 'lists',
-                        count: 20,
-                    }
-                })
-                .then(response => {
-                    this.lists = response.data;      
-                });
-            },
             find(){
                 this.user = ''; 
                 this.inactive = false;
@@ -231,50 +285,75 @@ import { isError } from 'lodash';
                     },
                 });
             },
+
+            filter(){
+                // this.currentTime2 = new Date().toLocaleTimeString("en-US",options1);
+                // if(this.currentTime2 < twelve){
+                //     this.activebutton = 0; this.form.type = 'Time In (am)';
+                // }else if(this.currentTime2 >= twelve && this.currentTime2 < twelvethirty){
+                //     this.activebutton = 1; this.form.type = 'Time Out (am)';
+                // }else if(this.currentTime2 >= twelvethirty && this.currentTime2 < one){
+                //     this.activebutton = 2; this.form.type = 'Time In (pm)';
+                // }else{
+                //     this.activebutton = 3; this.form.type = 'Time Out (pm)';
+                // }
+            },
+
+            // swap(type,action){
+            //     this.form.type = type;
+            //     this.activebutton = action;
+            //     setInterval(() => {
+            //         this.filter();
+            //         this.user = '';
+            //     }, 20000); 
+            // },
             async initCamera() {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 this.$refs.video.srcObject = stream;
             },  
             async captureFrame(type) {
-    const video = this.$refs.video;
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const video = this.$refs.video;
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
-    const formData = new FormData();
-    formData.append('image', blob); 
-    formData.append('type', type); 
-    formData.append('option', 'dtr'); 
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+                const formData = new FormData();
+                formData.append('image', blob); 
+                formData.append('type',type); 
+                formData.append('option','dtr'); 
 
-    try {
-        const res = await axios.post('/recognize', formData); 
-        const data = res.data;
-
-        // Force Vue to detect change even if repeated status
-        this.status = null;
-        await this.$nextTick();
-        this.status = data.info;
-
-        // Update employee only if not an error
-        if (data.info === 'New' || data.info === 'Success' || data.info === 'Duplicate') {
-            this.employee = data.data ? { ...data.data } : null;
-            this.user = this.employee;
-
-            if (data.info === 'New' || data.info === 'Success') {
-                // Add to the list only for new/success entries
-                this.lists = [this.employee, ...this.lists];
-            }
-        }
-
-    } catch (e) {
-        console.error(e);
-        this.status = 'Error';
-    }
-}
-
+                try {
+                    const res = await axios.post('/recognize', formData); 
+                    const data = res.data;
+                    this.user = res.data.data;
+                    this.status = res.data.info;
+                    if(this.status == 'New'){
+                        this.lists.unshift(this.user);
+                    }
+                    this.employee = this.user;
+                    // if (data.faces.length > 0) {
+                    // // At least one person detected → green box around first face
+                    // const face = data.faces[0];
+                    // this.drawBox(face.box, "Person Detected", "green");
+                    // } else {
+                    // // No person → red box covering the whole video
+                    // const videoCanvas = this.$refs.canvas;
+                    // const ctx = videoCanvas.getContext('2d');
+                    // ctx.clearRect(0, 0, videoCanvas.width, videoCanvas.height);
+                    // ctx.strokeStyle = "red";
+                    // ctx.lineWidth = 4;
+                    // ctx.strokeRect(0, 0, videoCanvas.width, videoCanvas.height);
+                    // ctx.font = "20px Arial";
+                    // ctx.fillStyle = "red";
+                    // ctx.fillText("No Person Detected", 10, 30);
+                    // }
+                } catch (e) {
+                    console.error(e);
+                }
+            },
         }
     }
 </script>
