@@ -28,28 +28,28 @@ class AttendanceController extends Controller
                return inertia('Public/Dtr/Python');
         }   
     }
-private function formatTimeFromJson($json)
-{
-    if (!$json) return null;
 
-    // Decode JSON safely
-    $decoded = json_decode(trim($json, '"'), true);
+    private function formatTimeFromJson($json) {
+        if (!$json) return null;
 
-    // Extract raw 24-hour time with seconds
-    $raw = $decoded['time'] ?? null;
+        // Decode JSON safely
+        $decoded = json_decode(trim($json, '"'), true);
 
-    // fallback if stored as plain HH:MM:SS
-    if (!$raw && is_string($json)) {
-        $raw = $json;
+        // Extract raw 24-hour time with seconds
+        $raw = $decoded['time'] ?? null;
+
+        // fallback if stored as plain HH:MM:SS
+        if (!$raw && is_string($json)) {
+            $raw = $json;
+        }
+
+        if (!$raw) return null;
+
+        // Convert 24-hour HH:MM:SS to 12-hour format
+        $time = DateTime::createFromFormat('H:i:s', $raw);
+
+        return $time ? $time->format('g:i A') : null;
     }
-
-    if (!$raw) return null;
-
-    // Convert 24-hour HH:MM:SS to 12-hour format
-    $time = DateTime::createFromFormat('H:i:s', $raw);
-
-    return $time ? $time->format('g:i A') : null;
-}
 
 
      public function lists($request)

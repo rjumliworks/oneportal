@@ -4,7 +4,7 @@
     <div class="account-pages my-4 pt-sm-1">
         <div class="container" style="max-width: 1400px;">
                 
-           
+            
             <div class="row justify-content-center">
                 <div class="col-md-12">
                     <div class="text-center mb-4">
@@ -18,14 +18,26 @@
                             <h4 class="text-white text-uppercase fw-semibold  fs-20 mt-1 mb-n2">{{ currentDate}}</h4>
                         </div>
                         <div class="card-body">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-5"> 
-                                    <video
-                                        ref="video"
-                                        autoplay
-                                        playsinline
-                                        class="qr-child img-thumbnail">
-                                    </video>
+                                    <div class="video-wrapper">
+                                        <video
+                                            ref="video"
+                                            autoplay
+                                            playsinline
+                                            class="qr-child img-thumbnail">
+                                        </video>
+                                        <div v-if="isScanning" class="scanner-overlay"></div>
+                                        <!-- <div class="face-recognition-overlay">
+                                            <div class="face-outline"></div>
+                                            <div class="face-outline-inner"></div>
+                                            <div class="scan-line-vertical"></div>
+                                            <div class="corner top-left"></div>
+                                            <div class="corner top-right"></div>
+                                            <div class="corner bottom-left"></div>
+                                            <div class="corner bottom-right"></div>
+                                        </div> -->
+                                    </div>
                                 </div>
                                 <div class="col-md-7">
                                     <div v-if="status == 'New'" class="d-flex w-100 justify-content-center align-items-center mb-2">
@@ -41,9 +53,8 @@
                                                     <p class="text-muted text-truncate-two-lines fs-12">{{employee.division}}</p>
                                                 </div>
                                                 <div class="flex-0">
-                                                    <!-- <div class="mb-4">{{ employee.time }}</div> -->
-                                                    <h5 class="mb-0 fs-14"><span class="text-body">{{employee.time}}</span></h5>
-                                                    <p class="text-muted text-truncate-two-lines float-end fs-12">{{employee.type}}</p>
+                                                     <h5 class="mb-0 fs-14"><span class="text-body">{{employee.time}}</span></h5>
+                                                     <p class="text-muted text-truncate-two-lines float-end fs-12">{{employee.type}}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -61,11 +72,11 @@
                                         </div>
                                     </div>
                                      <div v-else-if="status == 'Disabled'" class="d-flex w-100 justify-content-center align-items-center mb-2">
-                                        <div class="p-4 w-100 border rounded bg-danger-subtle text-center">
-                                            <p class="mb-0 text-dark fs-12">Time-in (AM) is only available before 12:00 PM.</p>
-                                            <p class="mb-0 text-muted fs-11">Please use Time-in (PM) instead.</p>
-                                        </div>
-                                    </div>
+                                         <div class="p-4 w-100 border rounded bg-danger-subtle text-center">
+                                             <p class="mb-0 text-dark fs-12">Time-in (AM) is only available before 12:00 PM.</p>
+                                             <p class="mb-0 text-muted fs-11">Please use Time-in (PM) instead.</p>
+                                         </div>
+                                     </div>
                                     <div v-else class="d-flex w-100 justify-content-center align-items-center mb-2">
                                         <div class="p-4 w-100 border rounded bg-dark-subtle text-center">
                                             <p class="mb-0 text-dark fs-12"> Please face the camera to begin.</p>
@@ -106,8 +117,8 @@
                                                         <tr v-for="(list,index) in lists"
                                                             :key="index"
                                                             :class="['fs-12',{ 'bg-success-subtle': list.subtype === 'in',
-                                                                'bg-danger-subtle': list.subtype === 'out'
-                                                            }]">
+                                                                 'bg-danger-subtle': list.subtype === 'out'
+                                                                }]">
                                                             <td class="text-center">
                                                                 <img :src="list.avatar" alt="user-img" class="avatar-xs rounded-circle">
                                                             </td>
@@ -124,24 +135,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time In (am)')">AM IN</button>
-                                            <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time Out (am)')">AM OUT</button>
-                                            <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time In (pm)')">PM IN</button>
-                                            <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time Out (pm)')">PM OUT</button>
-                                        </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time In (am)')">AM IN</button>
+                                        <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time Out (am)')">AM OUT</button>
+                                        <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time In (pm)')">PM IN</button>
+                                        <button class="btn btn-lg fw-semibold btn-light flex-fill" @click="captureFrame('Time Out (pm)')">PM OUT</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="mt-5 text-center">
-                        <p>2025 © DOST-IX ICT TEAM</p>
-                    </div> -->
                 </div>
-            </div>
+                </div>
         </div>
     </div>
 </body>
@@ -174,7 +182,8 @@ import { isError } from 'lodash';
                     type:'Time In (am)',
                     option: 'dtr'
                 }),
-                lists: []
+                lists: [],
+                isScanning: false,
             };
         },
         mounted() {
@@ -204,7 +213,7 @@ import { isError } from 'lodash';
                     }
                 })
                 .then(response => {
-                    this.lists = response.data;      
+                    this.lists = response.data;       
                 });
             },
             find(){
@@ -234,7 +243,7 @@ import { isError } from 'lodash';
             async initCamera() {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 this.$refs.video.srcObject = stream;
-            },  
+            },   
             async captureFrame(type) {
     const video = this.$refs.video;
     const canvas = document.createElement('canvas');
@@ -250,6 +259,7 @@ import { isError } from 'lodash';
     formData.append('option', 'dtr'); 
 
     try {
+          this.isScanning = true;
         const res = await axios.post('/recognize', formData); 
         const data = res.data;
 
@@ -272,13 +282,23 @@ import { isError } from 'lodash';
     } catch (e) {
         console.error(e);
         this.status = 'Error';
+        setTimeout(() => {
+            this.isScanning = false;
+        }, 2000);
     }
+    finally {
+        setTimeout(() => {
+            this.isScanning = false;
+        }, 2000);
+    }
+
 }
 
         }
     }
 </script>
 <style>
+/* --- Existing Styles --- */
     .nav-pills .nav-link {
         font-weight: bold;
         font-size: 16px;
@@ -291,4 +311,144 @@ import { isError } from 'lodash';
         height: 100%;
         object-fit: cover;   
     }
+
+
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+    overflow: hidden;
+    z-index: 20; /* Keep scanner line above everything */
+}
+
+.scanner-overlay::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(0,255,0,0) 0%, rgba(0,255,0,0.3) 50%, rgba(0,255,0,0) 100%);
+    animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+    0% { top: -50%; }
+    100% { top: 100%; }
+}
+
+/* --- New Animated Face Recognition Overlay Styles --- */
+.face-recognition-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Ignore mouse events */
+    z-index: 10; /* Below the main scanner overlay */
+}
+
+/* 1. Face Outline (Elliptical Shape) */
+.face-outline {
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    width: 70%;        /* bigger */
+    height: 80%;       /* bigger */
+    max-width: 340px;
+    max-height: 460px;
+    transform: translate(-50%, -50%);
+    
+    border: 5px solid rgba(52, 236, 246, 0.6);
+    border-radius: 50%;
+    box-shadow: none;
+}
+.face-outline-inner {
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    
+    width: 55%;              /* smaller than outer */
+    height: 65%;             /* smaller than outer */
+    max-width: 260px;
+    max-height: 340px;
+    
+    transform: translate(-50%, -50%);
+    border: 3px dashed rgba(52, 236, 246, 0.5); /* dashed = broken line */
+    border-radius: 50%;
+    box-shadow: none;
+}
+
+/* 2. Animated Vertical Scan Line (Inside the face frame) */
+.scan-line-vertical {
+    position: absolute;
+    top: 15%; /* Start above the ellipse */
+    bottom: 15%; /* End below the ellipse */
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(
+        to bottom, 
+        rgba(0, 255, 0, 0) 0%, 
+        rgb(25, 215, 209) 50%, 
+        rgba(0, 255, 0, 0) 100%
+    );
+    transform: translateX(-50%);
+    opacity: 0.6;
+    animation: vertical-scan 3s ease-in-out infinite alternate; 
+    filter: drop-shadow(0 0 5px rgb(59, 205, 235));
+}
+
+@keyframes vertical-scan {
+    0% { height: 1%; top: 49%; }
+    50% { height: 70%; top: 15%; } 
+    100% { height: 1%; top: 84%; }
+}
+
+
+/* 3. Corner Brackets (for a tech look) */
+.corner {
+    position: absolute;
+    width: 25px; 
+    height: 25px; 
+    border-color: #49d4ed;
+    border-style: solid;
+    z-index: 30; /* Ensure corners are above the ellipse and scanner */
+    opacity: 0.8;
+    animation: corner-blink 2s linear infinite alternate;
+}
+
+/* Define border for each corner */
+.top-left {
+    top: 20px;
+    left: 20px;
+    border-width: 5px 0 0 5px;
+}
+
+.top-right {
+    top: 20px;
+    right: 20px;
+    border-width: 5px 5px 0 0;
+}
+
+.bottom-left {
+    bottom: 40px;
+    left: 20px;
+    border-width: 0 0 5px 5px;
+}
+
+.bottom-right {
+    bottom: 40px;
+    right: 20px;
+    border-width: 0 5px 5px 0;
+}
+
+/* Corner Blink Animation */
+@keyframes corner-blink {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; filter: drop-shadow(0 0 5px rgb(71, 209, 243)); }
+}
+
 </style>
