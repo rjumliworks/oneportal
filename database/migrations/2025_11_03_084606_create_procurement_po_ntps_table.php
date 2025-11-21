@@ -19,8 +19,10 @@ return new class extends Migration
             $table->foreign('po_id')->references('id')->on('procurement_noa_pos');
             $table->integer('created_by_id')->unsigned()->index();
             $table->foreign('created_by_id')->references('id')->on('users');
-            $table->integer('approved_by_id')->unsigned()->index();
+            $table->integer('approved_by_id')->unsigned()->index()->nullable();
             $table->foreign('approved_by_id')->references('id')->on('users');
+            $table->integer('updated_by_id')->unsigned()->index()->nullable();
+            $table->foreign('updated_by_id')->references('id')->on('users');
             $table->tinyInteger('status_id')->unsigned()->index();
             $table->foreign('status_id')->references('id')->on('list_statuses');
             $table->timestamps();

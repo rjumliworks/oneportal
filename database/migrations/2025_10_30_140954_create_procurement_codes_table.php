@@ -19,9 +19,9 @@ return new class extends Migration
             $table->integer('year'); 
             $table->decimal('allocated_budget', 10, 2);
             $table->tinyInteger('app_type_id')->unsigned()->index();
-            $table->foreign('app_type_id')->references('id')->on('list_dropdowns');
+            $table->foreign('app_type_id')->references('id')->on('list_dropdowns')->onDelete('cascade');;
             $table->tinyInteger('mode_of_procurement_id')->unsigned()->index();
-            $table->foreign('mode_of_procurement_id')->references('id')->on('list_dropdowns');
+            $table->foreign('mode_of_procurement_id')->references('id')->on('list_dropdowns')->onDelete('cascade');;
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

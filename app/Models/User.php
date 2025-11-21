@@ -130,6 +130,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne('App\Models\OrgSignatory', 'oic_id');
     }
 
+    public function org_chart()
+    {
+        return $this->hasOne('App\Models\OrgChart', 'user_id')->with('designation');
+    }
+
     public function setEmailAttribute($value)
     {
         $email = strtolower($value);

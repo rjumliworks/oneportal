@@ -20,6 +20,9 @@ use App\Models\LocationMunicipality;
 use App\Models\LocationBarangay;
 use App\Models\ListVehicle;
 use App\Models\ProcurementCode;
+use App\Models\UnitType;
+use App\Models\supplier;
+use App\Models\OrgChart;
 
 
 class DropdownClass
@@ -400,4 +403,177 @@ class DropdownClass
         });
         return $data;
     }
+
+    public function unit_types(){
+        $data = UnitType::get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name_short' => $item->name_short,
+                'name_long' => $item->name_long
+            ];
+        });
+        return $data;
+    }
+
+    public function unit_type($code){
+        $data = UnitType::where('id',$code)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name_short' => $item->name_short,
+                'name_long' => $item->name_long
+            ];
+        });
+        return $data;
+    }
+
+    public function requesters()
+    {
+        $data = User::with(['roles', 'profile.suffix'])
+            ->get()
+            ->map(function ($item) {
+                $profile = $item->profile;
+                $firstname = $profile->firstname ?? '';
+                $middlename = $profile->middlename ? strtoupper(substr($profile->middlename, 0, 1)) . '.' : '';
+                $lastname = $profile->lastname ?? '';
+                $suffix = $profile->suffix?->name ? ' ' . $profile->suffix->name : '';
+
+                return [
+                    'value' => $item->id,
+                    'name' => trim("{$firstname} {$middlename} {$lastname}{$suffix}"),
+                ];
+            });
+
+        return $data;
+    }
+
+
+    public function approvers()
+    {
+        $data = User::with(['roles', 'profile.suffix'])
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'value' => $user->id,
+                    'name' => $user->profile->full_name,
+                ];
+            });
+
+        return $data;
+    }
+
+    
+    public function supply_officers(){
+        $data = User::with('roles' , 'profile')
+        ->whereHas('roles', function ($query) {
+            $query->where('role_id', 5);
+        })->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->profile->full_name ,
+            ];
+        });
+
+        return $data;
+    }
+
+    public function suppliers(){
+        $data = Supplier::with('conformes')->where('is_active',1)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name,
+            ];
+        });
+        return $data;
+    }
+
+    public function bac_members(){
+        $data = User::with('roles' , 'profile')
+        ->whereHas('roles', function ($query) {
+            $query->where('role_id', 8);
+        })->get()->map(function ($user) {
+            return [
+                'value' => $user->id,
+                'name' => $user->profile->full_name ,
+            ];
+        });
+
+        return $data;
+    }
+
+    
+    public function bac_vice_chairperson(){
+        $data = User::with('roles', 'profile')
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 10);
+            })
+            ->first();
+
+        if (!$data) {
+            return null; // or return an empty array []
+        }
+
+        return [
+            'value' => $data->id,
+            'name' => strtoupper(
+                $data->profile->full_name,
+            ),
+        ];
+    }
+
+    public function bac_chairperson()
+    {
+        $data = User::with('roles', 'profile')
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 9);
+            })
+            ->first();
+
+        if (!$data) {
+            return null; // or return an empty array []
+        }
+
+        return [
+            'value' => $data->id,
+           'name' => strtoupper(
+                $data->profile->full_name,
+            ),
+        ];
+    }
+
+    public function regional_director()
+    {
+        $data = OrgChart::with('user.profile')->where('designation_id', 45)->first();
+        if (!$data) {
+            return null; // or return an empty array []
+        }
+    
+        return [
+            'value' => $data->id,
+            'name' => strtoupper(
+                $data->user->profile->full_name,
+            ),
+            'designation' => $data->designation
+        ];
+    }
+
+    public function chief_accountant()
+    {
+        $data = OrgChart::with('user.profile')->where('designation_id', 45)->first();
+        if (!$data) {
+            return null; // or return an empty array []
+        }
+    
+        return [
+            'value' => $data->id,
+            'name' => strtoupper(
+                $data->user->profile->full_name,
+            ),
+            'designation' => $data->designation
+        ];
+    }
+    
+
+
+
+
 }

@@ -20,10 +20,12 @@ return new class extends Migration
             $table->string('purpose'); 
             $table->tinyInteger('division_id')->unsigned()->index();
             $table->foreign('division_id')->references('id')->on('list_dropdowns');
-            $table->tinyInteger('section_id')->unsigned()->index();
-            $table->foreign('section_id')->references('id')->on('list_dropdowns');
+            $table->tinyInteger('unit_id')->unsigned()->index();
+            $table->foreign('unit_id')->references('id')->on('list_dropdowns');
             $table->tinyInteger('fund_cluster_id')->unsigned()->index();
             $table->foreign('fund_cluster_id')->references('id')->on('list_dropdowns');
+            $table->integer('created_by_id')->unsigned()->index();
+            $table->foreign('created_by_id')->references('id')->on('users');
             $table->integer('requested_by_id')->unsigned()->index();
             $table->foreign('requested_by_id')->references('id')->on('users');
             $table->integer('approved_by_id')->unsigned()->index();
@@ -32,9 +34,9 @@ return new class extends Migration
             $table->integer('reawarded_count')->default(0);
             $table->integer('rebidded_count')->default(0);
             $table->tinyInteger('status_id')->unsigned()->index();
-            $table->foreign('status_id')->references('id')->on('list_statuses');
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');;
             $table->tinyInteger('sub_status_id')->unsigned()->index()->nullable();
-            $table->foreign('sub_status_id')->references('id')->on('list_statuses');
+            $table->foreign('sub_status_id')->references('id')->on('list_statuses')->onDelete('cascade');;
             $table->timestamps();
         });
     }

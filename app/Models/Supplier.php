@@ -6,5 +6,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'code',
+        'is_active',
+        'user_id',
+    ];
+
+    public function created_by()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id')->with('profile');
+    }
+
+    public function address()
+    {
+        return $this->hasOne('App\Models\SupplierAddress', 'supplier_id');
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany('App\Models\SupplierAttachment', 'supplier_id');
+    }
+
+    public function conformes()
+    {
+        return $this->hasMany('App\Models\SupplierConforme', 'supplier_id');
+    }
+
 }

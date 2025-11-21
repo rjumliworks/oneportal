@@ -8,7 +8,7 @@ class ProcurementCodeGroup extends Model
 {
     protected $fillable = [
         'procurement_code_id',
-        'end_user_id'
+        'procurement_id'
     ];
 
     public function procurement_code()
@@ -16,9 +16,9 @@ class ProcurementCodeGroup extends Model
         return $this->belongsTo('App\Models\ProcurementCode', 'procurement_code_id' );
     }
 
-    public function end_user()
+    public function procurement()
     {
-        return $this->belongsTo('App\Models\ListDropdown', 'end_user_id' );
+        return $this->belongsTo('App\Models\Procurement', 'procurement_id' );
     }
 
 }

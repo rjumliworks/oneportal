@@ -12,8 +12,9 @@ class Procurement extends Model
         'purpose',
         'title',
         'division_id',
-        'section_id',
+        'unit_id',
         'fund_cluster_id',
+        'created_by_id',
         'requested_by_id',
         'approved_by_id',
         'reawarded_count',
@@ -22,6 +23,11 @@ class Procurement extends Model
         'status_id',
         'sub_status_id'
     ];
+
+    public function division()
+    {
+        return $this->belongsTo('App\Models\ListDropdown', 'division_id', 'id');
+    }
 
     public function unit()
     {
@@ -33,6 +39,12 @@ class Procurement extends Model
         return $this->belongsTo('App\Models\ListDropdown', 'fund_cluster_id', 'id');
     }
 
+    public function created_by()
+    {
+        return $this->belongsTo('App\Models\User', 'created_by_id')->with('profile');
+    }
+
+
     public function requested_by()
     {
         return $this->belongsTo('App\Models\User', 'requested_by_id')->with('profile');
@@ -40,14 +52,24 @@ class Procurement extends Model
 
     public function approved_by()
     {
-        return $this->belongsTo('App\Models\User', 'approved_by_id');
+        return $this->belongsTo('App\Models\User', 'approved_by_id')->with('profile');
     }
 
-    public function procurement_codes()
+    public function codes()
     {
-        return $this->hasMany('App\Models\ProcurementCode', 'procurement_id');
+        return $this->hasMany('App\Models\ProcurementCodeGroup', 'procurement_id',)->with('procurement_code', 'procurement_code.mode_of_procurement' , 'procurement_code.app_type') ;
     }
-    
+
+    public function items()
+    {
+        return $this->hasMany('App\Models\ProcurementItem', 'procurement_id');
+    }
+
+    public function quotations()
+    {
+        return $this->hasMany('App\Models\ProcurementQuotation', 'procurement_id');
+    }
+
     public function status()
     {
         return $this->belongsTo('App\Models\ListStatus', 'status_id');
@@ -75,4 +97,13 @@ class Procurement extends Model
     
         return 'PR-' . $year . '-' . $month . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
+
+  
+
+
+
+    
+
+ 
+
 }

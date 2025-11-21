@@ -6,5 +6,57 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcurementQuotation extends Model
 {
-    //
+     protected $fillable = [
+        'code',
+        'submission_not_later_than',
+        'supplier_id',
+        'supply_officer_id',
+        'procurement_id',
+        'status_id',
+        'delivery_term',
+        'place_of_delivery_id',
+    ];
+
+    public function procurement()
+    {
+        return $this->belongsTo('App\Models\Procurement', 'procurement_id');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier', 'supplier_id');
+    }
+
+    public function supply_officer()
+    {
+        return $this->belongsTo('App\Models\User', 'supply_officer_id')->with('profile');
+    }
+
+
+    public function items()
+    {
+        return $this->hasMany('App\Models\ProcurementQuotationItem', 'quotation_id')->with('item' , 'status');
+    }
+    
+    public function status()
+    {
+        return $this->belongsTo('App\Models\ListStatus', 'status_id' , 'id');
+    }
+
+
+    public static function generateRFQNumber()
+    {
+        $now = now(); // Laravel's Carbon instance
+        $year = $now->format('y'); // Last two digits of year
+        $month = $now->format('m');
+
+        // Count existing RFQs for this year and month
+        $count = self::whereYear('created_at', $now->year)
+                    ->whereMonth('created_at', $month)
+                    ->count() + 1;
+
+        $sequence = str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        return "RFQ-{$year}-{$month}-{$sequence}";
+    }
 }

@@ -3,7 +3,7 @@
 namespace App\Services\FAIMS\Procurement;
 
 use App\Models\ProcurementCode;
-use App\Models\ProcurementCodeGroup;
+use App\Models\ProcurementCodeUnit;
 use App\Http\Resources\FAIMS\Procurement\ProcurementCodeResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +38,7 @@ class ProcurementCodeClass
 
         // Loop through end_user_ids and save them
         foreach ($request->end_user_ids as $end_user_id) {
-            ProcurementCodeGroup::create([
+            ProcurementCodeUnit::create([
                 'procurement_code_id' => $procurement_code->id,
                 'end_user_id' => $end_user_id,
             ]);

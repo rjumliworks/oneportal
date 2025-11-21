@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('list_suppliers', function (Blueprint $table) {
+        Schema::create('procurement_unit_types', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->Increments('id');
-            $table->string('name')->nullable(); 
-            $table->string('personnel')->nullable();
-            $table->string('address')->nullable(); 
-            $table->string('contact')->nullable(); 
-            $table->string('code'); 
+            $table->tinyIncrements('id');
+            $table->string('name_short'); 
+            $table->string('name_long'); 
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('list_suppliers');
+        Schema::dropIfExists('procurement_unit_types');
     }
 };

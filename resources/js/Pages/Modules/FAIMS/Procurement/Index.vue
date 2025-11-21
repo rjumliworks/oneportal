@@ -1,280 +1,440 @@
 <template>
-    <Head title="Requests"/>
-    <PageHeader title="Procurement Requests" pageTitle="List" />
-    <BRow>
-        <div class="col-md-12">
-            <div class="card bg-light-subtle shadow-none border">
-                <div class="card-header bg-light-subtle">
-                    <div class="d-flex mb-n3">
-                        <div class="flex-shrink-0 me-3">
-                            <div style="height:2.5rem;width:2.5rem;">
-                                <span class="avatar-title bg-primary-subtle rounded p-2 mt-n1">
-                                    <i class="ri-pin-distance-fill text-primary fs-24"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h5 class="mb-0 fs-14"><span class="text-body">My Requests</span></h5>
-                            <p class="text-muted text-truncate-two-lines fs-12">A detailed list of submitted procurement requests including code, purpose, title, and status.</p>
-                        </div>
-                        <div class="flex-shrink-0" style="width: 45%;">
-                            
-                        </div>
-                    </div>
-                </div>
-                <div class="car-body bg-white border-bottom shadow-none">
-                    <b-row class="mb-2 ms-1 me-1" style="margin-top: 12px;">
-                        <b-col lg>
-                            <div class="input-group mb-1">
-                                <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                                <input type="text" v-model="filter.keyword" placeholder="Search Procurement Request" class="form-control" style="width: 40%;">
-                                <template v-if="filter.type == 156">
-                                    <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
-                                    <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
-                                </template>
-                                <template v-else-if="filter.type == 157">
-                                    
-                                </template>
-                                <template v-else-if="filter.type == 158">
-                                    <!-- <Multiselect class="white" style="width: 15%;" :options="leave_dropdowns.leaves" v-model="filter.keave" label="name" :searchable="true" placeholder="Select Travel Mode" /> -->
-                                    <Multiselect class="white" style="width: 15%;" v-model="filter.leave" :groups="true" :options="leave_dropdowns.leaves" label="name" placeholder="Select type"/>
-                                </template>
-                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.statuses" v-model="filter.status" label="name" :searchable="true" placeholder="Select Status" />
-                                <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
-                                    <i class="bx bx-refresh search-icon"></i>
-                                </span>
-                                <b-button type="button" variant="primary" @click="goCreatePage">
-                                    <i class="ri-add-circle-fill align-bottom me-1"></i> Create
-                                </b-button>
-                            </div>
-                        </b-col>
-                    </b-row>
-                </div>
-                <div class="card bg-white border-bottom shadow-none" no-body>
-                    <div class="d-flex">
-                        <div class="flex-grow-1">
-                            <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
-                                <li class="nav-item">
-                                    <BLink @click="viewStatus(null,null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                    <i class="ri-apps-2-line me-1 align-bottom"></i> My Request
-                                    </BLink>
-                                </li>
-                                <li class="nav-item" v-for="(list,index) in dropdowns.requests" v-bind:key="index">
-                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? list.others+' active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
-                                        <i :class="icons[index]" class="me-1 align-bottom"></i>
-                                        {{ list.name }} <BBadge v-if="counts[index] > 0" :class="list.color" class="align-middle ms-1">{{counts[index]}}</BBadge>
-                                    </BLink>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <div class="d-flex flex-wrap gap-2 mt-3">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body bg-white rounded-bottom">
-                    <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 465px); overflow: auto;">
-                        <table class="table align-middle table-striped table-centered mb-0">
-                            <thead class="table-light thead-fixed">
-                                <tr class="fs-11">
-                                    <th style="width: 3%;" class="text-center">#</th>
-                                    <th>Code</th>
-                                    <th v-if="!filter.type" style="width: 14%;" class="text-center">Type</th>
-                                    <th v-else-if="filter.type == 156" style="width: 14%;" class="text-center">Mode</th>
-                                    <th v-else-if="filter.type == 158" style="width: 14%;" class="text-center">Type</th>
-                                    <th v-else-if="filter.type == 157" style="width: 14%;" class="text-center">Vehicle</th>
-                                    <th v-else-if="filter.type == 165" style="width: 14%;" class="text-center">Type</th>
-                                    <th style="width: 10%;" class="text-center">Personnel</th>
-                                    <th style="width: 15%;" class="text-center">Dates</th>
-                                    <th style="width: 15%;" class="text-center">Date Filed</th>
-                                    <th style="width: 10%;" class="text-center">Status</th>
-                                    <th style="width: 5%;"></th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-white fs-12">
-                                <tr v-for="(list,index) in lists" v-bind:key="index" >
-                                    <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
-                                    <td>
-                                        <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.code }}</h5>
-                                        <!-- <p class="fs-12 text-muted mb-0">{{list.code}}</p> -->
-                                    </td>
-                                    <td class="text-center" v-if="!filter.type">
-                                        <!-- <span :class="'badge bg-primary'">{{list.type}}</span> -->
-                                        <span v-if="list.type == 'Vehicle Reservation'" class="badge bg-secondary-subtle text-secondary">{{list.type}}</span>
-                                        <span v-else-if="list.type == 'Travel Order'" class="badge bg-success-subtle text-success">{{list.type}}</span>
-                                        <span v-else-if="list.type == 'Leave Form'" class="badge bg-danger-subtle text-danger">{{list.type}}</span>
-                                        <span v-else-if="list.type == 'Render Overtime Service'" class="badge bg-info-subtle text-info">{{list.type}}</span>
-                                    </td>
-                                    <td class="text-center" v-else>
-                                        <span :class="'badge bg-primary'">{{list.subtype}}</span>
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <div class="avatar-group  d-inline-flex justify-content-center">
-                                            <div class="avatar-group-item material-shadow"  v-for="(list, index) of list.tags" :key="index">
-                                                <!-- <a href="javascript: void(0);" class="d-inline-block" 
-                                                v-b-tooltip.hover="{title: list.name,placement: 'top',customClass: 'my-tooltip-class'}"> -->
-                                                    <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
-                                                <!-- </a> -->
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">{{formatDateRange(list.start, list.end)}}</td>
-                                    <td class="text-center">{{ list.created_at }}</td>
-                                    <td class="text-center">
-                                        <span :class="'badge '+list.status.bg">{{list.status.name}}</span>
-                                    </td>
-                                    <td class="text-end">
-                                        <!-- <Link :href="`/requests/${list.link}`">
-                                            <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
-                                                <i class="ri-eye-fill align-bottom"></i>
-                                            </b-button>
-                                        </Link> -->
-                                        <div class="d-flex gap-3 justify-content-center"> 
-                                            <div class="dropdown" @click.stop> 
-                                                <button class="btn btn-light btn-icon btn-sm dropdown material-shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="ri-more-fill align-bottom"></i> </button>
-                                                <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
-                                                    <li>
-                                                        <Link :href="`/requests/${list.link}`" class="dropdown-item d-flex align-items-center" role="button">
-                                                            <i class="ri-eye-fill me-2"></i> View
-                                                        </Link>
-                                                    </li>
-                                                    <li>
-                                                        <a @click="openDetail(list,index)" class="dropdown-item d-flex align-items-center" role="button">
-                                                            <i class="ri-information-fill me-2"></i> Details
-                                                        </a>
-                                                    </li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li>
-                                                        <a @click="openPrint(list.key,index,list.type)" class="dropdown-item d-flex align-items-center" role="button">
-                                                            <i class="ri-printer-fill me-2"></i> Print
-                                                        </a>
-                                                        <a @click="openPrint(list.key,index)" class="dropdown-item d-flex align-items-center" role="button">
-                                                            <i class="ri-download-cloud-fill me-2"></i> Download
-                                                        </a>
-                                                    </li>
-                                                </ul>
-
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <Pagination class="ms-2 me-2 mt-n1" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
-                </div>
+  <Head title="Requests" />
+  <PageHeader title="Procurement Requests" pageTitle="List" />
+  <BRow>
+    <div class="col-md-12">
+      <div class="card bg-light-subtle shadow-none border">
+        <div class="card-header bg-light-subtle">
+          <div class="d-flex mb-n3">
+            <div class="flex-shrink-0 me-3">
+              <div style="height: 2.5rem; width: 2.5rem">
+                <span class="avatar-title bg-primary-subtle rounded p-2 mt-n1">
+                  <i class="ri-pin-distance-fill text-primary fs-24"></i>
+                </span>
+              </div>
             </div>
+            <div class="flex-grow-1">
+              <h5 class="mb-0 fs-14"><span class="text-body">Procurement Requests</span></h5>
+              <p class="text-muted text-truncate-two-lines fs-12">
+                A detailed list of submitted procurement requests including code, purpose,
+                title, and status.
+              </p>
+            </div>
+            <div class="flex-shrink-0" style="width: 45%"></div>
+          </div>
         </div>
-    </BRow>
+        <div class="car-body bg-white border-bottom shadow-none">
+          <b-row class="mb-2 ms-1 me-1" style="margin-top: 12px">
+            <b-col lg>
+              <div class="input-group mb-1">
+                <span class="input-group-text">
+                  <i class="ri-search-line search-icon"></i
+                ></span>
+                <input
+                  type="text"
+                  v-model="filter.keyword"
+                  placeholder="Search Procurement Request"
+                  class="form-control"
+                  style="width: 40%"
+                />
+                <Multiselect
+                  class="white"
+                  style="width: 15%"
+                  :options="dropdowns.statuses"
+                  v-model="filter.status"
+                  label="name"
+                  :searchable="true"
+                  placeholder="Select Status"
+                />
+                <span
+                  @click="refresh()"
+                  class="input-group-text"
+                  v-b-tooltip.hover
+                  title="Refresh"
+                  style="cursor: pointer"
+                >
+                  <i class="bx bx-refresh search-icon"></i>
+                </span>
+                <b-button type="button" variant="primary" @click="goCreatePage">
+                  <i class="ri-add-circle-fill align-bottom me-1"></i> Create
+                </b-button>
+              </div>
+            </b-col>
+          </b-row>
+        </div>
+
+        <div class="card bg-white border-bottom shadow-none" no-body>
+          <div class="d-flex">
+            <div class="flex-grow-1">
+              <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
+                <li class="nav-item">
+                  <BLink
+                    @click="viewStatus(null, null)"
+                    class="nav-link py-3 active"
+                    data-bs-toggle="tab"
+                    role="tab"
+                    aria-selected="true"
+                  >
+                    <i class="ri-apps-2-line me-1 align-bottom"></i> All
+                  </BLink>
+                </li>
+                <li
+                  class="nav-item"
+                  v-for="(list, index) in dropdowns.requests"
+                  v-bind:key="index"
+                >
+                  <BLink
+                    @click="viewStatus(index, list.value)"
+                    class="nav-link py-3"
+                    :class="this.index == index ? list.others + ' active' : ''"
+                    data-bs-toggle="tab"
+                    role="tab"
+                    aria-selected="false"
+                  >
+                    <i :class="icons[index]" class="me-1 align-bottom"></i>
+                    {{ list.name }}
+                    <BBadge
+                      v-if="counts[index] > 0"
+                      :class="list.color"
+                      class="align-middle ms-1"
+                      >{{ counts[index] }}</BBadge
+                    >
+                  </BLink>
+                </li>
+              </ul>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="d-flex flex-wrap gap-2 mt-3"></div>
+            </div>
+          </div>
+        </div>
+
+     
+        <div class="card-body bg-white rounded-bottom">
+          <div
+            class="table-responsive table-card"
+            style="margin-top: -39px; height: calc(100vh - 465px); overflow: auto"
+          >
+            <table class="table align-middle table-striped table-centered mb-0">
+              <thead class="table-light thead-fixed">
+                <tr class="fs-11">
+                  <th style="width: 3%" class="text-center">#</th>
+                  <th style="width: 10%">Code</th>
+                  <th style="width: 14%" class="text-center">Purpose</th>
+                  <th style="width: 14%" class="text-center">Division</th>
+                  <th style="width: 10%" class="text-center">Requested By</th>
+                  <th style="width: 10%" class="text-center">PAP Code</th>
+                  <th style="width: 10%" class="text-center">Quotation Count</th>
+                  <th style="width: 15%" class="text-center">Date Created</th>
+                  <th style="width: 10%" class="text-center">Status</th>
+                  <th style="width: 5%"></th>
+                </tr>
+              </thead>
+
+              <tbody class="table-white fs-12">
+                <tr v-for="(list, index) in lists" v-bind:key="index">
+                  <td class="text-center">
+                    {{ (meta.current_page - 1) * meta.per_page + index + 1 }}.
+                  </td>
+                  <td>
+                    <h5 class="fs-13 mb-0 fw-semibold text-primary">{{ list.code }}</h5>
+                  </td>
+                  <td class="text-center">{{ list.purpose }}</td>
+                  <td class="text-center">
+                    {{ list.division?.name }}
+                  </td>
+                  <td class="text-center">{{ list.requested_by }}</td>
+                  <td class="text-center">
+                    <div v-for="(list, index) in list.codes" v-bind:key="index">
+                      <b-badge>
+                        {{ list?.procurement_code?.title }}
+                      </b-badge>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <span v-if="list.quotation_count > 0">
+                      {{ list.quotation_count }}
+                    </span>
+                    <span else></span>
+                  </td>
+                  <td class="text-center">{{ list.date }}</td>
+                  <td class="text-center">
+                    <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-flex gap-3 justify-content-center">
+                      <div class="dropdown" @click.stop>
+                        <button
+                          class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="ri-more-fill align-bottom"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
+                          <li
+                              @click="goViewPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-eye-fill align-bottom me-1"></i>View
+                          </li>
+                          
+                          <li
+                              v-if="list.status.name == 'Pending'"
+                              @click="goEditPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-edit-2-fill align-bottom me-1"></i>Edit
+                          </li>
+                          <li
+                              v-if="
+                                list.status.name == 'Pending' &&
+                                roles.includes('Procurement Officer')
+                              "
+                              @click="goReviewPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-double-fill align-bottom me-1"></i>Review
+                          </li>
+                          <li
+                              v-if="
+                                list.status.name == 'Reviewed' &&
+                                roles.includes('Procurement Officer')
+                              "
+                              @click="goApprovePage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-fill align-bottom me-1"></i>Approve
+                          </li>
+
+                          <li
+                              v-if="
+                                (list.status.name == 'Approved' &&
+                                  roles.includes('Procurement Officer')) ||
+                                roles.includes('Procurement Staff')
+                              "
+                              @click="goQuotationPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-fill align-bottom me-1"></i>Quotation
+                          </li>
+
+                          <li
+                              v-if="
+                                list.status.name == 'For Bids' || 
+                                (list.status.name == 'For Approval of BAC Resolution' || 
+                                list.status.name == 'For BAC Resolution' &&
+                                roles.includes('Procurement Officer')) ||
+                                roles.includes('Procurement Staff')
+                              "
+                              @click="goBidsPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-fill align-bottom me-1"></i>Abstract of
+                              Bids
+                          </li>
+
+                           <li
+                              v-if="
+                                 list.status.name == 'For Approval of BAC Resolution' || list.status.name == 'For NOA' || list.status.name == 'Served to Supplier' ||
+                                list.status.name == 'NOA Conformed /For PO' || list.status.name == 'Partially Delivered/For Inspection' || list.status.name == 'Re-award' ||
+                                list.status.name == 'NOA Served to Supplier' &&
+                                roles.includes('Procurement Officer') ||
+                                roles.includes('Procurement Staff')
+                              "
+                              @click="goBACResolutionPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-fill align-bottom me-1"></i>BAC Resolution
+                          </li>
+
+
+
+                          <li><hr class="dropdown-divider" /></li>
+                          <li>
+                            <a
+                              @click="openPrint(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-printer-fill me-2"></i> Print
+                            </a>
+                          
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <Pagination
+            class="ms-2 me-2 mt-n1"
+            v-if="meta"
+            @fetch="fetch"
+            :lists="lists.length"
+            :links="links"
+            :pagination="meta"
+          />
+        </div>
+      </div>
+    </div>
+  </BRow>
 </template>
 <script>
-import _ from 'lodash';
+import _ from "lodash";
+
 import Multiselect from "@vueform/multiselect";
-import PageHeader from '@/Shared/Components/PageHeader.vue';
+import PageHeader from "@/Shared/Components/PageHeader.vue";
 import Pagination from "@/Shared/Components/Pagination.vue";
-import { router } from '@inertiajs/vue3';
+import { router } from "@inertiajs/vue3";
 export default {
-    components: { PageHeader, Pagination, Multiselect },
-    props: ['dropdowns'],
-    data(){
-        return {
-            currentUrl: window.location.origin,
-            lists: [],
-            meta: {},
-            links: {},
-            filter: {
-                keyword: null,
-                type: null,
-                status: null,
-                mode: null,
-                expense: null,
-                leave: null
-            },
-            icons: ['ri-flight-takeoff-fill','ri-car-fill','ri-calendar-2-fill','ri-alarm-fill'],
-            index: null,
-            units: []
-        }
+  components: { PageHeader, Pagination, Multiselect },
+  props: ["dropdowns", "roles" ],
+  data() {
+    return {
+      currentUrl: window.location.origin,
+      lists: [],
+      meta: {},
+      links: {},
+      filter: {
+        keyword: null,
+        type: null,
+        status: null,
+        mode: null,
+        expense: null,
+        leave: null,
+      },
+      icons: [
+        "ri-flight-takeoff-fill",
+        "ri-car-fill",
+        "ri-calendar-2-fill",
+        "ri-alarm-fill",
+      ],
+      index: null,
+      units: [],
+    };
+  },
+  watch: {
+    "filter.keyword"(newVal) {
+      this.checkSearchStr(newVal);
     },
-    watch: {
-        "filter.keyword"(newVal){
-            this.checkSearchStr(newVal)
-        },
-        "filter.status"(newVal){
-            this.fetch();
-        },
-        "filter.mode"(newVal){
-            this.fetch();
-        },
-        "filter.expense"(newVal){
-            this.fetch();
-        }
+    "filter.status"(newVal) {
+      this.fetch();
     },
-    created(){
-        this.fetch();
+    "filter.mode"(newVal) {
+      this.fetch();
     },
-    methods: {
-        checkSearchStr: _.debounce(function(string) {
-            this.fetch();
-        }, 300),
-        fetch(page_url){
-            page_url = page_url || '/faims/procurements';
-            axios.get(page_url,{
-                params : {
-                    keyword: this.filter.keyword,
-                    type: this.filter.type,
-                    status: this.filter.status,
-                    expense: this.filter.expense,
-                    mode: this.filter.mode,
-                    count: 10, 
-                    option: 'lists'
-                }
-            })
-            .then(response => {
-                if(response){
-                    this.lists = response.data.data;
-                    this.meta = response.data.meta;
-                    this.links = response.data.links;          
-                }
-            })
-            .catch(err => console.log(err));
-        },
-        formatDateRange(start, end) {
-            const startDate = new Date(start);
-            const endDate = new Date(end);
+    "filter.expense"(newVal) {
+      this.fetch();
+    },
+  },
+  created() {
+    this.fetch();
+  },
+  methods: {
+    checkSearchStr: _.debounce(function (string) {
+      this.fetch();
+    }, 300),
+    fetch(page_url) {
+      page_url = page_url || "/faims/procurements";
+      axios
+        .get(page_url, {
+          params: {
+            keyword: this.filter.keyword,
+            type: this.filter.type,
+            status: this.filter.status,
+            mode: this.filter.mode,
+            count: 10,
+            option: "lists",
+          },
+        })
+        .then((response) => {
+          if (response) {
+            this.lists = response.data.data;
+            this.meta = response.data.meta;
+            this.links = response.data.links;
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+    formatDateRange(start, end) {
+      const startDate = new Date(start);
+      const endDate = new Date(end);
 
-            const options = { month: 'long', day: 'numeric' };
-            const startStr = startDate.toLocaleDateString('en-US', options);
-            const endStr = endDate.toLocaleDateString('en-US', { day: 'numeric' });
+      const options = { month: "long", day: "numeric" };
+      const startStr = startDate.toLocaleDateString("en-US", options);
+      const endStr = endDate.toLocaleDateString("en-US", { day: "numeric" });
 
-            if (start === end) {
-            return startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            }
+      if (start === end) {
+        return startDate.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
 
-            const year = startDate.getFullYear(); // assume same year
-            return `${startStr}-${endStr}, ${year}`;
-        },
-        viewStatus(index,type){
-            this.index = index;
-            this.filter.type = type;
-            this.fetch();
-        },
-        goCreatePage(){
-            router.get('/faims/procurements/create');
-        },
-        openPrint(key,index,type){
-            this.index = index;
-            window.open('/requests?option=print&type='+type+'&key='+key);
-        },
-        refresh(){
-            this.filter.expense = null;
-            this.filter.mode = null;
-            this.filter.keyword = null;
-            this.fetch();  
-        }
-    }
-}
+      const year = startDate.getFullYear(); // assume same year
+      return `${startStr}-${endStr}, ${year}`;
+    },
+    viewStatus(index, type) {
+      this.index = index;
+      this.filter.type = type;
+      this.fetch();
+    },
+    goCreatePage() {
+      router.get("/faims/procurements/create", { option: "create" });
+    },
+
+    goViewPage(data) {
+      router.get("/faims/procurements/"+ data.id, { option: "view" });
+    },
+
+    goEditPage(data) {
+      router.get("/faims/procurements/" + data.id, { option: "edit" });
+    },
+
+    goReviewPage(data) {
+      router.get("/faims/procurements/" + data.id, { option: "review" });
+    },
+
+    goApprovePage(data) {
+      router.get("/faims/procurements/" + data.id, { option: "approve" });
+    },
+
+    goQuotationPage(data) {
+      router.get("/faims/procurements/" + data.id, { option: "quotations" });
+    },
+
+    goBidsPage(data) {
+      router.get("/faims/procurements/" + data.id, { option: "bids" });
+    },
+
+    goBACResolutionPage(data) {
+      router.get("/faims/procurements/" + data.id, { option: "bac_resolutions" });
+    },
+    
+    openPrint(data) {
+      window.open(`/faims/procurements/${data.id}?option=print&type=procurement`);
+    },
+
+    refresh() {
+      this.filter.expense = null;
+      this.filter.mode = null;
+      this.filter.keyword = null;
+      this.fetch();
+    },
+  },
+};
 </script>

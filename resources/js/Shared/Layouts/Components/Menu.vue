@@ -42,6 +42,14 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">PAP Codes</span>
                 </Link>
             </li>
+
+            <li class="nav-item">
+                <Link href="/faims/purchase-orders" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
+                    <i class="ri-file-paper-2-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Purchase Orders</span>
+                </Link>
+            </li>
             <!-- <li class="nav-item">
                 <Link href="/procurement" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
@@ -64,13 +72,7 @@
                 </Link>
             </li>
 
-            <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">Purchase Orders</span>
-                </Link>
-            </li>
+        
 
             
             <li class="nav-item">

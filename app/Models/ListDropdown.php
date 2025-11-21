@@ -13,4 +13,6 @@ class ListDropdown extends Model
     {
         return $this->morphOne('App\Models\Signatory', 'designationable');
     }
+
+
 }

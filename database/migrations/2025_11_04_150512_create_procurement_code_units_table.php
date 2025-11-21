@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('procurement_bac_items', function (Blueprint $table) {
+        Schema::create('procurement_code_units', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('bac_resolution_id')->unsigned()->index();
-            $table->foreign('bac_resolution_id')->references('id')->on('procurement_bacs');
-            $table->integer('procurement_item_id')->unsigned()->index();;
-            $table->foreign('procurement_item_id')->references('id')->on('procurement_items');
+            $table->integer('procurement_code_id')->unsigned()->index();
+            $table->foreign('procurement_code_id')->references('id')->on('procurement_codes');
+            $table->tinyInteger('end_user_id')->unsigned()->index();
+            $table->foreign('end_user_id')->references('id')->on('list_units');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('procurement_bac_items');
+        Schema::dropIfExists('procurement_code_units');
     }
 };

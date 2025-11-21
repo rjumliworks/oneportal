@@ -16,9 +16,9 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('item_no');
             $table->Integer('procurement_id')->unsigned()->index();
-            $table->foreign('procurement_id')->references('id')->on('procurements');
+            $table->foreign('procurement_id')->references('id')->on('procurements')->onDelete('cascade');;
             $table->tinyInteger('item_unit_type_id')->unsigned()->index();;
-            $table->foreign('item_unit_type_id')->references('id')->on('list_dropdowns');
+            $table->foreign('item_unit_type_id')->references('id')->on('list_dropdowns')->onDelete('cascade');;
             $table->text('item_description');
             $table->string('item_quantity');
             $table->decimal('item_unit_cost');

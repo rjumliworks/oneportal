@@ -38,7 +38,11 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
             'index' => 'procurement.index',
         ]);
         Route::get('/procurements/create', [App\Http\Controllers\FAIMS\Procurement\ProcurementController::class, 'create_index']);
-
+        Route::resource('/quotations', App\Http\Controllers\FAIMS\Procurement\QuotationController::class);
+        Route::resource('/offers', App\Http\Controllers\FAIMS\Procurement\OfferController::class);
+        Route::resource('/bac-resolutions', App\Http\Controllers\FAIMS\Procurement\BACResolutionController::class);
+        Route::resource('/notice-of-awards', App\Http\Controllers\FAIMS\Procurement\NOAController::class);
+        Route::resource('/purchase-orders', App\Http\Controllers\FAIMS\Procurement\POController::class);
 
     });
 });
