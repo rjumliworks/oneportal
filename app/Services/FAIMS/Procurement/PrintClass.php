@@ -128,7 +128,6 @@ class PrintClass
             'bac_vice_chairperson' => $bac_vice_chairperson,
             'bac_members' => $bac_members,
             'regional_director' => $regional_director,
-            'chief_accountant' => $chief_accountant, // 
         ];
 
         $pdf = \PDF::loadView('FAIMS.Procurement.prints.bac-resolution',$array)->setPaper('A4', 'portrait');

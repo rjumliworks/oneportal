@@ -76,17 +76,17 @@
       <hr class="my-1" />
 
       <!-- Ranking section -->
-      <div class="mt-4" v-if="checkedBidsDescriptions && checkedBidsPrice">
+      <div class="mt-4" >
         <div
           v-for="(group, groupIndex) in groupedUnawardedBids"
           :key="group.item_no"
           class="mb-4"
         >
-          <div>
+          <div v-if="group.length > 0">
             <b class="text-info">Item No: {{ group.item_no }}</b>
           </div>
 
-          <table class="table table-bordered" style="width: 100%">
+          <table class="table table-bordered" style="width: 100%" v-if="group.length > 0">
             <thead>
               <tr>
                 <th>Rank</th>
@@ -134,7 +134,7 @@
         </div>
 
         <div>
-          <b-form-checkbox v-model="checkedBidsRank">
+          <b-form-checkbox v-model="checkedBidsRank"  >
             <h5>The bid items are correctly ranked from first to last.</h5>
           </b-form-checkbox>
         </div>
@@ -143,7 +143,10 @@
 
     <template #footer>
       <b-button @click="hide()" variant="light" block>No</b-button>
-      <b-button @click="submit()" variant="success" block :disabled="!rankChecked"
+      <b-button @click="submit()" variant="success" block :disabled="!rankChecked" v-if="groupedUnawardedBids.length > 0"
+        >Yes</b-button
+      >
+      <b-button @click="submit()" variant="success" block v-else :disabled="!bothChecked"
         >Yes</b-button
       >
     </template>
@@ -232,24 +235,24 @@ export default {
         });
       });
 
-      console.log(this.bidsForAward, 66);
-      console.log(this.bidsNotForAward, 67);
-
       // 🔽 Sort each group by lowest total bid price
       this.groupedUnawardedBids = Object.entries(grouped)
         .sort(([a], [b]) => a - b)
-        .map(([item_no, bids]) => ({
+        .map(([item_no, quotations]) => ({
           item_no,
-          bids: bids
+          quotations: quotations
             .sort(
               (a, b) =>
-                a.item_bid_price * a.item_quantity - b.item_bid_price * b.item_quantity
+                a.bid_price * a.item_quantity - b.bid_price * b.item_quantity
             )
             .map((bid, index) => ({
               ...bid,
               rank: index + 2,
             })),
         }));
+
+
+     
 
       // // Flatten for posting
       this.bidsNotForAward = Object.entries(grouped)
@@ -262,8 +265,13 @@ export default {
               rank: index + 2,
             }))
         );
-    },
 
+          console.log(this.bidsNotForAward, 66);
+          console.log(this.groupedUnawardedBids, 67);
+
+
+    },
+   
     updateRanks(groupIndex) {
       this.groupedUnawardedBids[groupIndex].bids.forEach((bid, index) => {
         bid.rank = index + 2;

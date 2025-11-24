@@ -77,7 +77,7 @@ class Procurement extends Model
 
     public function sub_status()
     {
-        return $this->belongsTo('App\Models\ListStatus', 'status_id');
+        return $this->belongsTo('App\Models\ListStatus', 'sub_status_id');
     }
 
     

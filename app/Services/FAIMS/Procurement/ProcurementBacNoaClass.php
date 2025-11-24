@@ -33,28 +33,37 @@ class ProcurementBacNoaClass
         $noa = ProcurementBacNoa::with('procurement_bac.procurement')->findOrFail($id);
 
         if($request->status['name'] == "Pending"){
-             $noa->update([
-                'status_id' => 47, // set status to "served to supplier"
-                'updated_by_id' => $user->id,
-            ]);
-        }
+            $noa->update([
+                    'status_id' => 47, // set status to "served to supplier"
+                ]);
+            }
         else{
             $noa->update([
                 'status_id' => 54, // set status to "conformed"
-                'updated_by_id' => $user->id,
             ]);
 
         }
-      
+
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
-        $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
+        $procurement = $noa->procurement_bac->procurement;
 
-        // update Procurement Request Status
-        $noa->procurement_bac->procurement->update([
-            'status_id' =>  $updated_pr_status,
-            'updated_by_id' => $user->id,
-        ]); 
+        // if current_pr_status "Re-award"
+       if($current_pr_status == 59){
+            $updated_pr_substatus = $noa->procurement_bac->overall_substatus($current_pr_status);
+            // update Procurement Request Status
+            $noa->procurement_bac->procurement->update([
+                'sub_status_id' =>  $updated_pr_substatus,
+            ]);
+        }
+        else{
+            $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
 
+            // update Procurement Request Status
+            $noa->procurement_bac->procurement->update([
+                'status_id' =>  $updated_pr_status,
+            ]);
+        }
+        
         return [
             'data' =>new ProcurementBacNoaResource($noa),
             'message' => 'NOA Status updated successfully!', 
@@ -82,6 +91,14 @@ class ProcurementBacNoaClass
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
 
+        // if updated status is "re-award" 
+        if($updated_pr_status  == 59){
+            // --- update the old BAC Resolution status to "NOA Not Conformed" -----
+            $noa->procurement_bac->update([
+                'status_id' => 68,
+            ]);
+        }
+
         // update Procurement Request Status
         $noa->procurement_bac->procurement->update([
             'status_id' => $updated_pr_status,
@@ -93,6 +110,11 @@ class ProcurementBacNoaClass
             'message' => 'BAC Resolution Status updated successfully!', 
             'info' => "You've successfully updated BAC Resolution Status.",
         ];
+    }
+
+    public function createBACResolution($id, $request)
+    { 
+
     }
 
    

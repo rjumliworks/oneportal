@@ -72,15 +72,6 @@ class ProcurementPOClass
              $noa->update();
         }
 
-        $current_pr_status = $noa->procurement_bac->procurement->status_id;
-        $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
-           
-        // update Procurement Request Status
-       $procurement =  $noa->procurement_bac->procurement->update([
-            'status_id' => $updated_pr_status,
-            'updated_by_id' => $user->id,
-        ]); 
-
 
         return [
             'data' =>new ProcurementNoaPoResource($data),
@@ -158,13 +149,31 @@ class ProcurementPOClass
         }
 
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
-        $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
-           
-        // update Procurement Request Status
-       $procurement =  $po->noa->procurement_bac->procurement->update([
-            'status_id' => $updated_pr_status,
-            'updated_by_id' => $user->id,
-        ]); 
+        $procurement =  $po->noa->procurement_bac->procurement;
+
+        // if current_pr_status "Re-award"
+       if($current_pr_status == 59){
+            $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
+            // update Procurement Request Status
+            $procurement->update([
+                'sub_status_id' =>  $updated_pr_substatus,
+            ]);
+
+            // if pr sub_status is "Completed" update pr status also to "Completed"
+            if($updated_pr_substatus == 53){
+                $procurement->update([
+                    'status_id' =>  $updated_pr_substatus,
+                ]);
+            }
+        }
+        else{
+            $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
+
+            // update Procurement Request Status
+            $procurement->update([
+                'status_id' =>  $updated_pr_status,
+            ]);
+        }
 
      
 

@@ -25,97 +25,104 @@
                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                     <i class="bx bx-refresh search-icon"></i>
                 </span>
-                <b-button v-if="procurement.status.id == 'For BAC Resolution' || procurement.status.name == 'Re-award'" type="button" variant="primary" @click="openBACReso()">
+                <b-button v-if="procurement.status.id == 'For BAC Resolution' || procurement.status.name == 'Rebid' || procurement.status.name == 'Re-award'" type="button" variant="primary" @click="openBACReso()">
                     <i class="ri-add-circle-fill align-bottom me-1"></i> New
                 </b-button>
             </div>
         </b-col>
     </b-row>
 
+    <b-card no-body>
+              <b-tabs card  >
+                <b-tab title="All" active >
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr class="fs-11">
+                                <th>#</th>
+                                <th>BAC Resolution No.</th>  
+                                <th>Type</th>
+                                <th>Date Created</th>   
+                                <th>Status</th>   
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
 
-    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
-    <div class="file-manager-content w-100 p-4 pb-0" style="height: calc(90vh - 180px); overflow: auto;" ref="box">
-        <table class="table mb-0">
-            <thead class="table-light">
-                <tr class="fs-11">
-                    <th>#</th>
-                    <th>BAC Resolution No.</th>  
-                    <th>Type</th>
-                    <th>Date Created</th>   
-                     <th>Status</th>   
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
+                        <tbody>
+                            <tr class="custom-hover-row" v-for="(list, index) in lists" v-bind:key="index" @click="selectRow(list.id)" :class="{ 'bg-info-subtle': selectedRow === list.id }" >
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ list.code }}</td>
+                                <td>{{ list.type }}</td>
+                                <td>{{ list.created_at }}</td>
+                                <td>
+                                    <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-3 justify-content-center">
+                                <div class="dropdown" @click.stop>
+                                    <button
+                                    class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    >
+                                    <i class="ri-more-fill align-bottom"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
+                                    <li
+                                        @click="printBACReso(list)"
+                                        class="dropdown-item d-flex align-items-center"
+                                        role="button"
+                                        >
+                                        <i class="ri-printer-fill align-bottom me-1"></i>Print
+                                    </li>
+                                    <li
+                                        @click="editBACReso(list)"
+                                        class="dropdown-item d-flex align-items-center"
+                                        role="button"
+                                        >
+                                        <i class="ri-edit-2-fill align-bottom me-1"></i>Edit 
+                                    </li>
+                                        <li
+                                        v-if="list.status.name == 'Pending'"
+                                        @click="updateStatus(list)"
+                                        class="dropdown-item d-flex align-items-center"
+                                        role="button"
+                                        >
+                                        <i class="ri-edit-2-fill align-bottom me-1"></i>Update Status
+                                    </li>
 
-            <tbody>
-                <tr class="custom-hover-row" v-for="(list, index) in lists" v-bind:key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ list.code }}</td>
-                    <td>{{ list.type }}</td>
-                    <td>{{ list.created_at }}</td>
-                     <td>
-                        <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
-                    </td>
-                    <td class="text-center">
-                        <div class="d-flex gap-3 justify-content-center">
-                      <div class="dropdown" @click.stop>
-                        <button
-                          class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <i class="ri-more-fill align-bottom"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
-                          <li
-                              @click="printBACReso(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-printer-fill align-bottom me-1"></i>Print
-                          </li>
-                          <li
-                              @click="editBACReso(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-edit-2-fill align-bottom me-1"></i>Edit 
-                          </li>
-                            <li
-                              v-if="list.status.name == 'Pending'"
-                              @click="updateStatus(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-edit-2-fill align-bottom me-1"></i>Update Status
-                          </li>
-
-                            <li
-                              v-if="list.status.name == 'Approved'"
-                              @click="goNOAPage(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-eye-2-fill align-bottom me-1"></i> Notice of Awards
-                          </li>
-                          
-                        </ul>
-                      </div>
-                    </div>
-
-
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-        <Pagination class="ms-2 me-2" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
-    </div> 
-</div>
+                                        <li
+                                        v-if="list.status.name == 'Approved' || list.status.name == 'NOA Not Conformed'"
+                                        @click="goNOAPage(list)"
+                                        class="dropdown-item d-flex align-items-center"
+                                        role="button"
+                                        >
+                                        <i class="ri-eye-2-fill align-bottom me-1"></i> Notice of Awards
+                                    </li>
+                                    
+                                    </ul>
+                                </div>
+                                </div>
 
 
-<BACResolution  :procurement="procurement" ref="BACReso"/>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <Pagination class="ms-2 me-2" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
+                        
+                </b-tab>
+                <b-tab title="Comments" v-if="selectedRow">
+                  <b-card-text>Comments</b-card-text>
+                </b-tab>
+                <b-tab title="Logs" v-if="selectedRow">
+                  <b-card-text>Status Logs</b-card-text>
+                </b-tab>
+              </b-tabs>
+    </b-card>
+
+<BACResolution  :procurement="procurement" @add="fetch()" ref="BACReso" />
 <UpdateStatus  :procurement="procurement"   @add="fetch()" ref="updateStatus"/>
 
 </template>
@@ -139,6 +146,7 @@ data(){
         filter: {
             keyword: null,
         },
+        selectedRow: null,
         index: null,
         option: "",
     }
@@ -216,6 +224,10 @@ methods: {
 
      goNOAPage(data) {
         router.get('/faims/procurements/'+this.procurement.id + '?bac_reso_id='+ data.id + '&option=notice_of_awards');
+    },
+
+    selectRow(selected_id) {
+        this.selectedRow = selected_id;
     },
 }
 }

@@ -67,6 +67,19 @@ class ViewClass
         $procurement = Procurement::with('unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status' )->findOrFail($id);
         switch($request->option){
             case 'view':
+                 return inertia('Modules/FAIMS/Procurement/View', [
+                    'dropdowns' => [
+                        'divisions' => $this->dropdown->dropdowns('Division'),
+                        'fund_clusters' => $this->dropdown->dropdowns('Fund Cluster'),
+                        'procurement_codes' => $this->dropdown->procurement_codes(),
+                        'unit_types' => $this->dropdown->unit_types(),
+                        'requesters' => $this->dropdown->requesters(),
+                        'approvers' => $this->dropdown->approvers(),     
+                    ],
+                    'procurement' => $procurement,
+                    'option' => $request->option,
+                ]); 
+            break;
             case 'edit':
             case 'review':
             case 'approve':

@@ -50,13 +50,10 @@
     </b-col>
   </b-row>
 
-  <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
-    <div
-      class="file-manager-content w-100 p-4 pb-0"
-      style="height: calc(90vh - 180px); overflow: auto"
-      ref="box"
-    >
-      <table class="table mb-0">
+  <b-card no-body>
+      <b-tabs card  >
+        <b-tab title="All" active >
+            <table class="table mb-0">
         <thead class="table-light">
           <tr class="fs-11">
             <th>#</th>
@@ -68,7 +65,7 @@
         </thead>
 
         <tbody>
-          <tr class="custom-hover-row" v-for="(list, index) in lists" v-bind:key="index">
+          <tr class="custom-hover-row" v-for="(list, index) in lists" v-bind:key="index" @click="selectRow(list.id)" :class="{ 'bg-info-subtle': selectedRow === list.id }">
             <td>{{ index + 1 }}</td>
             <td>{{ list.code }}</td>
             <td>{{ list.created_at }}</td>
@@ -92,7 +89,7 @@
                       class="dropdown-item d-flex align-items-center"
                       role="button"
                     >
-                      <i class="ri-eye-fill align-bottom me-1"></i>Comments
+                      <i class="ri-eye-fill align-bottom me-1"></i>View
                     </li>
                     <li
                       @click="printNOA(list)"
@@ -143,8 +140,17 @@
         :links="links"
         :pagination="meta"
       />
-    </div>
-  </div>
+                
+        </b-tab>
+        <b-tab title="Comments" v-if="selectedRow">
+          <b-card-text>Comments</b-card-text>
+        </b-tab>
+        <b-tab title="Logs" v-if="selectedRow">
+          <b-card-text>Status Logs</b-card-text>
+        </b-tab>
+      </b-tabs>
+  </b-card>
+
 
   <NOA :procurement="procurement" ref="NOA" />
   <UpdateStatus :procurement="procurement" @add="fetch()" ref="updateStatus" />
@@ -169,6 +175,7 @@ export default {
       filter: {
         keyword: null,
       },
+      selectedRow: null,
       index: null,
     };
   },
@@ -246,6 +253,10 @@ export default {
           data.id +
           "&option=purchase_order"
       );
+    },
+
+    selectRow(selected_id) {
+        this.selectedRow = selected_id;
     },
   },
 };

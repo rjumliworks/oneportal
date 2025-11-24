@@ -44,13 +44,23 @@ class ProcurementBACClass
             'status_id' => 36, // set to "pending"
         ]);
 
-        
-
-        $procurement = Procurement::findOrFail($request->procurement_id);
+        $procurement = Procurement::with('status')->findOrFail($request->procurement_id);
         if($procurement){
-             // update PR status to "For NOA" 
-             $procurement->status_id = 45;
-             $procurement->update();
+             // check procurement status if "rebid" or "reaward"
+            if($procurement->status->name == "Re-award"){ 
+                // if reaward update procurement substatus to "For BAC Resolution"
+                $procurement->sub_status_id = 44;
+            }
+            else if($procurement->status->name == "Rebid"){
+                // if rebid update procurement substatus to "For BAC Resolution"
+                $procurement->sub_status_id = 44;
+            }
+            else{
+                // update PR status to "For NOA" 
+                $procurement->status_id = 45;
+            }
+            $procurement->update();
+           
         }
 
         return [
@@ -82,24 +92,32 @@ class ProcurementBACClass
     public function updateStatus($id, $request)
     { 
         $user = Auth::user();
-        $bac_resolution = ProcurementBac::with('procurement')->findOrFail($id);
+        $bac_resolution = ProcurementBac::with('procurement.status' )->findOrFail($id);
 
         $bac_resolution->update([
             'status_id' => 38, // set status to "Approved"
-            'updated_by_id' => $user->id,
         ]);
 
-        $bac_resolution->procurement->update([
-            'status_id' => 46, // set status to "For NOA"
-            'updated_by_id' => $user->id,
-        ]);
-
-        //save the items connected to this quotation that are awarded
-        // dd($request->quotations);
-
+        $procurement = $bac_resolution->procurement;
+        // if status is "re-award"
+        if( $procurement->status->name == "Re-award"){
+             $procurement->update([
+                'sub_status_id' => 46, // set sub_status to "For NOA"
+            ]);
+        }
+        if( $procurement->status->name == "Rebid"){
+             $procurement->update([
+                'sub_status_id' => 46, // set sub_status to "For NOA"
+            ]);
+        }
+        else{
+            $procurement->update([
+                'status_id' => 46, // set status to "For NOA"
+            ]);
+        }
+   
         // create NOA and its items
         $this->createNOA($request, $bac_resolution, $user);
-
 
         return [
             'data' =>new ProcurementBacResource($bac_resolution),
