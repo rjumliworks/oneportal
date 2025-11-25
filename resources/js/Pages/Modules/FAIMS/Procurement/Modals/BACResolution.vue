@@ -280,8 +280,8 @@ export default {
                 allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format){
 
       // Filter only awarded quotation
-      const awarded_quotations = (this.procurement.quotations || []).filter(quotation =>
-        (quotation.items).some(item => item.status_id == 43 || item.status?.id == 43 && bid_item.bid_price != null)
+      const awarded_quotations = (this.procurement.quotations ).filter(quotation =>
+        (quotation.items).some(item => item.status_id == 43 && item.bid_price != null && item.is_rebid == 0)
       );
 
       const awarded_supplier_names = (awarded_quotations.map(quotation => quotation.supplier?.name).filter(Boolean).join(", ")).toUpperCase();
@@ -292,7 +292,7 @@ export default {
      
       let counter = 2;
       const awarded_quotations_list = awarded_quotations.map(quotation => {
-        const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43);
+        const filtered_items = (quotation.items).filter(item => item.status_id == 43  && item.is_rebid == 0);
         if (filtered_items.length === 0) return "";
         const item_numbers = filtered_items.map(item => item.item.item_no).join(", ");
         const total_price = filtered_items.reduce((sum, item) => {
@@ -314,10 +314,10 @@ export default {
 
       // === CORRECT total accumulation across awarded bids ===
       const award_bid_total_price = awarded_quotations.reduce((total, bid) => {
-        const filtered_items = (bid.bid_items || []).filter(bid_item => bid_item.status_id == 8 || bid_item.status?.id == 8);
-        const total_price = filtered_items.reduce((sum, detail) => {
-          const bp = parseFloat(detail.item_bid_price) || 0;
-          const bq = parseFloat(detail.item_quantity) || 0;
+        const filtered_items = (bid.bid_items || []).filter(item => item.status_id == 43 && item.is_rebid == 0);
+        const total_price = filtered_items.reduce((sum, quotation) => {
+          const bp = parseFloat(quotation.bid_price) || 0;
+          const bq = parseFloat(quotation.item_quantity) || 0;
           return sum + bp * bq;
         }, 0);
         return total + total_price; // accumulate correctly
@@ -327,7 +327,7 @@ export default {
 
       const awarded_table_rows = awarded_quotations
         .map(quotation => {
-          const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43);
+          const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43 && item.is_rebid == 1);
           if (filtered_items.length === 0) return null;
           const item_ids = filtered_items.map(bid_item => bid_item.item_no).join(", ");
           return `
@@ -557,8 +557,8 @@ export default {
                         allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format){
     
         // Filter only awarded quotation
-      const awarded_quotations = (this.procurement.quotations || []).filter(quotation =>
-        (quotation.items).some(item => item.status_id == 43 || item.status?.id == 43 && bid_item.bid_price != null)
+      const awarded_quotations = (this.procurement.quotations).filter(quotation =>
+        (quotation.items).some(item => (item.status_id == 43 && item.bid_price != null) || item.is_rebid == 0)
       );
 
       const awarded_supplier_names = (awarded_quotations.map(quotation => quotation.supplier?.name).filter(Boolean).join(", ")).toUpperCase();
@@ -569,7 +569,7 @@ export default {
      
       let counter = 2;
       const awarded_quotations_list = awarded_quotations.map(quotation => {
-        const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43);
+        const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.is_rebid == 0);
         if (filtered_items.length === 0) return "";
         const item_numbers = filtered_items.map(item => item.item.item_no).join(", ");
         const total_price = filtered_items.reduce((sum, item) => {
@@ -589,12 +589,13 @@ export default {
         `;
       }).join("");
 
+
       // === CORRECT total accumulation across awarded bids ===
-      const award_bid_total_price = awarded_quotations.reduce((total, bid) => {
-        const filtered_items = (bid.bid_items || []).filter(bid_item => bid_item.status_id == 8 || bid_item.status?.id == 8);
-        const total_price = filtered_items.reduce((sum, detail) => {
-          const bp = parseFloat(detail.item_bid_price) || 0;
-          const bq = parseFloat(detail.item_quantity) || 0;
+      const award_bid_total_price = awarded_quotations.reduce((total, quotation) => {
+        const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43 || item.is_rebid == 0);
+        const total_price = filtered_items.reduce((sum, item) => {
+          const bp = parseFloat(item.bid_price) || 0;
+          const bq = parseFloat(item.item.item_quantity) || 0;
           return sum + bp * bq;
         }, 0);
         return total + total_price; // accumulate correctly
@@ -607,11 +608,11 @@ export default {
       this.rebid_body = `
         <div style=" font-size: 16px;">
           <p style="text-align: center;"><b>DECLARATION OF FAILURE OF BIDDING FOR THE PROCUREMENT "${this.procurement.title.toUpperCase()}"</b></p>
-          <p style="text-align: justify"><b>WHEREAS</b>, the Regional Director, Mr. ${this.procurement.approved_by.profile.fullname}, approved the DOST-IX 2nd Supplemental Annual Procurement Plan for CY${new Date().getFullYear()} upon favorable recommendation of the Bids and Awards Committee;</p>
+          <p style="text-align: justify"><b>WHEREAS</b>, the Regional Director, Ms. ${this.procurement.approved_by.profile.fullname}, approved the DOST-IX 2nd Supplemental Annual Procurement Plan for CY${new Date().getFullYear()} upon favorable recommendation of the Bids and Awards Committee;</p>
           <p style="text-align: justify">
             <b>WHEREAS</b>, the ${ app_types } (Annex "A") contains the procurement
             <i style="font-size:12px">"${this.procurement.title.toUpperCase()}"</i>
-            with allocated budget of ${budget_in_words} (PHP ${Number(this.procurement.pap_codes?.[0]?.pap_code?.allocated_budget || 0).toLocaleString()}),
+            with allocated budget of ${budget_in_words} (PHP ${Number(allocated_budget).toLocaleString()}),
             to be procured through Section 53.9 of the revised IRR of ${mode_of_procurement_ra_nos};
           </p>
           <p style="text-align: justify">

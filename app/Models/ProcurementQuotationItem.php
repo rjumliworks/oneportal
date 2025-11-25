@@ -12,7 +12,8 @@ class ProcurementQuotationItem extends Model
         'delivery_term',
         'technical_proposal',
         'bid_price',
-        'status'
+        'status_id',
+        'is_rebid'
     ];
 
     public function item()

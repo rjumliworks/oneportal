@@ -41,7 +41,7 @@ class ViewClass
     public function quotations($request){
         $data = ProcurementQuotationResource::collection(
             ProcurementQuotation::query()
-            ->with('supplier' ,'supply_officer')
+            ->with('supplier.address' ,'supply_officer')
             ->where('procurement_id', $request->procurement_id)
             ->when($request->keyword, function ($query, $keyword) {
                 $query->where('code', 'LIKE', "%{$keyword}%")
@@ -64,7 +64,7 @@ class ViewClass
 
     public function show($id, $request){
      
-        $procurement = Procurement::with('unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status' )->findOrFail($id);
+        $procurement = Procurement::with('unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' )->findOrFail($id);
         switch($request->option){
             case 'view':
                  return inertia('Modules/FAIMS/Procurement/View', [

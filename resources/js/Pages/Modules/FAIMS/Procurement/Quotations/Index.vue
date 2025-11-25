@@ -62,21 +62,24 @@
           </tr>
         </thead>
 
+
         <tbody>
           <tr class="custom-hover-row" v-for="(list, index) in lists" :key="index">
+          
             <td>{{ index + 1 }}</td>
             <td>{{ list.code }}</td>
             <td>{{ list.submission_not_later_than }}</td>
             <td style="line-height: 0.1">
               <p>{{ list.supplier?.name }}</p>
+
               <p>
-                {{ list.supplier?.address }}
+                {{ list.supplier.address }}
               </p>
             </td>
             <td>{{ list.supply_officer }}</td>
 
             <td>
-              <b-badge>
+              <b-badge :class="list.status.bg">
                 {{ list.status.name }}
               </b-badge>
             </td>
@@ -109,6 +112,7 @@
       @add="fetch()"
       :procurement="procurement"
       :dropdowns="dropdowns"
+      :rfqs="lists"
       ref="create"
     />
   </div>
@@ -172,14 +176,13 @@ export default {
     },
 
     // // remove RFQ
-    // removeRFQ(id) {
-    //   router.delete(`/faims/quotations/${id}`);
-    // },
+    removeRFQ(id) {
+      router.delete(`/faims/quotations/${id}`);
+    },
 
-
-     print(data) {
-        window.open(`/faims/quotations/${data.id}?option=print&type=quotations`);
-      },
+    print(data) {
+      window.open(`/faims/quotations/${data.id}?option=print&type=quotations`);
+    },
 
     goBackPage() {
       this.$inertia.visit("/faims/procurements");

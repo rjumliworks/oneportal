@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('technical_proposal')->nullable(); 
             $table->string('bid_price')->nullable(); 
             $table->boolean('is_checked')->default(0); 
+            $table->boolean('is_rebid')->default(0); 
             $table->tinyInteger('status_id')->unsigned()->index();
             $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');;
             $table->timestamps();

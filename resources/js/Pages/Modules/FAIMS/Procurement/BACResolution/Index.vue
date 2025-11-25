@@ -25,7 +25,7 @@
                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                     <i class="bx bx-refresh search-icon"></i>
                 </span>
-                <b-button v-if="procurement.status.id == 'For BAC Resolution' || procurement.status.name == 'Rebid' || procurement.status.name == 'Re-award'" type="button" variant="primary" @click="openBACReso()">
+                <b-button v-if="procurement.status.name == 'For BAC Resolution' || procurement.status.name == 'Rebid' || (procurement.status.name === 'Rebid' && procurement.sub_status?.name === 'For Quotations') || procurement.status.name == 'Re-award'" type="button" variant="primary" @click="openBACReso()">
                     <i class="ri-add-circle-fill align-bottom me-1"></i> New
                 </b-button>
             </div>
@@ -83,7 +83,7 @@
                                         <i class="ri-edit-2-fill align-bottom me-1"></i>Edit 
                                     </li>
                                         <li
-                                        v-if="list.status.name == 'Pending'"
+                                        v-if="list.status.name == 'Pending' && list.type != 'Rebid'"
                                         @click="updateStatus(list)"
                                         class="dropdown-item d-flex align-items-center"
                                         role="button"
@@ -92,7 +92,7 @@
                                     </li>
 
                                         <li
-                                        v-if="list.status.name == 'Approved' || list.status.name == 'NOA Not Conformed'"
+                                        v-if="list.type != 'Rebid' && list.status.name == 'Approved' || list.status.name == 'NOA Not Conformed' "
                                         @click="goNOAPage(list)"
                                         class="dropdown-item d-flex align-items-center"
                                         role="button"

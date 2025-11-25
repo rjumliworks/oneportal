@@ -30,7 +30,7 @@ class OfferClass
     
   
     public function save_bid_for_award($request){
-        $procurement = Procurement::findOrFail($request->procurement_id);
+        $procurement = Procurement::with('status')->findOrFail($request->procurement_id);
         foreach ($request->items as $item) {
             $item = ProcurementQuotationItem::findOrFail($item['id']);
             if($item){
@@ -56,13 +56,21 @@ class OfferClass
              
             }
         }
-
-        // if PR exist
-        if($procurement){
+        
+        //dd($procurement->status->name);
+        if($procurement && $procurement->status->name === 'Rebid'){
             // update PR status to "For BAC Resolution" 
-            $procurement->status_id = 44;
-            $procurement->update();
+            $procurement->update([
+                'sub_status_id' => 44,
+            ]);
         }
+        else{
+             // update PR status to "For BAC Resolution" 
+            $procurement->update([
+                'status_id' => 44,
+            ]);
+        }
+
 
         return [
             'data' => $request->items,

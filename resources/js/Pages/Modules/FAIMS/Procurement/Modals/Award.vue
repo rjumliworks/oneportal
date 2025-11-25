@@ -76,17 +76,18 @@
       <hr class="my-1" />
 
       <!-- Ranking section -->
-      <div class="mt-4" >
+      <div class="mt-4"  >
         <div
           v-for="(group, groupIndex) in groupedUnawardedBids"
           :key="group.item_no"
           class="mb-4"
+          v-if="!groupedUnawardedBids.length == 0"
         >
-          <div v-if="group.length > 0">
+          <div>
             <b class="text-info">Item No: {{ group.item_no }}</b>
           </div>
 
-          <table class="table table-bordered" style="width: 100%" v-if="group.length > 0">
+          <table class="table table-bordered" style="width: 100%" >
             <thead>
               <tr>
                 <th>Rank</th>
@@ -100,7 +101,7 @@
               </tr>
             </thead>
             <draggable
-              v-model="group.bids"
+              v-model="group.quotations"
               tag="tbody"
               :animation="200"
               item-key="id"
@@ -134,16 +135,16 @@
         </div>
 
         <div>
-          <b-form-checkbox v-model="checkedBidsRank"  >
+          <b-form-checkbox v-model="checkedBidsRank"  v-if="!groupedUnawardedBids.length === 0">
             <h5>The bid items are correctly ranked from first to last.</h5>
           </b-form-checkbox>
         </div>
       </div>
     </form>
 
-    <template #footer>
+    <template #footer >
       <b-button @click="hide()" variant="light" block>No</b-button>
-      <b-button @click="submit()" variant="success" block :disabled="!rankChecked" v-if="groupedUnawardedBids.length > 0"
+      <b-button @click="submit()" variant="success" block :disabled="!bothChecked" v-if="groupedUnawardedBids.length > 0"
         >Yes</b-button
       >
       <b-button @click="submit()" variant="success" block v-else :disabled="!bothChecked"
@@ -176,14 +177,26 @@ export default {
     };
   },
 
-  computed: {
-    bothChecked() {
-      return this.checkedBidsDescriptions && this.checkedBidsPrice;
-    },
-    rankChecked() {
-      return this.checkedBidsRank;
-    },
+ computed: {
+  bothChecked() {
+    // if NO items to rank → require 2 checks
+    if (this.checkedBidsDescriptions  && this.checkedBidsPrice) {
+      return true;
+    }
+
   },
+
+  rankChecked() {
+    // if there ARE items to rank → require rank check
+    if (this.groupedUnawardedBids.length > 0) {
+      return true;
+    }
+
+    // if NO unawarded items → rank check is irrelevant
+    return true;
+  }
+},
+
 
   methods: {
     edit(checkedItems) {
@@ -202,38 +215,41 @@ export default {
       this.bidsNotForAward = [];
       const grouped = {};
 
-      console.log();
 
-      this.procurement.quotations.forEach((quotation) => {
-        quotation.items.forEach((item) => {
-          const entry = {
-            id: item.id,
-            item_no: item.item.item_no,
-            item_quantity: item.item.item_quantity,
-            item_unit_type: item.item.item_unit_type,
-            item_description: item.item.item_description,
-            supplier_id: quotation.supplier.id,
-            supplier: quotation.supplier,
-            total_cost: item.item.item_quantity * item.item.item_unit_cost,
-            bid_price: item.bid_price,
-            total_bid_price: item.bid_price * item.item.item_quantity,
-            technical_proposal: item.technical_proposal,
-            delivery_term: item.delivery_term,
-            status: item.status_id,
-            rank: 1,
-            is_checked: item.is_checked,
-          };
+    this.procurement.quotations.forEach((quotation) => {
+       // 🔹 Only process items with status_id === 36 or "Pending"
+      if (quotation.status_id !== 36) return;
 
-          if (item.is_checked) {
-            entry.rank = 1;
-            this.bidsForAward.push(entry);
-          } else {
-            this.bidsNotForAward.push(entry);
-            if (!grouped[item.item.item_no]) grouped[item.item.item_no] = [];
-            grouped[item.item.item_no].push(entry);
-          }
-        });
+      quotation.items.forEach((item) => {
+        const entry = {
+          id: item.id,
+          item_no: item.item.item_no,
+          item_quantity: item.item.item_quantity,
+          item_unit_type: item.item.item_unit_type,
+          item_description: item.item.item_description,
+          supplier_id: quotation.supplier.id,
+          supplier: quotation.supplier,
+          total_cost: item.item.item_quantity * item.item.item_unit_cost,
+          bid_price: item.bid_price,
+          total_bid_price: item.bid_price * item.item.item_quantity,
+          technical_proposal: item.technical_proposal,
+          delivery_term: item.delivery_term,
+          status: item.status_id,
+          rank: 1,
+          is_checked: item.is_checked,
+        };
+
+        if (item.is_checked) {
+          entry.rank = 1;
+          this.bidsForAward.push(entry);
+        } else {
+          this.bidsNotForAward.push(entry);
+          if (!grouped[item.item.item_no]) grouped[item.item.item_no] = [];
+          grouped[item.item.item_no].push(entry);
+        }
       });
+    });
+
 
       // 🔽 Sort each group by lowest total bid price
       this.groupedUnawardedBids = Object.entries(grouped)
@@ -245,8 +261,8 @@ export default {
               (a, b) =>
                 a.bid_price * a.item_quantity - b.bid_price * b.item_quantity
             )
-            .map((bid, index) => ({
-              ...bid,
+            .map((quotation, index) => ({
+              ...quotation,
               rank: index + 2,
             })),
         }));
@@ -257,11 +273,11 @@ export default {
       // // Flatten for posting
       this.bidsNotForAward = Object.entries(grouped)
         .sort(([a], [b]) => a - b)
-        .flatMap(([item_no, bids]) =>
-          bids
+        .flatMap(([item_no, quotations]) =>
+          quotations
             .sort((a, b) => a.bid_price * a.item_quantity - b.bid_price * b.item_quantity)
-            .map((bid, index) => ({
-              ...bid,
+            .map((quotation, index) => ({
+              ...quotation,
               rank: index + 2,
             }))
         );
@@ -273,8 +289,8 @@ export default {
     },
    
     updateRanks(groupIndex) {
-      this.groupedUnawardedBids[groupIndex].bids.forEach((bid, index) => {
-        bid.rank = index + 2;
+      this.groupedUnawardedBids[groupIndex].quotations.forEach((quotation, index) => {
+        quotation.rank = index + 2;
       });
     },
 

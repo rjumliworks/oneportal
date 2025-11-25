@@ -133,7 +133,7 @@ export default {
     TextInput,
     Multiselect,
   },
-  props: ["procurement", "dropdowns"],
+  props: ["procurement", "dropdowns" , "rfqs"],
   data() {
     return {
       currentUrl: window.location.origin,
@@ -150,23 +150,31 @@ export default {
     };
   },
 
-  computed: {
-    filteredSuppliers() {
-      const allSuppliers = this.dropdowns.suppliers || [];
+computed: {
+  filteredSuppliers() {
+    const all = this.dropdowns.suppliers || [];
 
-      const existedIds = (this.list_of_existed_rfq || []).map((item) =>
-        typeof item === "object" ? item.value : item
-      );
+    // 2. Suppliers selected in modal
+    const selected_ids = (this.form.supplier_ids || []).map(item =>
+      typeof item === "object" ? item.value : item
+    );
 
-      const selectedIds = (this.form.supplier_ids || []).map((item) =>
-        typeof item === "object" ? item.value : item
-      );
+    // 3. Suppliers already in RFQ list shown on page
+    const rfq_supplier_ids = (this.rfqs || []).map(r =>
+      r.supplier?.id
+    );
 
-      const excludeIds = new Set([...existedIds, ...selectedIds]);
+    // Merge exclusions
+    const exclude_ids = new Set([
+      ...selected_ids,
+      ...rfq_supplier_ids,
+    ]);
 
-      return allSuppliers.filter((supplier) => !excludeIds.has(supplier.value));
-    },
-  },
+    return all.filter(s => !exclude_ids.has(s.value));
+  }
+},
+
+
 
   methods: {
     show() {

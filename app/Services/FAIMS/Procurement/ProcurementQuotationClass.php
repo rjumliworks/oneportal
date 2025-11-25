@@ -37,11 +37,25 @@ class ProcurementQuotationClass
             }
         }
 
-        $procurement = Procurement::findOrFail($request->procurement_id);
-        // update Procurement status
-        $procurement->quotation_count = $procurement->quotation_count+1;
-        $procurement->status_id = 42; // set to "For Bids"
-        $procurement->update();
+        $procurement = Procurement::with('status')->findOrFail($request->procurement_id);
+
+        if( $procurement && $procurement->status->name === 'Rebid'){
+            // update Procurement status
+            $procurement->update([
+                'quotation_count' => $procurement->quotation_count+1,
+                'sub_status_id' =>  42, // set to "For Bids"
+            ]);
+        }
+        else{
+            // update Procurement status
+            $procurement->update([
+                'quotation_count' => $procurement->quotation_count+1,
+                'status_id' =>  42, // set to "For Bids"
+            ]);
+        }
+
+      
+
 
         return [
             'data' => new ProcurementQuotationResource($procurement_quotation),
@@ -64,45 +78,6 @@ class ProcurementQuotationClass
     //     ];
     // }
 
-    // public function list_of_existed_rfq($request){
-     
-    //     // get the latest RFQ created
-    //     $list_of_existed_rfq = QuotationRequest::where('purchase_request_id', $request->purchase_request_id)
-    //     ->orderBy('id', 'desc')
-    //     ->get()->map(function ($item) {
-    //         return [
-    //             'value' => $item->supplier_id,
-    //             'name' => $item->supplier->name,
-    //         ];
-    //     });;
-
-    //     return  $list_of_existed_rfq;
 
 
-    // }
-
-    // public function print($id, $request){
-    //     $date = now()->format('d F Y');
-
-    //     $item_details = PurchaseRequestDetail::with('unit_type')->where('purchase_request_id', $request->purchase_request_id)->get();
-    //     $supplier = Supplier::findOrFail($request->supplier_id);
-
-    //     $supply_officer = UserProfile::findOrFail($request->supplier_officer_id);
-
-    //     $data = QuotationRequest::findOrFail($id);
-
-    //     $array = [
-    //         'data' => $data,
-    //         'supplier' => $supplier,
-    //         'supply_officer' =>  $supply_officer,
-    //         'submission_not_later_than' =>  (new \DateTime($data->submission_not_later_than))->format('F d, Y'),
-    //         'date' =>  $date,
-    //         'rfq_number' => $request->rfq_no,
-    //         'purchase_request_number' => $request->purchase_request_number,
-    //         'item_details' =>  $item_details,
-    //     ];
-
-    //     $pdf = \PDF::loadView('FAIMS.Procurement.printQuotation',$array)->setPaper('A4', 'portrait');
-    //     return $pdf->stream($request->purchase_request_number.'.pdf');
-    // }
 }

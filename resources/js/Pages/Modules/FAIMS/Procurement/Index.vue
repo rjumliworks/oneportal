@@ -172,6 +172,7 @@
 
                                 <li
                                     v-if="
+                                      (list.status.name == 'Rebid' && list.sub_status?.name == 'For Quotations') ||
                                       (list.status.name == 'Approved' &&
                                         roles.includes('Procurement Officer')) ||
                                       roles.includes('Procurement Staff')
@@ -185,9 +186,10 @@
 
                                 <li
                                     v-if="
+                                      (list.status.name == 'Rebid' && list.sub_status?.name == 'For Bids') ||
                                       list.status.name == 'For Bids' || 
                                       (list.status.name == 'For Approval of BAC Resolution' || 
-                                      list.status.name == 'For BAC Resolution' &&
+                                      list.status.name == 'For BAC Resolution' && 
                                       roles.includes('Procurement Officer')) ||
                                       roles.includes('Procurement Staff')
                                     "
@@ -227,7 +229,7 @@
                                     <i class="ri-file-fill align-bottom me-1"></i>
                                     
                                     <span v-if=" list.status.name =='Re-award'">Re-award</span> 
-                                    <span v-if=" list.status.name =='Rebid'">Rebid</span> 
+                                    <span v-if=" list.status.name =='Rebid' ">Rebid</span> 
                                 </li>
 
 
