@@ -44,7 +44,7 @@
                     <Sidebar :information="information_data.data"/>
                 </BCol>
                 <BCol lg="6">
-                    <Main :information="information_data.data"/>
+                    <Main :information="information_data.data" :attachments="attachments"/>
                 </BCol>
             </BRow>
         </div>
@@ -62,7 +62,7 @@ import Recommend from './Modals/Recommend.vue';
 import Disapproved from './Modals/Disapproved.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
-    props: ['information_data'],
+    props: ['information_data','attachments'],
     components: { Main, Sidebar, Edit, Approved, Disapproved, Recommend },
     data(){
         return {

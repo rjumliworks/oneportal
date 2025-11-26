@@ -8,7 +8,9 @@ Route::get('/verification', [App\Http\Controllers\WelcomeController::class, 'ver
 Route::post('/verify', [App\Http\Controllers\WelcomeController::class, 'verify']);
 Route::get('/attendance', [App\Http\Controllers\AttendanceController::class, 'index']);
 Route::post('/attendance', [App\Http\Controllers\AttendanceController::class, 'store']);
-
+Route::post('/improve', [App\Http\Controllers\AiController::class, 'improve']);
+// Route::post('/face/register', [App\Http\Controllers\FaceController::class, 'register']);
+// Route::post('/face/recognize', [App\Http\Controllers\FaceController::class, 'recognize']);
 Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', [App\Http\Controllers\DashboardController::class, 'search']);
@@ -28,6 +30,11 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
         Route::resource('/payroll', App\Http\Controllers\Hr\PayrollController::class);
         Route::get('/payroll/{type}/{code}', [App\Http\Controllers\Hr\PayrollController::class, 'view']);
     });
+
+    Route::middleware(['role:Document Management Officer'])->group(function () {
+        Route::resource('/events', App\Http\Controllers\Trace\EventController::class);
+    });
+
     Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
     Route::resource('/requests', App\Http\Controllers\Portal\RequestController::class);
     Route::resource('/approvals', App\Http\Controllers\Portal\ApprovalController::class);
@@ -102,4 +109,5 @@ Route::get('/rekognition-create', function () {
         return response()->json(['error' => $e->getMessage()], 500);
     }
 });
+
 require __DIR__.'/auth.php';

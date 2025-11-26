@@ -18,7 +18,7 @@ return new class extends Migration
             $table->json('expenses');
             $table->unsignedSmallInteger('mode_id');
             $table->foreign('mode_id')->references('id')->on('list_data')->onDelete('cascade');
-            $table->unsignedSmallInteger('transpo_id');
+            $table->unsignedSmallInteger('transpo_id')->nullable();
             $table->foreign('transpo_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->unsignedSmallInteger('expense_id');
             $table->foreign('expense_id')->references('id')->on('list_data')->onDelete('cascade');            

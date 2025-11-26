@@ -15,7 +15,7 @@ class ListDataTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_data')->delete();
+        \DB::table('list_data')->truncate();
         
         \DB::table('list_data')->insert(array (
             0 => 
@@ -1234,6 +1234,125 @@ class ListDataTableSeeder extends Seeder
                 'id' => 174,
                 'name' => 'Course',
                 'type' => 'Academic',
+                'is_active' => 1,
+            ),
+            174 => 
+            array (
+                'id' => 175,
+                'name' => 'Certificate of Appearance',
+                'type' => 'Attachment',
+                'is_active' => 1,
+            ),
+            175 => 
+            array (
+                'id' => 176,
+                'name' => 'Itinerary of Travel',
+                'type' => 'Attachment',
+                'is_active' => 1,
+            ),
+            176 => 
+            array (
+                'id' => 177,
+                'name' => 'Travel Accomplishment Report',
+                'type' => 'Attachment',
+                'is_active' => 1,
+            ),
+            177 => 
+            array (
+                'id' => 178,
+                'name' => 'Certificate of Travel Completed',
+                'type' => 'Attachment',
+                'is_active' => 1,
+            ),
+            178 => 
+            array (
+                'id' => 179,
+                'name' => 'Certification of Expenses not Requiring Receipts',
+                'type' => 'Attachment',
+                'is_active' => 1,
+            ),
+            179 => 
+            array (
+                'id' => 180,
+                'name' => 'Administrative / Operational',
+                'type' => 'Event',
+                'is_active' => 1,
+            ),
+            180 => 
+            array (
+                'id' => 181,
+                'name' => 'Meetings / Coordination',
+                'type' => 'Event',
+                'is_active' => 1,
+            ),
+            181 => 
+            array (
+                'id' => 182,
+                'name' => 'Training / Capacity Building',
+                'type' => 'Event',
+                'is_active' => 1,
+            ),
+            182 => 
+            array (
+                'id' => 183,
+                'name' => 'Assessment / Evaluation',
+                'type' => 'Event',
+                'is_active' => 1,
+            ),
+            183 => 
+            array (
+                'id' => 184,
+                'name' => 'Official / Ceremonial',
+                'type' => 'Event',
+                'is_active' => 1,
+            ),
+            184 => 
+            array (
+                'id' => 185,
+                'name' => 'Conference / Forum',
+                'type' => 'Event',
+                'is_active' => 1,
+            ),
+            185 => 
+            array (
+                'id' => 186,
+                'name' => 'Face-to-Face',
+                'type' => 'Event Mode',
+                'is_active' => 1,
+            ),
+            186 => 
+            array (
+                'id' => 187,
+                'name' => 'Online',
+                'type' => 'Event Mode',
+                'is_active' => 1,
+            ),
+            187 => 
+            array (
+                'id' => 188,
+                'name' => 'Hybrid',
+                'type' => 'Event Mode',
+                'is_active' => 1,
+            ),
+            188 => 
+            array (
+                'id' => 189,
+                'name' => 'Internal',
+                'type' => 'Audience',
+                'is_active' => 1,
+            ),
+            189 => 
+            array (
+                'id' => 190,
+                'name' => 'External',
+                'type' => 'Audience',
+                'is_active' => 1,
+            ),
+            190 => 
+            array (
+                'id' => 191,
+                'name' => 'Selected',
+                'type' => 'Audience',
                 'is_active' => 1,
             ),
         ));

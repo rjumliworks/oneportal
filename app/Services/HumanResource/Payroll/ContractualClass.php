@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\UserDeduction;
 use App\Models\UserOrganization;
 use App\Models\Schedule;
+use App\Models\Request;
 use App\Models\Payroll;
 use App\Models\PayrollCycle;
 use App\Models\PayrollCutoff;
@@ -243,31 +244,31 @@ class ContractualClass
                 $ignoreDates = array_keys($holidays->toArray());
 
             // Get official business dates
-            // $travels = Request::where('type_id', 156)
-            //     ->whereHas('tags', function ($query) use ($user_id) {
-            //         $query->where('user_id', $user_id);
-            //     })
-            //     ->whereHas('dates', function ($q) use ($start, $end) {
-            //         $q->whereBetween('start', [$start, $end])
-            //             ->orWhereBetween('end', [$start, $end])
-            //             ->orWhere(function ($q2) use ($start, $end) {
-            //                 $q2->where('start', '<', $start)
-            //                     ->where('end', '>', $end);
-            //             });
-            //     })
-            //     ->with('dates', 'detail')
-            //     ->get();
-            $travels = [];
+            $travels = Request::where('type_id', 156)
+                ->whereHas('tags', function ($query) use ($user_id) {
+                    $query->where('user_id', $user_id);
+                })
+                ->whereHas('dates', function ($q) use ($start, $end) {
+                    $q->whereBetween('start', [$start, $end])
+                        ->orWhereBetween('end', [$start, $end])
+                        ->orWhere(function ($q2) use ($start, $end) {
+                            $q2->where('start', '<', $start)
+                                ->where('end', '>', $end);
+                        });
+                })
+                ->with('dates', 'detail')
+                ->get();
+            // $travels = [];
 
-            // foreach ($travels as $travel) {
-            //     foreach ($travel->dates as $travelDate) {
-            //         $startDate = \Carbon\Carbon::parse($travelDate->start);
-            //         $endDate = \Carbon\Carbon::parse($travelDate->end ?? $travelDate->start);
-            //         foreach (\Carbon\CarbonPeriod::create($startDate, $endDate) as $day) {
-            //             $officialBusiness[$day->format('Y-m-d')] = $travel->location->address.', '.$travel->location->municipality->name ?? 'Official Business';
-            //         }
-            //     }
-            // }
+            foreach ($travels as $travel) {
+                foreach ($travel->dates as $travelDate) {
+                    $startDate = \Carbon\Carbon::parse($travelDate->start);
+                    $endDate = \Carbon\Carbon::parse($travelDate->end ?? $travelDate->start);
+                    foreach (\Carbon\CarbonPeriod::create($startDate, $endDate) as $day) {
+                        $officialTravel[$day->format('Y-m-d')] = $travel->location->address.', '.$travel->location->municipality->name ?? 'Official Travel';
+                    }
+                }
+            }
 
 
             // Generate daily data
@@ -284,23 +285,23 @@ class ContractualClass
                 if ($date->isSaturday() || $date->isSunday()) {
                     $status = 'Non-working Day';
                     $title = 'Non-working Day';
-                }elseif (isset($holidays[$dateStr])) {
+                }elseif(isset($holidays[$dateStr])) {
                     $status = 'Holiday';
                     $title = $holidays[$dateStr];
-                } elseif (isset($officialBusiness[$dateStr])) {
+                }elseif(isset($officialTravel[$dateStr])) { 
                     $status = 'Official Travel';
-                    $title = $officialBusiness[$dateStr];
+                    $title = $officialTravel[$dateStr];
                 }
 
                 // $dtr = $item->dtrs->firstWhere('date', $dateStr);
-               if (
-        in_array($dateStr, $ignoreDates) ||
-        in_array(Carbon::parse($dateStr)->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY])
-    ) {
-        continue; // skip this date
-    }
+                if (
+                    in_array($dateStr, $ignoreDates) ||
+                    in_array(Carbon::parse($dateStr)->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY])
+                ) {
+                    continue; // skip this date
+                }
 
-    $dtr = $item->dtrs->firstWhere('date', $dateStr);
+                $dtr = $item->dtrs->firstWhere('date', $dateStr);
 
                 $dates[] = [
                     'date' => $dateStr,

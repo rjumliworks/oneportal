@@ -2,9 +2,20 @@
     <b-modal v-model="showModal" style="--vz-modal-width: 1000px;" header-class="p-3 bg-light" title="File Travel Order" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow class="g-3 p-2">
-                <BCol lg="12" class="mt-2">
+                <BCol lg="12" class="mt-2 mb-2">
                     <InputLabel for="name" value="Purpose" :message="form.errors.purpose"/>
-                    <TextInput id="name" v-model="form.purpose" type="text" class="form-control" placeholder="Please enter purpose" @input="handleInput('purpose')" :light="true"/>
+                    <div class="position-relative">
+                        <textarea
+                            id="attribute" v-model="form.purpose" rows="1"
+                            class="form-control" placeholder="Please enter details"
+                            style="background-color: #f5f6f7; padding-bottom: 28px;" 
+                        ></textarea>
+
+                        <span class="position-absolute" style="top: -18px; font-size: 11px; right: 8px; background-color: white; cursor: pointer; color: #0d6efd; font-weight: 500;" @click="improveText" :class="{ 'text-muted': loading }">
+                            <span v-if="loading">Improving...</span>
+                            <span v-else>Improve with AI</span>
+                        </span>
+                    </div>
                 </BCol>
                 <!-- <BCol lg="4" class="mt-0">
                     <InputLabel for="name" value="Destination" :message="form.errors.destination"/>
@@ -210,6 +221,7 @@ export default {
             address: null,
             employees: [],
             vehicles: [],
+            loading: false,
             isLoading: false,
             showModal: false
         }
@@ -261,6 +273,21 @@ export default {
             })
             .catch(err => console.log(err));
         }, 
+        async improveText() {
+            this.loading = true;
+            axios.post('/improve', {
+                purpose: this.form.purpose, 
+            })
+            .then(res => {
+                this.form.purpose = res.data.improved.trim();
+            })
+            .catch(err => {
+                console.error(err);
+            })
+            .finally(() => {
+                this.loading = false;
+            });
+        },
         checkSearchStr: _.debounce(function(string) {
             (string) ? this.searchUser(string) : '';
         }, 300),

@@ -25,6 +25,26 @@
                     </Link>
                 </li>
             </tempalte>
+            <tempalte v-if="$page.props.roles.includes('Document Management Officer')">
+                <li class="menu-title">
+                    <i class="ri-more-fill" aria-expanded="false"></i>
+                    <span data-key="t-menu">Document Management</span>
+                </li>
+                <li class="nav-item">
+                    <Link href="/humanresource" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Dashboard') }">
+                    <i class="ri-apps-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/events" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Trace/Events') }">
+                    <i class="ri-calendar-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Events</span>
+                    </Link>
+                </li>
+            </tempalte>
             <tempalte v-if="$page.props.roles.includes('Human Resource Officer')">
                 <li class="menu-title">
                     <i class="ri-more-fill" aria-expanded="false"></i>

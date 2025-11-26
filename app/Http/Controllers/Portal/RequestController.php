@@ -118,7 +118,8 @@ class RequestController extends Controller
         switch($type){
             case 'travel-order':
                 return inertia('Modules/Portal/Requests/View/Travels/View',[
-                    'information_data' => $this->show->travel($code)
+                    'information_data' => $this->show->travel($code),
+                    'attachments' => $this->dropdown->datas('Attachment'),
                 ]);
             break;
             case 'vehicle-reservation':

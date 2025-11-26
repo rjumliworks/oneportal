@@ -375,81 +375,92 @@ class AttendanceController extends Controller
         return $path;
     }
 
-    // public function recognize(Request $request) //AWS REKOGNITION
-    // {
-    //     $request->validate(['image' => 'required|image']);
-
-    //     $file = $request->file('image');
-    //     $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-    //     // Store temporarily in S3 (or local)
-    //     $s3Path = $file->storeAs('oneportal/temp', $filename, 's3');
-
-    //     $rekognition = new \Aws\Rekognition\RekognitionClient([
-    //         'version'     => 'latest',
-    //         'region'      => config('services.rekognition.region'),
-    //         'credentials' => [
-    //             'key'    => config('services.rekognition.key'),
-    //             'secret' => config('services.rekognition.secret'),
-    //         ],
-    //     ]);
-
-    //     try {
-    //         $matches = $rekognition->searchFacesByImage([
-    //             'CollectionId' => config('services.rekognition.collection_id'),
-    //             'Image' => [
-    //                 'S3Object' => [
-    //                     'Bucket' => config('services.rekognition.bucket'),
-    //                     'Name' => $s3Path,
-    //                 ],
-    //             ],
-    //             'FaceMatchThreshold' => 90,
-    //             'MaxFaces' => 1,
-    //         ]);
-
-    //         if (!empty($matches['FaceMatches'])) {
-    //             $externalId = $matches['FaceMatches'][0]['Face']['ExternalImageId'];
-    //             $user = User::find($externalId); // your user table
-    //             return response()->json([
-    //                 'user_id' => $user->id,
-    //                 'user_name' => $user->name,
-    //                 'similarity' => $matches['FaceMatches'][0]['Similarity'],
-    //             ]);
-    //         } else {
-    //             return response()->json(['message' => 'No match found'], 404);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => $e->getMessage()], 500);
-    //     }
-    // }
-
-    public function recognize(Request $request)
+    public function recognize(Request $request) //AWS REKOGNITION
     {
-        $image = $request->file('image');
         $type = $request->type;
-        $response = Http::attach(
-            'image',
-            fopen($image->getPathname(), 'r'),
-            $image->getClientOriginalName()
-        )->post('http://3.0.197.61:5001/recognize'); // Flask HTTP endpoint
-        // dd($response->json());
-        $data = $response->json();
-        // dd($data);
-        // dd($data['faces'][0]['name']);
-        if(count($data['faces']) > 0){
-            $request['type'] = $type;
-            $request['username'] = $data['faces'][0]['name'];
-            $result = $this->store($request);
-        }else{
-            $result['info'] = 'Error';
-        }
+        $request->validate(['image' => 'required|image']);
 
-    //    return back()->with([
-    //         'data' => $result['data'],
-    //         'message' => $result['message'],
-    //         'info' => $result['info'],
-    //         'status' => $result['status'],
-    //     ]);
-        return $result;
+        $file = $request->file('image');
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+        // Store temporarily in S3 (or local)
+        $s3Path = $file->storeAs('oneportal/temp', $filename, 's3');
+
+        $rekognition = new \Aws\Rekognition\RekognitionClient([
+            'version'     => 'latest',
+            'region'      => config('services.rekognition.region'),
+            'credentials' => [
+                'key'    => config('services.rekognition.key'),
+                'secret' => config('services.rekognition.secret'),
+            ],
+        ]);
+
+        try {
+            $matches = $rekognition->searchFacesByImage([
+                'CollectionId' => config('services.rekognition.collection_id'),
+                'Image' => [
+                    'S3Object' => [
+                        'Bucket' => config('services.rekognition.bucket'),
+                        'Name' => $s3Path,
+                    ],
+                ],
+                'FaceMatchThreshold' => 90,
+                'MaxFaces' => 1,
+            ]);
+
+            if (!empty($matches['FaceMatches'])) {
+                $externalId = $matches['FaceMatches'][0]['Face']['ExternalImageId'];
+                $user = User::find($externalId); // your user table
+                $request['type'] = $type;
+                $request['username'] = $user->username;
+                $result = $this->store($request);
+return $result;
+                // return back()->with([
+                //     'data' => $result['data'],
+                //     'message' => $result['message'],
+                //     'info' => $result['info'],
+                //     'status' => $result['status'],
+                // ]);
+                // return response()->json([
+                //     'user_id' => $user->id,
+                //     'user_name' => $user->username,
+                //     'similarity' => $matches['FaceMatches'][0]['Similarity'],
+                // ]);
+            } else {
+                return response()->json(['message' => 'No match found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+
+    // public function recognize(Request $request)
+    // {
+    //     $image = $request->file('image');
+    //     $type = $request->type;
+    //     $response = Http::attach(
+    //         'image',
+    //         fopen($image->getPathname(), 'r'),
+    //         $image->getClientOriginalName()
+    //     )->post('http://3.0.197.61:5001/recognize'); // Flask HTTP endpoint
+    //     // dd($response->json());
+    //     $data = $response->json();
+    //     // dd($data);
+    //     // dd($data['faces'][0]['name']);
+    //     if(count($data['faces']) > 0){
+    //         $request['type'] = $type;
+    //         $request['username'] = $data['faces'][0]['name'];
+    //         $result = $this->store($request);
+    //     }else{
+    //         $result['info'] = 'Error';
+    //     }
+
+    // //    return back()->with([
+    // //         'data' => $result['data'],
+    // //         'message' => $result['message'],
+    // //         'info' => $result['info'],
+    // //         'status' => $result['status'],
+    // //     ]);
+    //     return $result;
+    // }
 }

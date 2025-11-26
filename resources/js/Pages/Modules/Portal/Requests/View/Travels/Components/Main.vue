@@ -134,7 +134,7 @@
                                         </div>
                                     </template>
                                      <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Activities'" />
-                                    <Attachment :information="information" v-if="menu == 'Attachment'" />
+                                    <Attachment :information="information" :attachments="attachments" v-if="menu == 'Documents'" />
                                 </div>
                             </transition>
                         </div>
@@ -190,7 +190,7 @@ import simplebar from "simplebar-vue";
 import Multiselect from "@vueform/multiselect";
 export default {
     components: { simplebar, Multiselect, Signatories, Attachment },
-    props: ['information'],
+    props: ['information','attachments'],
     data(){
         return {
             form: useForm({
@@ -200,7 +200,7 @@ export default {
                 option: 'comment'
             }),
             menus: [
-                'Home','Activities','Attachment'
+                'Home','Activities','Documents'
             ],
             menu: 'Home',
             replyuser: null,

@@ -46,7 +46,7 @@
                     </BCol>
                 </template> -->
                 <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
-                <BCol lg="12" class="mt-n2 mb-3">
+                <BCol lg="12" class="mt-n2 mb-1">
                     <InputLabel for="role" value="Employees" :message="form.errors.tags"/>
                     <Multiselect
                         v-model="form.tags"
@@ -65,8 +65,20 @@
                         ref="multiselect2"
                         />
                 </BCol>
-                <BCol lg="12" class="mt-1">
-                    <Textarea id="name" v-model="form.purpose" type="text" rows="3" placeholder="Add purpose of the request" class="form-control" :class="{ 'is-invalid': form.errors.purpose }" @input="handleInput('purpose')" :light="true"/>
+                <BCol lg="12" class="mt-0">
+                    <InputLabel for="name" value="Purpose" :message="form.errors.purpose"/>
+                    <div class="position-relative">
+                        <textarea
+                            id="attribute" v-model="form.purpose" rows="3"
+                            class="form-control" placeholder="Please enter details"
+                            style="background-color: #f5f6f7; padding-bottom: 28px;" 
+                        ></textarea>
+
+                        <span class="position-absolute" style="top: -18px; font-size: 11px; right: 8px; background-color: white; cursor: pointer; color: #0d6efd; font-weight: 500;" @click="improveText" :class="{ 'text-muted': loading }">
+                            <span v-if="loading">Improving...</span>
+                            <span v-else>Improve with AI</span>
+                        </span>
+                    </div>
                 </BCol>
             </BRow>
         </form>
@@ -132,6 +144,7 @@ export default {
             },
             employees:[],
             dateType: null,
+            loading: false,
             showModal: false
         }
     },
@@ -223,6 +236,21 @@ export default {
                     this.form.reset();
                     this.hide();
                 },
+            });
+        },
+        async improveText() {
+            this.loading = true;
+            axios.post('/improve', {
+                purpose: this.form.purpose, 
+            })
+            .then(res => {
+                this.form.purpose = res.data.improved.trim();
+            })
+            .catch(err => {
+                console.error(err);
+            })
+            .finally(() => {
+                this.loading = false;
             });
         },
         formatDate(date) {
