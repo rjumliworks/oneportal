@@ -34,6 +34,11 @@ class Request extends Model
         return $this->hasOne('App\Models\RequestLeave', 'request_id');
     }
 
+    public function event()
+    {
+        return $this->hasOne('App\Models\RequestEvent', 'request_id');
+    }
+
     public function travel()
     {
         return $this->hasOne('App\Models\RequestTravel', 'request_id');

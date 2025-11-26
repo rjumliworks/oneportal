@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('request_events', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->string('code',30)->unique()->index();
             $table->text('title');
-            $table->longText('purpose');
-            $table->string('remarks')->nullable();
             $table->boolean('is_host')->default(true);
             $table->unsignedSmallInteger('audience_id');
             $table->foreign('audience_id')->references('id')->on('list_data');
@@ -25,8 +22,8 @@ return new class extends Migration
             $table->foreign('mode_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->unsignedSmallInteger('type_id');
             $table->foreign('type_id')->references('id')->on('list_data')->onDelete('cascade');
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('request_id')->nullable();
+            $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -36,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('request_events');
     }
 };
