@@ -90,7 +90,7 @@ class ContractualClass
                     $payroll->mins = $tardiness['mins'];
                     $payroll->days = $tardiness['days'];
                     $payroll->tardiness = $tardiness['total'];
-                    $payroll->netpay = ($salary / 2) - ($tardiness['total'] + $tax);
+                    $payroll->netpay = (($salary / 2) - round($tardiness['total'],2)) - round($tax,2);
                     $payroll->save();
 
                     $deduction = UserDeduction::where('is_active', 1)->where('is_automatic', 0)->where('user_id', $user)->first();

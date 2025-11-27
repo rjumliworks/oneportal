@@ -73,6 +73,7 @@
                                 <tr class="fs-11">
                                     <th style="width: 3%;" class="text-center">#</th>
                                     <th>Name</th>
+                                    <th style="width: 15%;" class="text-center">Participants</th>
                                     <th style="width: 15%;" class="text-center">Type</th>
                                     <th style="width: 10%;" class="text-center">Mode</th>
                                     <th style="width: 15%;" class="text-center">Date</th>
@@ -86,6 +87,7 @@
                                         <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.title}}</h5>
                                         <p class="fs-12 text-muted mb-0">{{list.location.name}}</p>
                                     </td>
+                                     <td class="text-center">{{ list.tags.length }}</td>
                                     <td class="text-center">{{ list.type.name }}</td>
                                     <td class="text-center">{{ list.mode.name }}</td>
                                     <td class="text-center">{{formatDateRange(list.start, list.end)}}</td>

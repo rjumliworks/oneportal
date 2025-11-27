@@ -30,20 +30,34 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){ 
-            if(strpos($request->date, ' to ') !== false) {
-                [$start, $end] = explode(' to ', $request->date);
-            } else {
-                $start = $end = $request->date;
+            if($request->date_type != 'Multiple Dates (non-continuous)'){
+                $dates = $request->dates;
+                $allWholeDay = array_reduce($dates, function ($carry, $item) {
+                    return $carry && ($item['timeOfDay'] === 'Whole Day');
+                }, true);
+
+                if ($allWholeDay) {
+                    $dates = array_column($dates, 'date');
+                    $start = min($dates);
+                    $end = max($dates);
+
+                    $data->dates()->create([
+                        'start' => $start,
+                        'end' => $end,
+                        'time' => '08:00',
+                    ]);
+                } else {
+                    foreach($dates as $date){
+                        $data->dates()->create([
+                            'start' => $date['date'],
+                            'end' => $date['date'],
+                            'time' => '08:00',
+                            'time_of_day' => $date['timeOfDay']
+                        ]);
+                    }
+                    
+                }
             }
-
-            $start = \Carbon\Carbon::parse($start)->toDateString();
-            $end = \Carbon\Carbon::parse($end)->toDateString();
-
-            $data->dates()->create([
-                'start' => $start,
-                'end' => $end,
-                'time' => $request->time,
-            ]);
 
             $data->detail()->create($request->only([
                 'purpose', 'remarks'

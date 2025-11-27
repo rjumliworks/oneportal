@@ -130,6 +130,7 @@ import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
+import { data } from 'autoprefixer';
 export default {
     components: { Multiselect, InputLabel, TextInput, flatPickr, ViewDate, ViewType, Location },
     props: ['dropdowns'],
@@ -143,6 +144,7 @@ export default {
                 mode_id: null,
                 type_id: null,
                 timeOfDay: 'Whole Day',
+                date: null,
                 dates: [],
                 date_type: null,
                 is_host: null,
@@ -267,6 +269,7 @@ export default {
             this.showModal = true;
         },
         submit(){
+            this.form.date = this.date;
             this.form.date_type = this.dateType;
             this.form.post('/events',{
                 preserveScroll: true,
