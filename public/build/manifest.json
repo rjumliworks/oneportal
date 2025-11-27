@@ -220,6 +220,14 @@
     "file": "assets/logo-sm-BMbbSDmV.png",
     "src": "public/images/logo-sm.png"
   },
+  "public/images/logos/bagongpilipinas.png": {
+    "file": "assets/bagongpilipinas-DcObCbJR.png",
+    "src": "public/images/logos/bagongpilipinas.png"
+  },
+  "public/images/logos/dost.png": {
+    "file": "assets/dost-R0vjotWm.png",
+    "src": "public/images/logos/dost.png"
+  },
   "public/images/sidebar/img-1.jpg": {
     "file": "assets/img-1-C6VsSbnm.jpg",
     "src": "public/images/sidebar/img-1.jpg"
@@ -237,7 +245,7 @@
     "src": "public/images/sidebar/img-4.jpg"
   },
   "resources/js/app.js": {
-    "file": "assets/app-CoUXitbf.js",
+    "file": "assets/app-C2ogHKFb.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -254,10 +262,12 @@
       "node_modules/leaflet/dist/leaflet-src.esm.js"
     ],
     "css": [
-      "assets/app-7sMkAzlK.css"
+      "assets/app-BIIUDaMc.css"
     ],
     "assets": [
       "assets/logo-sm-BMbbSDmV.png",
+      "assets/dost-R0vjotWm.png",
+      "assets/bagongpilipinas-DcObCbJR.png",
       "assets/logo-dark-BTQwWYkM.png",
       "assets/logo-light-xO5Q2xFH.png",
       "assets/laboratory-DGebyxyk.png",
