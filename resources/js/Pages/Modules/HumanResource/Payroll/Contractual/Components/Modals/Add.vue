@@ -151,6 +151,9 @@
                                             <template v-else-if="list.status === 'Official Travel'">
                                                 <td class="text-center" colspan="5">Official Travel : {{list.title}}</td>
                                             </template>
+                                            <template v-else-if="list.status === 'Official Business'">
+                                                <td class="text-center" colspan="5">Official Business : {{list.title}}</td>
+                                            </template>
                                             <template v-else-if="list.status === 'Absent'">
                                                 <td class="text-center" colspan="5">Absent</td>
                                             </template>
@@ -211,6 +214,9 @@ export default {
         travelCount() {
             return (this.selected?.dtrs || []).filter(item => item.status == "Official Travel").length;
         },
+        businessCount() {
+            return (this.selected?.dtrs || []).filter(item => item.status == "Official Business").length;
+        },
         nonCount() {
             return (this.selected?.dtrs || []).filter(item => item.status == "Non-working Day").length;
         },
@@ -218,7 +224,7 @@ export default {
             return (this.selected?.dtrs || []).filter(item => item.status == "Absent").length;
         },
         totalWorkDays() {
-            return (this.selected?.dtrs?.length || 0) - (this.holidayCount + this.travelCount + this.nonCount + this.absentCount);
+            return (this.selected?.dtrs?.length || 0) - (this.holidayCount + this.travelCount + this.nonCount + this.absentCount + this.businessCount);
         }
     },
     methods: { 

@@ -51,6 +51,9 @@ class EventController extends Controller
                 case 'event':
                     return $this->save->store($request);
                 break;
+                case 'participant':
+                    return $this->save->participant($request);
+                break;
             }
         });
 

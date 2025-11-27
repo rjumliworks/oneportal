@@ -35,10 +35,10 @@ class PayrollRequest extends FormRequest
                     'month' => [
                         'sometimes',
                         'required',
-                        Rule::unique('payroll_cycles')->where(function ($query) {
-                            return $query->where('is_regular',0)
-                                        ->where('year', $this->year);
-                        })
+                        // Rule::unique('payroll_cycles')->where(function ($query) {
+                        //     return $query->where('is_regular',0)
+                        //                 ->where('year', $this->year);
+                        // })
                     ],
                     'year' => 'sometimes|required',
                     'start' => 'sometimes|required',

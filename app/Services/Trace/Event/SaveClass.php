@@ -8,6 +8,21 @@ use App\Models\RequestReport;
 
 class SaveClass
 {
+    public function participant($request){
+        $data = Request::findOrFail($request->id);
+        $data->tags()->create([
+            'user_id' => $request->user_id,
+            'division_id' => $request->division_id,
+            'signatory_id' => 1,
+            'status_id' => 36,
+        ]);
+        return [
+            'data' => $data,
+            'message' => 'Participant added successfully.',
+            'info' => 'The participant has been added to the event. You may review or update participant details anytime.'
+        ];
+    }
+
     public function store($request){
         $data = Request::create([
             'code' => $this->generateCode(),

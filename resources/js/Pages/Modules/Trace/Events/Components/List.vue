@@ -26,6 +26,9 @@
                         <div class="input-group mb-1">
                             <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
                             <input type="text" placeholder="Search Employee" class="form-control" style="width: 20%;">
+                            <span @click="openGroup()" class="input-group-text" v-b-tooltip.hover title="Group" style="cursor: pointer;"> 
+                                    <i class="ri-team-fill search-icon"></i>
+                                </span>
                             <b-button type="button" variant="primary" @click="openAdd">
                                 <i class="ri-user-add-fill align-bottom me-1"></i> Add Employee
                             </b-button>
@@ -40,32 +43,34 @@
                             <tr class="fs-11">
                                 <th style="width: 3%;"></th>
                                 <th>Name</th>
-                                <th style="width: 15%;" class="text-center">Division</th>
-                                <th style="width: 15%;" class="text-center">Unit</th>
+                                <th style="width: 20;" class="text-center">Division</th>
+                                <th style="width: 20%;" class="text-center">Unit</th>
                                 <th style="width: 10%;" class="text-center">Status</th>
                                 <th style="width: 6%;"></th>
                             </tr>
                         </thead>
                         <tbody class="table-white fs-12">
-                            <!-- <tr v-for="(list,index) in sortedPayrolls" v-bind:key="index" @click="selectRow(index)" :class="{ 'bg-info-subtle': selectedRow === index }">
-                                <td class="text-center">{{ index + 1 }}.</td>
+                            <tr v-for="(list,index) in information.tags" v-bind:key="index" @click="selectRow(index)" :class="{ 'bg-info-subtle': selectedRow === index }">
+                                <td class="text-center">
+                                    <div class="avatar-xs chat-user-img online">
+                                        <img :src="list.avatar" alt="" class="avatar-xs rounded-circle">
+                                    </div>
+                                </td>
                                 <td>
                                     <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.name}}</h5>
                                     <p class="fs-12 text-muted mb-0">{{list.position}}</p>
                                 </td>
-                                <td class="text-center">{{ list.salary }}</td>
-                                <td class="text-center">{{ list.tardiness }}</td>
-                                <td class="text-center">{{ list.deduction }}</td>
-                                <td class="text-center">{{ list.netpay }}</td>
+                                <td class="text-center">{{ list.division }}</td>
+                                <td class="text-center">{{ list.unit }}</td>
+                                <td class="text-center">
+                                    <span :class="'badge '+list.status.bg+' '+list.status.type">{{list.status.name}}</span>
+                                </td>
                                 <td class="text-end">
-                                    <b-button v-if="payroll.status.name == 'Draft'" @click="openView(list,'delete')" variant="soft-danger" class="me-1" v-b-tooltip.hover title="Remove" size="sm">
-                                        <i class="ri-delete-bin-fill align-bottom"></i>
-                                    </b-button>
                                     <b-button @click="openView(list,'view')" variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                         <i class="ri-eye-fill align-bottom"></i>
                                     </b-button>
                                 </td>
-                            </tr> -->
+                            </tr>
                         </tbody>
                         <tfoot class="bg-light text-primary tfoot-fixed fw-bold fs-12">
                             <!-- <tr>
@@ -83,14 +88,16 @@
             </div>
         </div>
     </div>
-    <Add :start="information.start" :end="information.end" ref="add"/>
+    <Group ref="group"/>
+    <Add :id="information.request_id" :start="information.start" :end="information.end" ref="add"/>
 </template>
 <script>
 import Add from './Modals/Add.vue';
+import Group from './Modals/Group.vue';
 import simplebar from "simplebar-vue";
 export default {
     props: ['information'],
-    components: { simplebar, Add },
+    components: { simplebar, Add, Group },
     data(){
         return {
             lists: [],
@@ -115,6 +122,9 @@ export default {
     methods: {
         openAdd(){
             this.$refs.add.show();
+        },
+        openGroup(){
+            this.$refs.group.show();
         },
         openView(payroll,type){
             this.$refs.view.show(payroll,type);

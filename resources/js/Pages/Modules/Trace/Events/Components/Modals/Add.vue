@@ -1,5 +1,5 @@
 <template>
-<b-modal v-model="showModal" header-class="p-3 bg-light" title="Select Employee" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+<b-modal v-model="showModal" style="--vz-modal-width: 800px;" header-class="p-3 bg-light" title="Select Employee" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow class="g-3">
                 <BCol lg="12">
@@ -28,13 +28,13 @@
                                 </div>
                             </form>
                         </BCol>
-                        <BCol lg="12" class="mt-n1 mb-n4" v-if="selected">
+                        <BCol lg="12" class="mt-n1 mb-n3" v-if="selected">
                             <hr class="text-muted"/>
                         </BCol>
                         <BCol md  v-if="selected">
                             <BRow class="align-items-center g-1">
                                 <BCol md="auto">
-                                    <div style="height: 3.5rem; width: 3.5rem;">
+                                    <div style="height: 3rem; width: 3rem;">
                                         <div class="avatar-title bg-white rounded-circle">
                                             <img :src="selected.avatar" alt="" class="avatar-sm rounded-circle">
                                         </div>
@@ -42,7 +42,7 @@
                                 </BCol>
                                 <BCol md>
                                     <div class="ms-2">
-                                        <h4 class="fs-18 fw-semibold mb-1">{{ selected.name }}</h4>
+                                        <h4 class="fs-16 fw-semibold mb-1">{{ selected.name }}</h4>
                                         <div class="hstack gap-3 flex-wrap">
                                             <div><span class="text-muted">Position :</span> {{selected.position}}</div>
                                             <div class="vr" style="width: 1px;"></div>
@@ -52,123 +52,21 @@
                                 </BCol>
                             </BRow>
                         </BCol>
-                        <BCol lg="12" class="mt-n1 mb-n3" v-if="selected">
+                        <BCol lg="12" class="mt-0 mb-n3" v-if="selected">
                             <hr class="text-muted"/>
                         </BCol>
-                        <BCol lg="12" v-if="selected && selected.already_in_payroll">
-                            <div class="alert alert-danger alert-dismissible alert-label-icon label-arrow" role="alert">
+                        <BCol lg="12" v-if="selected">
+                            <div v-if="selected.available" class="alert alert-success alert-dismissible alert-label-icon label-arrow" role="alert">
                                 <i class="ri-error-warning-line label-icon"></i>
-                                <strong>Alert</strong> – This employee is already in the payroll.
+                                <strong>Alert</strong> – This employee available on this date.
+                            </div>
+                             <div v-else class="alert alert-danger alert-dismissible alert-label-icon label-arrow" role="alert">
+                                <i class="ri-error-warning-line label-icon"></i>
+                                <strong>Alert</strong> – This employee is not available on this date.
+                                  {{ conflictText }}
                             </div>
                         </BCol>
-                        <BCol lg="12" v-if="selected && !selected.already_in_payroll">
-                            <div class="row g-3 mt-n3 mb-3">
-                                <div class="col-sm-3">
-                                    <div class="p-1 border border-dashed rounded">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-2">
-                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-calendar-check-fill"></i></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="text-muted mb-0 fs-12">Completed DTR :</p>
-                                                <h5 class="mb-0 fs-12">{{completedCount}} / {{ totalWorkDays }}</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="p-1 border border-dashed rounded">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-2">
-                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-calendar-todo-fill"></i></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="text-muted mb-0 fs-12">Holiday :</p>
-                                                <h5 class="mb-0 fs-12">{{holidayCount}}</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="p-1 border border-dashed rounded">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-2">
-                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-map-pin-fill"></i></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="text-muted mb-0 fs-12">Official Travel :</p>
-                                                <h5 class="mb-0 fs-12">{{travelCount}}</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="p-1 border border-dashed rounded">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-2">
-                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-close-circle-fill"></i></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="text-muted mb-0 fs-12">Absent :</p>
-                                                <h5 class="mb-0 fs-12">{{absentCount}}</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="completedCount != totalWorkDays"
-                                class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show material-shadow mt-2"
-                                role="alert">
-                                <i class="ri-alert-line label-icon"></i>
-                                <strong>Warning</strong> - Employee is not eligible to be added to the payroll because their DTR is incomplete.
-                            </div>
-                            <div class="table-responsive" style="height: calc(100vh - 565px); overflow: auto;">
-                                <table class="table table-bordered align-middle mb-1">
-                                    <thead class="bg-primary fs-11 thead-fixed">
-                                        <tr class="text-white">
-                                            <th class="text-center" style="width: 25%;">Date</th>
-                                            <th class="text-center" style="width: 15%;">Am In</th>
-                                            <th class="text-center" style="width: 15%;">Am Out</th>
-                                            <th class="text-center" style="width: 15%;">Pm In</th>
-                                            <th class="text-center" style="width: 15%;">Pm Out</th>
-                                            <th class="text-center" style="width: 15%;">Is updated</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-white fs-12">
-                                        <tr v-for="(list,index) in selected.dtrs" v-bind:key="index" :class="{
-                                            'bg-success-subtle': list.is_completed,
-                                            'bg-dark-subtle': list.status === 'Holiday' || list.status === 'Non-working Day',
-                                            'bg-warning-subtle': list.status === 'Official Travel',
-                                            'bg-danger-subtle': list.status === 'Absent'
-                                        }">
-                                            <td class="text-center">{{ list.date }}</td>
-                                            <template v-if="list.status === 'Non-working Day'">
-                                                <td class="text-center" colspan="5">{{list.title}}</td>
-                                            </template>
-                                             <template v-else-if="list.status === 'Holiday'">
-                                                <td class="text-center" colspan="5">{{list.title}}</td>
-                                            </template>
-                                            <template v-else-if="list.status === 'Official Travel'">
-                                                <td class="text-center" colspan="5">Official Travel : {{list.title}}</td>
-                                            </template>
-                                            <template v-else-if="list.status === 'Absent'">
-                                                <td class="text-center" colspan="5">Absent</td>
-                                            </template>
-                                            <template v-else>
-                                                <td class="text-center">{{ list.am_in ? list.am_in.time : '-' }}</td>
-                                                <td class="text-center">{{ list.am_out ? list.am_out.time : '-' }}</td>
-                                                <td class="text-center">{{ list.pm_in ? list.pm_in.time : '-' }}</td>
-                                                <td class="text-center">{{ list.pm_out ? list.pm_out.time : '-' }}</td>
-                                                <td class="text-center">
-                                                    <span v-if="list.is_updated" class="badge bg-border border-success border border-danger text-danger">Updated</span>
-                                                    <span v-else class="badge bg-border border-success border border-primary text-primary">Not Updated</span>
-                                                </td>
-                                            </template>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </BCol>
+                        
                     </BRow>
                 </BCol>
             </BRow>
@@ -183,19 +81,39 @@
 import _ from 'lodash';
 import { useForm } from '@inertiajs/vue3';
 export default {
-    props: ['start','end'],
+    props: ['id','start','end'],
     data(){
         return {
             currentUrl: window.location.origin,
             form: useForm({
                 id: this.id,
                 user_id: null,
-                option: 'payroll'
+                division_id: null,
+                option: 'participant'
             }),
             selected: null,
             names: [],
             keyword: null,
             showModal: false
+        }
+    },
+    computed: {
+        conflictText() {
+            if (!this.selected || !this.selected.conflicts) return "";
+            return this.selected.conflicts
+                .map(conflict => {
+                    const type = conflict.type;
+                    const dateRanges = conflict.dates
+                        .map(d => {
+                            if (d.start === d.end) {
+                                return d.start;
+                            }
+                            return `${d.start} to ${d.end}`;
+                        })
+                        .join("; ");
+                    return `${type} on ${dateRanges}`;
+                })
+                .join(". ");
         }
     },
     mounted() {
@@ -228,12 +146,13 @@ export default {
         chooseUser(data){
             this.selected = data;
             this.form.user_id = data.value;
+            this.form.division_id = data.division_id;
             this.keyword = null;
             document.getElementById("search-options").value = "";
             document.getElementById("search-options").focus();
         }, 
         submit(){
-            this.form.post('/payroll',{
+            this.form.post('/events',{
                 preserveScroll: true,
                 onSuccess: (response) => {
                     this.hide();

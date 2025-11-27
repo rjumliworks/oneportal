@@ -11,7 +11,11 @@ class TagResource extends JsonResource
     {
         return [
             'name' => $this->user->profile->firstname.' '.$this->user->profile->lastname,
-            'division' => $this->division_id,
+            'status' => $this->status,
+            'position' => $this->user->organization->position->name,
+            'division_id' => $this->user->organization->division->id,
+            'division' => $this->user->organization->division->name,
+            'unit' => $this->user->organization->unit->name,
             'avatar' => ($this->user->profile && $this->user->profile->avatar && $this->user->profile->avatar !== 'noavatar.jpg')
             ? asset('storage/' . $this->user->profile->avatar) 
             : asset('images/avatars/avatar.jpg'), 

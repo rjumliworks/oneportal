@@ -26,7 +26,8 @@ class ViewClass
         $data = RequestEvent::with([
             'mode','type','audience',
             'request.tags.user:id',
-            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar,suffix_id','request.tags.status',
+            'request.tags.user.organization.division','request.tags.user.organization.unit','request.tags.user.organization.position',
             'request.dates',
             'request.location',
             'request.detail',
@@ -77,10 +78,7 @@ class ViewClass
             'profile',
             'organization.position',
             'organization.division',
-            'organization.type',
-            'dtrs' => function ($q) use ($start, $end) {
-                $q->whereBetween('date', [$start, $end]);
-            }
+            'organization.type'
         ])
         ->when($keyword, function ($query) use ($keyword){
             $query->whereHas('profile', function ($q) use ($keyword) {
@@ -88,7 +86,25 @@ class ViewClass
             });
         })
         ->limit(5)->get()->map(function ($item) use ($start, $end){
+            $conflicts = $item->tags()
+                ->whereHas('request.dates', function ($q) use ($start, $end) {
+                    $q->where('start', '<=', $end)
+                      ->where('end', '>=', $start);
+                })
+                ->with([
+                    'request.type',
+                    'request.dates' => function ($q) {
+                        $q->select('id', 'request_id', 'start', 'end');
+                    }
+                ])
+                ->get()->map(function ($con){
+                    return [
+                        'type' => $con->request->type->name,
+                        'dates' => $con->request->dates
+                    ];
+                });
 
+            $isAvailable = $conflicts->isEmpty();
             return [
                 'value' => $item->id,
                 'name' => $item->profile->lastname . ', ' . $item->profile->firstname . ' ' . $item->profile->middlename . '.',
@@ -98,7 +114,9 @@ class ViewClass
                 'type' => $item->organization->type->name,
                 'avatar' => ($item->profile && $item->profile->avatar && $item->profile->avatar !== 'noavatar.jpg')
                 ? asset('storage/' . $item->profile->avatar) 
-                : asset('images/avatars/avatar.jpg')
+                : asset('images/avatars/avatar.jpg'),
+                'available' => $isAvailable,
+                'conflicts' => $conflicts 
             ];
         });
         return $data;

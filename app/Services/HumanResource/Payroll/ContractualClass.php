@@ -75,7 +75,6 @@ class ContractualClass
                     $payroll->save();
 
                 }elseif($data->type == '2nd') {
-                    
                     $previous = Payroll::where('user_id', $user)
                         ->whereHas('cutoff', function ($query) use ($data) {
                             $query->where('cycle_id', $data->cycle_id);
@@ -270,6 +269,33 @@ class ContractualClass
                 }
             }
 
+            $obs = Request::where('type_id', 192)
+                ->whereHas('tags', function ($query) use ($user_id) {
+                    $query->where('user_id', $user_id);
+                })
+                ->whereHas('dates', function ($q) use ($start, $end) {
+                    $q->whereBetween('start', [$start, $end])
+                        ->orWhereBetween('end', [$start, $end])
+                        ->orWhere(function ($q2) use ($start, $end) {
+                            $q2->where('start', '<', $start)
+                                ->where('end', '>', $end);
+                        });
+                })
+                ->with('dates', 'detail','event')
+                ->get();
+            // $travels = [];
+
+            foreach ($obs as $ob) {
+                foreach ($ob->dates as $obDate) {
+                    $startDate = \Carbon\Carbon::parse($obDate->start);
+                    $endDate = \Carbon\Carbon::parse($obDate->end ?? $obDate->start);
+                    foreach (\Carbon\CarbonPeriod::create($startDate, $endDate) as $day) {
+                        $officialBusiness[$day->format('Y-m-d')] = $ob->event->title ?? 'Official Business';
+                    }
+                }
+            }
+
+
 
             // Generate daily data
             $dates = [];
@@ -291,6 +317,9 @@ class ContractualClass
                 }elseif(isset($officialTravel[$dateStr])) { 
                     $status = 'Official Travel';
                     $title = $officialTravel[$dateStr];
+                }elseif(isset($officialBusiness[$dateStr])) { 
+                    $status = 'Official Business';
+                    $title = $officialBusiness[$dateStr];
                 }
 
                 // $dtr = $item->dtrs->firstWhere('date', $dateStr);
@@ -336,21 +365,36 @@ class ContractualClass
         $start = Carbon::parse($data->start);
         $end = Carbon::parse($data->end);
              $datesList = collect();
-        // $travels = Request::where('type_id',156)
-        // ->whereHas('tags', function ($query) use ($user) {
-        //     $query->where('user_id', $user);
-        // })
-        // ->whereHas('dates', function ($q) use ($start, $end) {
-        //     $q->whereBetween('start', [$start, $end]) // starts this month
-        //     ->orWhereBetween('end', [$start, $end]) // ends this month
-        //     ->orWhere(function ($q2) use ($start, $end) { // spans whole month
-        //         $q2->where('start', '<', $start)
-        //             ->where('end', '>', $end);
-        //     });
-        // })
-        // ->with('dates')
-        // ->get();
-        $travels = [];
+        $travels = Request::where('type_id',156)
+        ->whereHas('tags', function ($query) use ($user) {
+            $query->where('user_id', $user);
+        })
+        ->whereHas('dates', function ($q) use ($start, $end) {
+            $q->whereBetween('start', [$start, $end]) // starts this month
+            ->orWhereBetween('end', [$start, $end]) // ends this month
+            ->orWhere(function ($q2) use ($start, $end) { // spans whole month
+                $q2->where('start', '<', $start)
+                    ->where('end', '>', $end);
+            });
+        })
+        ->with('dates')
+        ->get();
+        $obs = Request::where('type_id',192)
+        ->whereHas('tags', function ($query) use ($user) {
+            $query->where('user_id', $user);
+        })
+        ->whereHas('dates', function ($q) use ($start, $end) {
+            $q->whereBetween('start', [$start, $end]) // starts this month
+            ->orWhereBetween('end', [$start, $end]) // ends this month
+            ->orWhere(function ($q2) use ($start, $end) { // spans whole month
+                $q2->where('start', '<', $start)
+                    ->where('end', '>', $end);
+            });
+        })
+        ->with('dates')
+        ->get();
+        // $travels = [];
+        // $obs = [];
 
         foreach ($travels as $travel) {
             foreach ($travel->dates as $range) {
@@ -363,6 +407,19 @@ class ContractualClass
                 }
             }
         }
+
+           foreach ($obs as $ob) {
+            foreach ($ob->dates as $range) {
+                $current = Carbon::parse($range->start);
+                $endDate = Carbon::parse($range->end);
+
+                while ($current->lte($endDate)) {
+                    $datesList->push($current->toDateString());
+                    $current->addDay();
+                }
+            }
+        }
+
         $datesList = $datesList->unique()->sort()->values();
         $combinedDates = $datesList->merge($this->holidays)->unique()->sort()->values();
 
