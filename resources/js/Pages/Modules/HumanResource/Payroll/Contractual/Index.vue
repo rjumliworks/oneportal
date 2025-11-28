@@ -1,5 +1,5 @@
 <template>
-<Head title="Dtr"/>
+<Head title="Payroll Contractual"/>
 <PageHeader title="Payroll Management" pageTitle="List" />
 <BRow>
     <div class="col-md-12">
@@ -109,7 +109,7 @@
         </div>
     </div>
 </BRow>
-<Create :payrolls="dropdowns.payrolls" ref="create"/>
+<Create :payrolls="dropdowns.payrolls" @success="fetch()" ref="create"/>
 </template>
 <script>
 import _ from 'lodash';
