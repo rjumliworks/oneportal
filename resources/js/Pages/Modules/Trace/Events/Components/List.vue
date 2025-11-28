@@ -66,8 +66,8 @@
                                     <span :class="'badge '+list.status.bg+' '+list.status.type">{{list.status.name}}</span>
                                 </td>
                                 <td class="text-end">
-                                    <b-button @click="openView(list,'view')" variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
-                                        <i class="ri-eye-fill align-bottom"></i>
+                                    <b-button @click="openView(list,'view')" variant="soft-danger" class="me-1" v-b-tooltip.hover title="Remove" size="sm">
+                                        <i class="ri-delete-bin-fill align-bottom"></i>
                                     </b-button>
                                 </td>
                             </tr>

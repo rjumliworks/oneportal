@@ -20,6 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'kradworkz',
         'password',
         'is_active',
+        'is_present',
         'must_change',
         'email_verified_at',
         'password_changed_at',
