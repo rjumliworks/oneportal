@@ -170,6 +170,10 @@
                                 <td width="80%" colspan="6" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
                                        Official Travel : {{ $list['destination'] }}
                                     </td>
+                                @elseif($list['data'] == 'OFFICIAL BUSINESS')
+                                <td width="80%" colspan="6" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                    OB : {{ $list['title'] }}
+                                </td>
                                 @else
                                 <td width="80%" colspan="6" style="letter-spacing: 1px; text-transform: uppercase; font-size: 8px;">
                                     {{ $list['data'] }}
@@ -340,8 +344,12 @@
                                     </td>
                                     @elseif($list['data'] == 'OFFICIAL TRAVEL')
                                     <td width="80%" colspan="6" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
-                                            Official Travel : {{ $list['destination'] }}
-                                        </td>
+                                        Official Travel : {{ $list['destination'] }}
+                                    </td>
+                                    @elseif($list['data'] == 'OFFICIAL BUSINESS')
+                                    <td width="80%" colspan="6" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                        OB : {{ $list['title'] }}
+                                    </td>
                                     @else
                                     <td width="80%" colspan="6" style="letter-spacing: 1px; text-transform: uppercase; font-size: 8px; background: rgba(128,128,128, .5)">
                                         {{ $list['data'] }}
