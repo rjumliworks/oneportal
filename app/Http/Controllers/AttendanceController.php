@@ -414,13 +414,13 @@ class AttendanceController extends Controller
                 $request['type'] = $type;
                 $request['username'] = $user->username;
                 $result = $this->store($request);
-return $result;
-                // return back()->with([
-                //     'data' => $result['data'],
-                //     'message' => $result['message'],
-                //     'info' => $result['info'],
-                //     'status' => $result['status'],
-                // ]);
+// return $result;
+                return back()->with([
+                    'data' => $result['data'],
+                    'message' => $result['message'],
+                    'info' => $result['info'],
+                    'status' => $result['status'],
+                ]);
                 // return response()->json([
                 //     'user_id' => $user->id,
                 //     'user_name' => $user->username,
