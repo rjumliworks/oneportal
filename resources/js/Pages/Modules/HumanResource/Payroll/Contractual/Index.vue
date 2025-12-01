@@ -76,7 +76,7 @@
                             <tr v-for="(list,index) in lists" v-bind:key="index" >
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                 <td>
-                                    <h5 class="fs-12 text-primary text-uppercase fw-semibold mb-0">{{ list.cycle.month }} {{ list.cycle.year }}</h5>
+                                    <h5 class="fs-12 text-primary text-uppercase fw-semibold mb-0">{{ list.cycle.month }} {{ list.cycle.year }} - {{ list.type }}  QUINCENA</h5>
                                     <p class="fs-12 text-muted mb-0">Batch {{ list.batch }} ({{ list.start }} to {{ list.end }})</p>
                                 </td>
                                 <td class="text-center">{{list.count}}</td>

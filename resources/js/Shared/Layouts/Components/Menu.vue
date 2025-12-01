@@ -16,6 +16,13 @@
                 <span class="fw-semibold fs-14" data-key="t-dashboards">My Requests</span>
                 </Link>
             </li>
+            <li class="nav-item">
+                <Link href="/dtr" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Portal/Dtrs') }">
+                <i class="ri-alarm-fill"></i>
+                <span class="fw-semibold fs-14" data-key="t-dashboards">Daily Time Record</span>
+                </Link>
+            </li>
             <tempalte v-if="$page.props.user.data.signatory">
                 <li class="nav-item">
                     <Link href="/approvals" class="nav-link menu-link"

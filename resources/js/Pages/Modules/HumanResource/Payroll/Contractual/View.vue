@@ -13,7 +13,7 @@
                                          
                                             <BCol md>
                                                 <div class="ms-2">
-                                                    <h4 class="fw-bold fs-21 d-inline-flex align-items-center text-uppercase">{{ payroll.cycle.month }} {{ payroll.cycle.year }} 
+                                                    <h4 class="fw-bold fs-21 d-inline-flex align-items-center text-uppercase">{{ payroll.cycle.month }} {{ payroll.cycle.year }} - {{ payroll.type }} QUINCENA
                                                         <span :class="'ms-2 fs-10 badge ' + payroll.status.bg">
                                                             {{ payroll.status.name }}
                                                         </span>
