@@ -14,7 +14,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h5 class="mb-0 fs-14"><span class="text-body">For Approval</span></h5>
+                            <h5 class="mb-0 fs-14"><span class="text-body">{{ month }} Records</span></h5>
                             <p class="text-muted text-truncate-two-lines fs-12">A detailed list of submitted travel order requests including destination, purpose, schedule, and status.</p>
                         </div>
                         <div class="flex-shrink-0" style="width: 15%;">
@@ -38,7 +38,7 @@
                         </b-col>
                     </b-row>
                 </div>
-                <div class="card bg-white border-bottom shadow-none p-4" no-body>
+                <div class="card bg-white border-bottom shadow-none p-4" no-body style="margin-bottom: 0px;">
                      <div class="row g-3">
                         <div class="col-sm-4">
                             <div class="p-1 border border-dashed rounded">
@@ -48,7 +48,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <p class="text-muted mb-0 fs-12">Completed DTR :</p>
-                                        <h5 class="mb-0 fs-12">{{completedCount}} / {{ totalWorkDays }}</h5>
+                                        <h5 class="mb-0 fs-12">{{completedCount - (travelCount+businessCount)}} / {{ totalWorkDays }}</h5>
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +166,7 @@ export default {
     data(){
         return {
             selected: {},
-            month: null,
+            month: new Date().toLocaleString('default', { month: 'long' }),
             months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
             icons: ['ri-flight-takeoff-fill','ri-car-fill','ri-calendar-2-fill'],
             index: null,
