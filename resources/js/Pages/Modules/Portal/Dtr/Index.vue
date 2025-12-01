@@ -108,7 +108,7 @@
                     </div>
                 </div>
                 <div class="card-body bg-white rounded-bottom">
-                    <div class="table-responsive" style="height: calc(100vh - 565px); overflow: auto;">
+                    <div class="table-responsive" style="height: calc(100vh - 500px); overflow: auto;">
                         <table class="table table-bordered align-middle mb-1">
                             <thead class="bg-primary fs-11 thead-fixed">
                                 <tr class="text-white">

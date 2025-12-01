@@ -23,7 +23,6 @@
                     <InputLabel for="due" value="Please type DELETE to continue."/>
                     <TextInput v-model="keyword" type="text" class="form-control text-center" :light="true"/>
                 </BCol>
-                {{ filteredDeductions }}s
             </BRow>
         </form>
         <template v-slot:footer>
