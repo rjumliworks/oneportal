@@ -26,8 +26,11 @@
                         <b-col lg>
                             <div class="input-group mb-1">
                                 <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                                <input type="text" placeholder="Search Request" class="form-control" style="width: 40%;">
-                                <Multiselect class="white" style="width: 11%;" :options="months" v-model="month" label="short" :searchable="true" placeholder="Select Month" />
+                                <input type="text" placeholder="Search" class="form-control" style="width: 30%;">
+                                <Multiselect class="white" style="width: 15%;" :options="months" v-model="month" label="short" :searchable="true" placeholder="Select Month" />
+                                 <span @click="print()" class="input-group-text" v-b-tooltip.hover title="Print" style="cursor: pointer;"> 
+                                    <i class="ri-printer-line search-icon"></i>
+                                </span>
                                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                                     <i class="bx bx-refresh search-icon"></i>
                                 </span>
@@ -246,7 +249,10 @@ export default {
 
             // Default — Not completed
             return 'bg-warning-subtle';
-        }
+        },
+        print(){
+            window.open('/dtrs?option=print&id='+this.$page.props.user.data.id+'&month='+this.month+'&year=2025');
+        }, 
     }
 }
 </script>

@@ -107,7 +107,7 @@ class ReservationClass
                 ? (int) substr($latest->code, -4) + 1
                 : 1;
 
-            $code = 'REQUEST-' . now()->format('Y') . '-VEHICLE-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+            $code = 'REQUEST-' . now()->format('mY') . '-VEHICLE-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
             return $code;
         });

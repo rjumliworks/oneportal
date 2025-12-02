@@ -199,7 +199,7 @@ class LeaveClass
                 ? (int) substr($latest->code, -4) + 1
                 : 1;
 
-            $code = now()->format('Y') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
+            $code = now()->format('mY') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
 
             return $code;
         });

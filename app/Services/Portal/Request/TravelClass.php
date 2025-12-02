@@ -159,7 +159,7 @@ class TravelClass
                 ? (int) substr($latest->code, -4) + 1
                 : 1;
 
-            $code = 'TRVL-'.now()->format('Y') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
+            $code = 'TRVL-'.now()->format('mY') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
 
             return $code;
         });
