@@ -30,7 +30,7 @@
       <button
         @click="verifyDocument"
         :disabled="loading || !file"
-        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg w-full disabled:opacity-50"
+        class="bg-primary hover:bg-blue-700 text-white py-2 px-4 rounded-lg w-full disabled:opacity-50"
       >
         {{ loading ? 'Verifying...' : 'Verify Document' }}
       </button>
