@@ -57,10 +57,10 @@
             <b-button @click="continueToForm()" variant="primary" block>Continue</b-button>
         </template>
     </b-modal>
-    <Vehicle :dropdowns="vehicle_dropdowns" ref="vehicle"/>
-    <Travel :dropdowns="travel_dropdowns" ref="travel"/>
-    <Leave @update="fetch()" :dropdowns="leave_dropdowns" ref="leave"/>
-    <Overtime @update="fetch()" :dropdowns="leave_dropdowns" ref="overtime"/>
+    <Vehicle @success="fetch()" :dropdowns="vehicle_dropdowns" ref="vehicle"/>
+    <Travel @success="fetch()" :dropdowns="travel_dropdowns" ref="travel"/>
+    <Leave @success="fetch()" :dropdowns="leave_dropdowns" ref="leave"/>
+    <Overtime @success="fetch()" :dropdowns="leave_dropdowns" ref="overtime"/>
 </template>
 <script>
 import Travel from './Travel.vue';

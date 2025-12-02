@@ -46,16 +46,14 @@ class WelcomeController extends Controller
     $recomputed = hash_hmac('sha256', $clean, $secret);
 
     $match = hash_equals($embedded, $recomputed);
-dd($match);
-    return inertia('Public/Verification/Index', [
-        'result' => [
-            'status'  => $match ? 'valid' : 'tampered',
-            'message' => $match
-                ? '✅ Verified — the uploaded document is authentic.'
-                : '❌ Tampered — the document has been altered.',
-            'embedded'  => $embedded,
-            'recomputed' => $recomputed,
-        ],
+
+    return response()->json([
+        'status'     => $match ? 'valid' : 'tampered',
+        'message'    => $match
+            ? '✅ Verified — the uploaded document is authentic.'
+            : '❌ Tampered — the document has been altered.',
+        'embedded'   => $embedded,
+        'recomputed' => $recomputed,
     ]);
 }
 }

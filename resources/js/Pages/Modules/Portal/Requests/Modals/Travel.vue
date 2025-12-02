@@ -255,6 +255,7 @@ export default {
                 preserveScroll: true,
                 forceFormData: true, 
                 onSuccess: (response) => {
+                    this.$emit('success',true);
                     this.form.clearErrors();
                     this.form.reset();
                     this.hide();

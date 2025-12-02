@@ -1,19 +1,5 @@
 <template>
-    <Head title="Human Resource - Date Time Record" />
-    <body>
-    <div class="account-pages my-4 pt-sm-1">
-        <div class="container" style="max-width: 1400px;">
-                
-            
-            <div class="row justify-content-center">
-                <div class="col-md-12">
-                    <div class="text-center mb-4">
-                        <img src="/images/logo-sm.png" alt="" class="avatar-sm mb-2">
-                        <p class="fs-14 fw-semibold text-p text-uppercase">Department of Science & Technology - IX</p>
-                        <p class="fs-13 text-muted" style="margin-top: -20px;">Human Resource - Date Time Record</p>
-                    </div>
-                    <div class="card border bg-white">
-                          <div class="min-h-screen flex flex-col items-center justify-center text-center bg-gray-50">
+  <div class="min-h-screen flex flex-col items-center justify-center text-center bg-gray-50">
     <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
       <h2 class="text-2xl font-semibold mb-3 text-center">📄 Document Verification</h2>
       <p class="text-gray-500 text-sm mb-6 text-center">
@@ -53,13 +39,8 @@
       </div>
     </div>
   </div>
-                    </div>
-                </div>
-              </div>
-        </div>
-    </div>
-</body>
 </template>
+
 <script>
 import axios from 'axios'
 
@@ -111,3 +92,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.card {
+  transition: all 0.3s ease;
+}
+</style>

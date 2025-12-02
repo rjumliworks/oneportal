@@ -17,7 +17,7 @@
         </div>
         <div class="card bg-white rounded-bottom shadow-none mb-0" style="height: calc(100vh - 342px); overflow-x: hidden; overflow-y: auto;">
             <div class="row g-3 p-3">
-                <div :class="(this.$page.props.user.data.type == 'Regular') ? 'col-md-4' : 'col-md-6'">
+                <div :class="(this.$page.props.user.data.type == 'Plantilla') ? 'col-md-4' : 'col-md-6'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
@@ -30,7 +30,7 @@
                         </div>
                     </div>
                 </div>
-                <div :class="(this.$page.props.user.data.type == 'Regular') ? 'col-md-4' : 'col-md-6'">
+                <div :class="(this.$page.props.user.data.type == 'Plantilla') ? 'col-md-4' : 'col-md-6'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4" v-if="this.$page.props.user.data.type == 'Regular'">
+                <div class="col-md-4" v-if="this.$page.props.user.data.type == 'Plantilla'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
@@ -54,7 +54,7 @@
                         </div>
                     </div>
                 </div>
-                <div :class="(this.$page.props.user.data.type == 'Regular') ? 'col-md-4' : 'col-md-6'">
+                <div :class="(this.$page.props.user.data.type == 'Plantilla') ? 'col-md-4' : 'col-md-6'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-file-text-fill"></i>
@@ -66,7 +66,7 @@
                         </div>
                     </div>
                 </div>
-                <div :class="(this.$page.props.user.data.type == 'Regular') ? 'col-md-4' : 'col-md-6'">
+                <div :class="(this.$page.props.user.data.type == 'Plantilla') ? 'col-md-4' : 'col-md-6'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
@@ -79,13 +79,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 p-3" v-if="this.$page.props.user.data.type != 'Regular'">
-                <div class="alert alert-danger alert-dismissible alert-label-icon label-arrow fade show material-shadow" role="alert">
-                    <i class="ri-information-fill label-icon"></i><strong>{{ information.count }} days</strong> - without pay
+            <div class="row g-3 p-3 mt-n3 mb-n3">
+                <div class="col-md-6" v-if="information.nopay > 0">
+                    <div class="mt-n2 alert alert-danger alert-dismissible alert-label-icon label-arrow fade show material-shadow" role="alert">
+                        <i class="ri-information-fill label-icon"></i><strong>{{ information.nopay }} day{{ (information.nopay == 1) ? '' : 's' }}</strong> - without pay
+                    </div>
+                </div>
+                <div class="col-md-6" v-if="information.pay > 0">
+                    <div class="mt-n2 alert alert-success alert-dismissible alert-label-icon label-arrow fade show material-shadow" role="alert">
+                        <i class="ri-information-fill label-icon"></i><strong>{{ information.pay }} day{{ (information.nopay == 1) ? '' : 's' }}</strong> - with pay
+                    </div>
                 </div>
             </div>
             
-            <template v-if="this.$page.props.user.data.type == 'Regular'">
+            <template v-if="this.$page.props.user.data.type == 'Plantilla'">
                 <hr class="text-muted mt-0"/>
                     <p class="ms-3 mb-0 text-primary fs-12 fw-semibold">Leave Credits</p>
                 <hr class="text-muted mb-0"/>

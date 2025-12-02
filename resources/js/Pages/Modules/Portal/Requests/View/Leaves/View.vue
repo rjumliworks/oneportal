@@ -28,7 +28,7 @@
                                     </BCol>
                                     <BCol md="auto">
                                         <div class="hstack gap-4 flex-wrap mt-2">
-                                            <Link href="/approvals">
+                                            <Link href="/requests">
                                                 <div class="text-muted" @click="hide()">  
                                                     <i class="ri-close-circle-fill fs-16"></i> Close
                                                 </div>

@@ -24,6 +24,8 @@ class LeaveResource extends JsonResource
             'request_id' => $this->request->id,
             'code' => $this->request->code,
             'count' => $this->count,
+            'nopay' => $this->nopay,
+            'pay' => $this->pay,
             'leave' => $this->type,
             'detail' => $this->detail->name,
             'type' => $this->request->type->name,
