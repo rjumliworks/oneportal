@@ -131,7 +131,7 @@ class TravelClass
     {
         return \DB::transaction(function () {
             $latest = Request::lockForUpdate()
-                ->whereMonth('created_at', now()->month)
+                // ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->orderByDesc('id')
                 ->first();
@@ -140,7 +140,7 @@ class TravelClass
                 ? (int) substr($latest->code, -4) + 1
                 : 1;
 
-            $code = 'REQUEST-' . now()->format('mY') . '-TRAVEL-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+            $code = 'REQUEST-' . now()->format('Y') . '-TRAVEL-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
             return $code;
         });
@@ -150,7 +150,7 @@ class TravelClass
     {
         return \DB::transaction(function () {
             $latest = RequestTravel::lockForUpdate()
-                ->whereMonth('created_at', now()->month)
+                // ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->orderByDesc('id')
                 ->first();

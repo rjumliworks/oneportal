@@ -76,11 +76,11 @@
                                     <th>Name</th>
                                     <th style="width: 10%;" class="text-center">Type</th>
                                     <th style="width: 10%;" class="text-center">Employee No.</th>
-                                    <th style="width: 10%;" class="text-center">Contact No.</th>
-                                    <th style="width: 15%;" class="text-center">Email</th>
-                                    <th style="width: 13%;" class="text-center">Birthdate</th>
+                                    <th style="width: 11%;" class="text-center">Contact No.</th>
+                                    <th style="width: 16%;" class="text-center">Email</th>
+                                    <th style="width: 8%;" class="text-center">Birthdate</th>
                                     <th style="width: 10%;" class="text-center">Status</th>
-                                    <th style="width: 6%;"></th>
+                                    <th style="width: 8%;"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-white fs-12">
@@ -105,7 +105,7 @@
                                     <td class="text-center">{{ list.email }}</td>
                                     <td class="text-center">{{ list.birthdate }}</td>
                                     <td class="text-center">
-                                        <span :class="'badge '+list.organization.status.color+' '+list.organization.status.type">{{list.organization.status.name}}</span>
+                                        <span :class="'badge '+list.organization.status.bg+' '+list.organization.status.type">{{list.organization.status.name}}</span>
                                     </td>
                                     <td class="text-end">
                                         <b-button @click="openEdit(list,index)" variant="soft-warning" class="me-1" v-b-tooltip.hover title="Edit" size="sm">

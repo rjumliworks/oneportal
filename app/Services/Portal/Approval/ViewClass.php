@@ -10,7 +10,7 @@ use App\Http\Resources\Portal\Approval\IndexResource;
 class ViewClass
 {
     public function lists($request){
-        $signatories = OrgSignatory::with('designationable')->where('user_id',\Auth::user()->id)->where('is_active',1)->get(); 
+        $signatories = OrgSignatory::with('designationable')->where('user_id',\Auth::user()->id)->orWhere('oic_id',\Auth::user()->id)->where('is_active',1)->get(); 
         
         $hasRecommendationRole = $signatories->contains(fn($s) => $s->designationable->designation_id == 44);
         $hasApprovalRole = $signatories->contains(fn($s) => $s->designationable->designation_id == 43);

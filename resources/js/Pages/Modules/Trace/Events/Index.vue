@@ -73,11 +73,11 @@
                                 <tr class="fs-11">
                                     <th style="width: 3%;" class="text-center">#</th>
                                     <th>Name</th>
-                                    <th style="width: 15%;" class="text-center">Participants</th>
-                                    <th style="width: 15%;" class="text-center">Type</th>
+                                    <th style="width: 10%;" class="text-center">Participants</th>
+                                    <th style="width: 17%;" class="text-center">Type</th>
                                     <th style="width: 10%;" class="text-center">Mode</th>
                                     <th style="width: 15%;" class="text-center">Date</th>
-                                    <th style="width: 6%;"></th>
+                                    <th style="width: 8%;"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-white fs-12">
