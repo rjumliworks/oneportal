@@ -49,7 +49,7 @@ class UserClass
         $id = $hashids->decode($request->code)[0];
 
         $data = UserFolderFile::whereHas('folder', function ($query) use ($id) {
-            $query->where('name', 'Reference1')
+            $query->where('name', 'Reference')
                 ->where('user_id', $id);
         })->get();
 
@@ -146,7 +146,7 @@ class UserClass
         $code = $hashids->encode($request->id);
 
         $folder = UserFolder::firstOrCreate(
-            ['user_id' => $request->id, 'name' => 'Reference1']
+            ['user_id' => $request->id, 'name' => 'Reference']
         );
         
         $folder_id = $folder->id;

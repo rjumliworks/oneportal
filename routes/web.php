@@ -111,4 +111,44 @@ Route::get('/rekognition-create', function () {
     }
 });
 
+Route::get('/rekognition-delete', function () {
+    try {
+        $rekognition = new RekognitionClient([
+            'version' => 'latest',
+            'region' => 'ap-southeast-1',
+            'credentials' => [
+                'key' => config('services.rekognition.key'),
+                'secret' => config('services.rekognition.secret'),
+            ],
+        ]);
+
+        $collectionId = 'dost9-users';
+
+        // 1. Get all faces
+        $faces = $rekognition->listFaces([
+            'CollectionId' => $collectionId,
+            'MaxResults' => 1000,
+        ]);
+
+        if (!empty($faces['Faces'])) {
+            $faceIds = array_column($faces['Faces'], 'FaceId');
+
+            // 2. Delete all faces
+            $rekognition->deleteFaces([
+                'CollectionId' => $collectionId,
+                'FaceIds' => $faceIds,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'All faces deleted successfully!',
+        ]);
+
+    } catch (\Aws\Exception\AwsException $e) {
+        return response()->json([
+            'error' => $e->getAwsErrorMessage(),
+            'type'  => $e->getAwsErrorCode(),
+        ], 500);
+    }
+});
 require __DIR__.'/auth.php';
