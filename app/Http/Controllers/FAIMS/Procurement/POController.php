@@ -40,7 +40,7 @@ class POController extends Controller
                 return inertia('Modules/FAIMS/Procurement/PurchaseOrder/List', [
                     'dropdowns' => [
                         'roles'  =>  \Auth::user()->roles,
-                        'designation'  =>  \Auth::user()->degination,
+                        'designation'  =>  \Auth::user()->designation,
                         'statuses' => $this->dropdown->statuses('Procurement'),
                     ],
                    
@@ -72,6 +72,9 @@ class POController extends Controller
                 break;
                 case 'update_status':
                     return $this->po->updateStatus($id, $request);
+                break;
+                case 'not_conformed':
+                    return $this->po->notConformed($id, $request);
                 break;
             }   
            

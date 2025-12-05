@@ -42,7 +42,7 @@ class ProcurementBACClass
                 $this->saveFailureBACResolution( $procurement, $request);
             break;
             case 'Re-award':
-                dd('re-award'); 
+                 $this->saveReawardBACResolution( $procurement, $request);
             break;
         }
 
@@ -68,9 +68,9 @@ class ProcurementBACClass
 
     protected function saveAwardBACResolution($procurement, $request)
     { 
-        if($procurement->status->name === "Rebid"){
+         if($procurement->status->name === "Rebid"){
             $procurement->update([
-                'sub_status_id' => 45  ,//set to 'For Bids'
+                'sub_status_id' => 45  ,//set to 'For Approval of BAC Resolution'
             ]);   
         }
         else{
@@ -78,26 +78,14 @@ class ProcurementBACClass
             $procurement->update([
                 'status_id' => 45  ,//set to 'For Approval of Failure BAC Resolution'
             ]);   
-        }
-          
-
+        }  
     }
 
-    protected function saveReAwardBACResolution($procurement, $request)
+    protected function saveReawardBACResolution($procurement, $request)
     { 
-        if($procurement->status->name === "Re-award"){
-            $procurement->update([
-                'sub_status_id' => 45  ,//set to 'For Bids'
-            ]);   
-        }
-        else{
-            // update procurement substatus to "For Quotations"
-            $procurement->update([
-                'status_id' => 45  ,//set to 'For Approval of Failure BAC Resolution'
-            ]);   
-        }
-          
-
+        $procurement->update([
+            'sub_status_id' => 45  ,//set to 'For Approval of BAC Resolution'
+        ]);   
     }
 
     protected function saveFailureBACResolution($procurement, $request)
@@ -153,30 +141,28 @@ class ProcurementBACClass
         ]);
 
         $procurement = $bac_resolution->procurement;
-        // if status is "re-award"
-        if( $procurement->status->name == "Re-award"){
-             $procurement->update([
-                'sub_status_id' => 46, // set sub_status to "For NOA"
-            ]);
+        switch($procurement->status->name){
+            case 'Re-award':
+                 $procurement->update([
+                    'sub_status_id' => 46, // set sub_status to "For NOA"
+                ]);
+            break;
+            case 'Rebid':
+                $procurement->update([
+                    'sub_status_id' => 46, // set sub_status to "For NOA"
+                ]);
+            break;
+            default:
+                $procurement->update([
+                    'status_id' => 46, // set status to "For NOA"
+                ]);
 
+            break;
         }
-        else if( $procurement->status->name == "Rebid"){
-             $procurement->update([
-                'sub_status_id' => 46, // set sub_status to "For NOA"
-            ]);
-        }
-        else{
-            $procurement->update([
-                'status_id' => 46, // set status to "For NOA"
-            ]);
-        }
-
-        if($request->type != "Rebid"){
+        if($request->bac_reso_type != "Rebid"){
              // create NOA and its items
             $this->createNOA($request, $bac_resolution, $user);
         }
-   
-        
         return [
             'data' =>new ProcurementBacResource($bac_resolution),
             'message' => 'BAC Resolution Status updated successfully!', 

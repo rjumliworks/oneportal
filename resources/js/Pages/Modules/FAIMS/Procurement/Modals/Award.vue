@@ -76,12 +76,11 @@
       <hr class="my-1" />
 
       <!-- Ranking section -->
-      <div class="mt-4"  >
+      <div class="mt-4"  v-if="unawardedWithBidPriceCount > 0">
         <div
           v-for="(group, groupIndex) in groupedUnawardedBids"
           :key="group.item_no"
           class="mb-4"
-          v-if="!groupedUnawardedBids.length == 0"
         >
           <div>
             <b class="text-info">Item No: {{ group.item_no }}</b>
@@ -135,7 +134,7 @@
         </div>
 
         <div>
-          <b-form-checkbox v-model="checkedBidsRank"  v-if="!groupedUnawardedBids.length === 0">
+          <b-form-checkbox v-model="checkedBidsRank"  v-if="unawardedWithBidPriceCount > 0">
             <h5>The bid items are correctly ranked from first to last.</h5>
           </b-form-checkbox>
         </div>
@@ -144,12 +143,14 @@
 
     <template #footer >
       <b-button @click="hide()" variant="light" block>No</b-button>
-      <b-button @click="submit()" variant="success" block :disabled="!bothChecked" v-if="groupedUnawardedBids.length > 0"
+      <b-button @click="submit()" variant="success" block :disabled="!rankChecked"  v-if="unawardedWithBidPriceCount > 0" 
         >Yes</b-button
       >
-      <b-button @click="submit()" variant="success" block v-else :disabled="!bothChecked"
-        >Yes</b-button
+        <b-button @click="submit()" variant="success" block :disabled="!bothChecked"  v-else
+        >Yes</b-button 
       >
+
+
     </template>
   </b-modal>
 </template>
@@ -181,20 +182,29 @@ export default {
   bothChecked() {
     // if NO items to rank → require 2 checks
     if (this.checkedBidsDescriptions  && this.checkedBidsPrice) {
-      return true;
+        return true;
     }
 
   },
 
   rankChecked() {
-    // if there ARE items to rank → require rank check
-    if (this.groupedUnawardedBids.length > 0) {
-      return true;
-    }
+      if (this.checkedBidsDescriptions  && this.checkedBidsPrice && this.checkedBidsRank) {
+          return true;
+      }
+  },
 
-    // if NO unawarded items → rank check is irrelevant
-    return true;
+  unawardedWithBidPriceCount() {
+    return this.groupedUnawardedBids.reduce((count, group) => {
+      return (
+        count +
+        group.quotations.filter(
+          q => q.bid_price !== null && q.bid_price > 0
+        ).length
+      );
+    }, 0);
   }
+
+
 },
 
 
@@ -281,9 +291,6 @@ export default {
               rank: index + 2,
             }))
         );
-
-          console.log(this.bidsNotForAward, 66);
-          console.log(this.groupedUnawardedBids, 67);
 
 
     },

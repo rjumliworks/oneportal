@@ -45,7 +45,7 @@
         variant="primary"
         :disabled="form.processing"
         block
-        >update</b-button
+        >Update</b-button
       >
     </template>
   </b-modal>

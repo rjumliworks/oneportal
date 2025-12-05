@@ -543,6 +543,7 @@ class DropdownClass
     public function regional_director()
     {
         $data = OrgChart::with('user.profile')->where('designation_id', 45)->first();
+
         if (!$data) {
             return null; // or return an empty array []
         }

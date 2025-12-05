@@ -25,7 +25,7 @@
                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                     <i class="bx bx-refresh search-icon"></i>
                 </span>
-                <b-button v-if="procurement.status.name == 'For BAC Resolution' || procurement.status.name == 'Rebid' || (procurement.status.name === 'Rebid' && procurement.sub_status?.name === 'For Quotations') || procurement.status.name == 'Re-award'" type="button" variant="primary" @click="openBACReso()">
+                <b-button v-if="procurement.status.name == 'For BAC Resolution' || (procurement.status.name === 'Rebid' && procurement.sub_status?.name == null) || procurement.status.name == 'Re-award'" type="button" variant="primary" @click="openBACReso()">
                     <i class="ri-add-circle-fill align-bottom me-1"></i> New
                 </b-button>
             </div>
@@ -226,8 +226,8 @@ methods: {
         router.get('/faims/procurements/'+this.procurement.id + '?bac_reso_id='+ data.id + '&option=notice_of_awards');
     },
 
-    selectRow(selected_id) {
-        this.selectedRow = selected_id;
+     selectRow(index) {
+        this.selectedRow = (this.selectedRow == index) ? null : index;
     },
 }
 }

@@ -80,6 +80,8 @@
                         <th style="width: 10%" class="text-center">Requested By</th>
                         <th style="width: 10%" class="text-center">PAP Code</th>
                         <th style="width: 10%" class="text-center">Quotation Count</th>
+                        <th style="width: 10%" class="text-center">Reawarded Count</th>
+                        <th style="width: 10%" class="text-center">Rebid Count</th>
                         <th style="width: 15%" class="text-center">Date Created</th>
                         <th style="width: 10%" class="text-center">Status</th>
                         <th style="width: 10%" class="text-center">Sub-status</th>
@@ -112,6 +114,14 @@
                           </span>
                           <span else></span>
                         </td>
+
+                        <td class="text-center">
+                          <span v-if="list.reawarded_count > 0">
+                            {{ list.reawarded_count }}
+                          </span>
+                          <span else></span>
+                        </td>
+                        <td></td>
                         <td class="text-center">{{ list.date }}</td>
                         <td class="text-center">
                           <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
@@ -172,6 +182,7 @@
 
                                 <li
                                     v-if="
+                                      list.status.name == 'Completed' || 
                                       (list.status.name == 'Rebid' && list.sub_status?.name == 'For Quotations') ||
                                       (list.status.name == 'Approved' &&
                                         roles.includes('Procurement Officer')) ||
@@ -181,13 +192,14 @@
                                     class="dropdown-item d-flex align-items-center"
                                     role="button"
                                   >
-                                    <i class="ri-check-fill align-bottom me-1"></i>Quotation
+                                    <i class="ri-check-fill align-bottom me-1"></i>Quotations
                                 </li>
 
                                 <li
                                     v-if="
                                       (list.status.name == 'Rebid' && list.sub_status?.name == 'For Bids') ||
-                                      list.status.name == 'For Bids' || 
+                                      (list.status.name == 'Rebid' && list.sub_status?.name == 'For BAC Resolution') ||
+                                      list.status.name == 'For Bids' ||  list.status.name == 'Completed' || 
                                       (list.status.name == 'For Approval of BAC Resolution' || 
                                       list.status.name == 'For BAC Resolution' && 
                                       roles.includes('Procurement Officer')) ||
@@ -203,6 +215,7 @@
 
                                 <li
                                     v-if="
+                                      list.status.name == 'Completed' || 
                                       list.status.name == 'For Approval of BAC Resolution' || list.status.name == 'For NOA' || list.status.name == 'Served to Supplier' ||
                                       list.status.name == 'NOA Conformed /For PO' || list.status.name == 'Partially Delivered/For Inspection' || 
                                       list.status.name == 'NOA Served to Supplier' &&
@@ -229,7 +242,7 @@
                                     <i class="ri-file-fill align-bottom me-1"></i>
                                     
                                     <span v-if=" list.status.name =='Re-award'">Re-award</span> 
-                                    <span v-if=" list.status.name =='Rebid' ">Rebid</span> 
+                                    <span v-else-if=" list.status.name =='Rebid' ">Rebid</span> 
                                 </li>
 
 
@@ -425,8 +438,8 @@ export default {
       window.open(`/faims/procurements/${data.id}?option=print&type=procurement`);
     },
 
-    selectRow(selected_id) {
-          this.selectedRow = selected_id;
+    selectRow(index) {
+         this.selectedRow = (this.selectedRow == index) ? null : index;
       },
 
     refresh() {

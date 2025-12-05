@@ -20,64 +20,70 @@
             Notice Of Award No.:
           </span>
 
-            <!-- Purchase Order -->
+          <!-- Purchase Order -->
           <span v-if="type == 'PO' || type == 'PO Not Conformed'">
             Purchase Order No.:
           </span>
-          
 
-          <span class="text-danger flex">{{ form.code }}</span></b>
-             <br />
+          <span class="text-danger flex">{{ form.code }}</span></b
+        >
+        <br />
 
-          <span v-if="form.status?.name === 'Pending' && type != 'NOA Not Conformed' && type != 'PO Not Conformed'">
-            Update status from
-            <span :class="form.status?.color">"{{ form.status?.name }}"</span>
-            to
-            <span class="text-primary">"Served to Supplier"</span>
-            ?
-          </span>
+        <span
+          v-if="
+            form.status?.name === 'Pending' &&
+            type != 'NOA Not Conformed' &&
+            type != 'PO Not Conformed'
+          "
+        >
+          Update status from
+          <span :class="form.status?.color">"{{ form.status?.name }}"</span>
+          to
+          <span class="text-primary">"Served to Supplier"</span>
+          ?
+        </span>
 
-          <span
-            v-if="
-              form.status?.name === 'Served to Supplier' && type != 'NOA Not Conformed' && type != 'PO Not Conformed'
-            "
-          >
-            Update status from
-            <span :class="form.status?.color">"{{ form.status?.name }}"</span>
-            to
-            <span class="text-primary">"Conformed"</span>
-            ?
-          </span>
+        <span
+          v-if="
+            form.status?.name === 'Served to Supplier' &&
+            type != 'NOA Not Conformed' &&
+            type != 'PO Not Conformed'
+          "
+        >
+          Update status from
+          <span :class="form.status?.color">"{{ form.status?.name }}"</span>
+          to
+          <span class="text-primary">"Conformed"</span>
+          ?
+        </span>
 
-          <span v-if="form.status?.name === 'Conformed'">
-            Update status from
-            <span :class="form.status?.color">"{{ form.status?.name }}"</span>
-            to
-            <span class="text-primary">"Delivered/For Inspection"</span>
-            ?
-          </span>
+        <span v-if="form.status?.name === 'Conformed'">
+          Update status from
+          <span :class="form.status?.color">"{{ form.status?.name }}"</span>
+          to
+          <span class="text-primary">"Delivered/For Inspection"</span>
+          ?
+        </span>
+        <br />
+
+        <div v-if="type == 'NOA Not Conformed' || type == 'PO Not Conformed'">
+          <b-form-textarea
+            id="textarea"
+            v-model="form.comment"
+            placeholder="Reason for not conforming..."
+            rows="3"
+            max-rows="6"
+          ></b-form-textarea>
           <br />
+          <span>
+            Update status from
+            <span :class="form.status?.color">"{{ form.status?.name }}"</span>
+            to
+            <span class="text-primary">"Not Conformed"</span>
+            ?
+          </span>
+        </div>
 
-
-          <div v-if="type == 'NOA Not Conformed'">
-            <b-form-textarea
-              id="textarea"
-              v-model="form.comment"
-              placeholder="Reason for not conforming..."
-              rows="3"
-              max-rows="6"
-            ></b-form-textarea>
-            <br />
-            <span>
-              Update status from
-              <span :class="form.status?.color">"{{ form.status?.name }}"</span>
-              to
-              <span class="text-primary">"Not Conformed"</span>
-              ?
-            </span>
-          </div>
-
-        
         <br />
       </div>
     </form>
@@ -107,8 +113,12 @@ export default {
         status: null,
         items: this.procurement.items,
         quotations: this.procurement.quotations.filter((q) =>
-          q.items.some((item) => item.status_id === 43)
+          q.items.some(
+            (item) =>
+              item.status_id === 43 && item.bid_price != null && item.is_rebid == 0
+          )
         ),
+        bac_reso_type: null,
         comment: null,
         option: "update_status",
       }),
@@ -122,6 +132,9 @@ export default {
       this.form.code = data.code;
       this.form.status = data.status;
       this.type = type;
+      if (this.type === "BACResolution") {
+        this.form.bac_reso_type = data.type;
+      }
       this.showModal = true;
     },
     submit() {
@@ -144,8 +157,7 @@ export default {
             this.hide();
           },
         });
-      }
-      else if (this.type == "PO" || this.type == "PO Not Conformed") {
+      } else if (this.type == "PO" || this.type == "PO Not Conformed") {
         if (this.type == "PO Not Conformed") {
           this.form.option = "not_conformed";
         }

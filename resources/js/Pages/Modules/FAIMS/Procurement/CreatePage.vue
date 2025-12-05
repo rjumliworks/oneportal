@@ -162,6 +162,8 @@
             >
           </BCol>
 
+          {{  regional_director  }} hey
+
           <div class="table-responsive">
             <table class="table table-nowrap mb-0">
               <thead class="table-light">
@@ -336,7 +338,7 @@ import { router } from "@inertiajs/vue3";
 
 export default {
   components: { PageHeader, InputError, InputLabel, TextInput, Multiselect, Item },
-  props: ["procurement", "dropdowns", "option"],
+  props: ["procurement", "dropdowns", "option", "regional_director"],
   data() {
     return {
       currentUrl: window.location.origin,
@@ -351,7 +353,7 @@ export default {
         fund_cluster_id: null,
         items: null,
         requested_by_id: null,
-        approved_by_id: null,
+        approved_by_id: this.dropdowns.regional_director,
         procurement_code_ids: [],
         option: null,
       }),

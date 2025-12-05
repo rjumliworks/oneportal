@@ -240,6 +240,63 @@ class ProcurementBac extends Model
             return 67; // Partially Completed/Awaiting for Inspection
         }
 
+        // Some NOAs has status "PO Not Conformed"
+        if ($noas->contains(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+            if ($hasAvailableReAwardItems) {
+                return 59; // Re-Award 
+            }
+                        
+            // STEP 1: Find the first Not Conformed NOA
+            foreach ($noas as $noa) {
+            
+                    foreach ($noa->items as $item) {
+
+                        if ($item->status_id == 40) {
+                            // Available for Re-Award → Awarded
+                            $item->update(['status_id' => 43]);
+                        }
+
+                        if ($item->status_id == 43) {
+                            // Awarded → Not Conformed
+                            $item->update(['status_id' => 68]);
+                        }
+                    }
+
+            
+            }
+            //dd('rebid');
+            return 60; // Rebid
+        }
+
+          // Some NOAs has status "PO Not Conformed"
+        if ($noas->every(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+            if ($hasAvailableReAwardItems) {
+                return 59; // Re-Award 
+            }
+                        
+            // STEP 1: Find the first Not Conformed NOA
+            foreach ($noas as $noa) {
+            
+                    foreach ($noa->items as $item) {
+
+                        if ($item->status_id == 40) {
+                            // Available for Re-Award → Awarded
+                            $item->update(['status_id' => 43]);
+                        }
+
+                        if ($item->status_id == 43) {
+                            // Awarded → Not Conformed
+                            $item->update(['status_id' => 68]);
+                        }
+                    }
+
+            
+            }
+            //dd('rebid');
+            return 60; // Rebid
+        }
+
+
         return $current_status;
 
     }

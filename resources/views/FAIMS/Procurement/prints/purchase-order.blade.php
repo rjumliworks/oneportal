@@ -141,7 +141,7 @@
                  Supplier: <u>{{ $supplier->name  }}</u>
                </p>
                <p>
-                 Address: <u>{{ $supplier->address->address }}</u>
+                 Address: <u>{{ $supplier->address?->address }}</u>
                </p>
                <p>
                 TIN: <u>{{ $supplier->tin }}</u>

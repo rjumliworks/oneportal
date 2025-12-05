@@ -46,8 +46,10 @@ class ProcurementController extends Controller
                 return inertia('Modules/FAIMS/Procurement/Index', [
                     'dropdowns' => [
                         'roles'  =>  \Auth::user()->roles,
-                        'designation'  =>  \Auth::user()->degination,
+                        'designation'  =>  \Auth::user()->designation,
+                       
                     ],
+                     'regional_director'  =>  $this->dropdown->regional_director(),
                    
                 ]); 
         }   

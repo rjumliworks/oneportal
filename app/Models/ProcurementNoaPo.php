@@ -43,6 +43,11 @@ class ProcurementNoaPo extends Model
     }
 
 
+    public function comments()
+    {
+        return $this->morphMany('App\Models\RequestComment', 'commentable');
+    }
+
     
     public static function generatePONumber($date = null)
     {
@@ -60,5 +65,7 @@ class ProcurementNoaPo extends Model
     
         return 'PO-' .$year . '-' . $month . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
+
+
 
 }

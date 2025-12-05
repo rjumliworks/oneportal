@@ -109,7 +109,6 @@ class ProcurementPOClass
 
              $po->update([
                 'status_id' => 47, // set status to "served to supplier"
-                'updated_by_id' => $user->id,
             ]);
             $po->noa->update([
                 'status_id' => 49, // set noa status to "PO Served to Supplier"
@@ -118,8 +117,7 @@ class ProcurementPOClass
         else if($request->status['name'] == "Served to Supplier"){
        
             $po->update([
-                'status_id' => 54, // set status to "Conformed"
-               
+                'status_id' => 54, // set status to "Conformed"  
             ]);
 
             $po->noa->update([
@@ -147,12 +145,11 @@ class ProcurementPOClass
                 'status_id' => 53, // set status to "Completed"
             ]);
         }
-
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
         $procurement =  $po->noa->procurement_bac->procurement;
 
-        // if current_pr_status "Re-award"
-       if($current_pr_status == 59){
+        // if current_pr_status "Re-award" or "Rebid"
+       if($current_pr_status == 59 || $current_pr_status == 60){
             $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
             // update Procurement Request Status
             $procurement->update([
@@ -168,15 +165,11 @@ class ProcurementPOClass
         }
         else{
             $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
-
             // update Procurement Request Status
             $procurement->update([
                 'status_id' =>  $updated_pr_status,
             ]);
         }
-
-     
-
 
         return [
             'data' =>new ProcurementNoaPoResource($po),
@@ -196,6 +189,61 @@ class ProcurementPOClass
                 'created_by_id' => $user->id,
                 'status_id' => 36, //set status to "pending"
             ]);
+    }
+
+
+    public function notConformed($id, $request)
+    { 
+        $user = Auth::user();
+        $po = ProcurementNoaPo::with('noa.procurement_bac.procurement' , 'status')->findOrFail($id);
+
+        $po->update([
+            'status_id' => 55, // set status to "not conformed"
+        ]);
+
+        $po->noa->update([
+            'status_id' => 61, // set noa status to "PO Not Conformed"
+        ]);
+    
+        $po->comments()->create([
+            'content' => $request->comment,
+            'user_id' => $user->id, 
+        ]);
+
+
+        $procurement = $po->noa->procurement_bac->procurement;
+        $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
+        $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
+
+        // if updated status is "re-award" or "rebid"
+        if($updated_pr_status  == 59 || $updated_pr_status  == 60){
+            if($updated_pr_status  == 59){
+                $procurement->update([
+                    'reawarded_count' =>  $procurement->reawarded_count + 1,
+                ]);
+            }
+            else if($updated_pr_status  == 60){
+                $procurement->update([
+                    'rebidded_count' =>  $procurement->rebidded_count + 1,
+                ]);
+            }
+            // --- update the old BAC Resolution status to "PO Not Conformed" --
+            $po->noa->update([
+                'status_id' => 61,
+            ]);
+        }
+
+
+        // update Procurement Request Status
+        $procurement->update([
+            'status_id' => $updated_pr_status,
+        ]); 
+
+        return [
+            'data' =>new ProcurementNoaPoResource($po),
+            'message' => 'Purchase Order Status updated successfully!', 
+            'info' => "You've successfully updated Purchase Order Status.",
+        ];
     }
 
 

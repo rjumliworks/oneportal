@@ -47,8 +47,8 @@ class ProcurementBacNoaClass
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $procurement = $noa->procurement_bac->procurement;
 
-        // if current_pr_status "Re-award"
-       if($current_pr_status == 59){
+        // if current_pr_status "Re-award" or  "Rebid"
+       if($current_pr_status == 59  || $current_pr_status == 60){
             $updated_pr_substatus = $noa->procurement_bac->overall_substatus($current_pr_status);
             // update Procurement Request Status
             $noa->procurement_bac->procurement->update([
@@ -57,7 +57,6 @@ class ProcurementBacNoaClass
         }
         else{
             $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
-
             // update Procurement Request Status
             $noa->procurement_bac->procurement->update([
                 'status_id' =>  $updated_pr_status,
@@ -87,12 +86,23 @@ class ProcurementBacNoaClass
             'user_id' => $user->id, 
         ]);
         
-         
+        $procurement = $noa->procurement_bac->procurement;
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
 
-        // if updated status is "re-award" 
-        if($updated_pr_status  == 59){
+    
+        // if updated status is "re-award" or "rebid"
+        if($updated_pr_status  == 59 || $updated_pr_status  == 60){
+            if($updated_pr_status  == 59){
+                $procurement->update([
+                    'reawarded_count' =>  $procurement->reawarded_count + 1,
+                ]);
+            }
+            else if($updated_pr_status  == 60){
+                $procurement->update([
+                    'rebidded_count' =>  $procurement->rebidded_count + 1,
+                ]);
+            }
             // --- update the old BAC Resolution status to "NOA Not Conformed" -----
             $noa->procurement_bac->update([
                 'status_id' => 68,
@@ -100,7 +110,7 @@ class ProcurementBacNoaClass
         }
 
         // update Procurement Request Status
-        $noa->procurement_bac->procurement->update([
+        $procurement->update([
             'status_id' => $updated_pr_status,
             'updated_by_id' => $user->id,
         ]); 
@@ -112,10 +122,6 @@ class ProcurementBacNoaClass
         ];
     }
 
-    public function createBACResolution($id, $request)
-    { 
-
-    }
 
    
 }

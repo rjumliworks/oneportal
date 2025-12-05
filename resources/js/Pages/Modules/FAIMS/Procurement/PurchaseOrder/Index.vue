@@ -18,9 +18,15 @@
             <i class="ri-pencil-fill align-bottom me-1"></i>
             Edit
           </b-dropdown-item>
+
           <b-dropdown-item v-if="purchase_order && purchase_order.status.name != 'Delivered/For Inspection'" @click="updateStatus(purchase_order)">
             <i class="ri-edit-fill align-bottom me-1"></i>
             Update Status
+          </b-dropdown-item>
+
+            <b-dropdown-item v-if="purchase_order && purchase_order.status.name == 'Served to Supplier'" @click="notConformed(purchase_order)">
+            <i class="ri-edit-fill align-bottom me-1"></i>
+            Not Conformed
           </b-dropdown-item>
 
           <b-dropdown-item v-if="purchase_order && purchase_order.status.name == 'Conformed'" @click="printNTP(purchase_order)">
@@ -237,7 +243,7 @@ export default {
       this.$refs.updateStatus.show(data, "PO");
     },
     notConformed(data) {
-      this.$refs.updateStatus.edit(data, "PO Not Conformed");
+      this.$refs.updateStatus.show(data, "PO Not Conformed");
     },
     printPO(data) {
       window.open(`/faims/purchase-orders/${data.id}?option=print&type=purchase_order`);

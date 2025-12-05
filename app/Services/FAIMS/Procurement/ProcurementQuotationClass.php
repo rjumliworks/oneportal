@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class ProcurementQuotationClass
 {
     public function save($request){
+        $procurement = Procurement::with('status')->findOrFail($request->procurement_id);
+
         // create initial 
         foreach ($request->supplier_ids as $supplier_id) {
 
@@ -35,21 +37,23 @@ class ProcurementQuotationClass
                 $procurement_quotation_item->save();
 
             }
+
+            $procurement->update([
+                'quotation_count' => $procurement->quotation_count+1,
+            ]);
         }
 
-        $procurement = Procurement::with('status')->findOrFail($request->procurement_id);
+      
 
         if( $procurement && $procurement->status->name === 'Rebid'){
             // update Procurement status
             $procurement->update([
-                'quotation_count' => $procurement->quotation_count+1,
                 'sub_status_id' =>  42, // set to "For Bids"
             ]);
         }
         else{
             // update Procurement status
             $procurement->update([
-                'quotation_count' => $procurement->quotation_count+1,
                 'status_id' =>  42, // set to "For Bids"
             ]);
         }

@@ -252,6 +252,11 @@ export default {
       
       const all_pr_supplier_names = (this.procurement.quotations).map(quotation => quotation.supplier?.name).filter(Boolean).join(", ");
 
+      // Filter bidders
+      const bidders = (this.procurement.quotations ).filter(quotation =>
+        (quotation.items).some(item => item.bid_price != null && item.is_rebid == 0)
+      );
+
       // purchase request date formatted
       const pr_date = new Date(this.procurement.date).toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -263,13 +268,13 @@ export default {
 
 
       this.awardContent(current_date, mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
-                        allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date , submission_not_later_than_with_format);
+                        allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date , submission_not_later_than_with_format, bidders);
 
       this.reawardContent(current_date,  mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
-                    allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date , submission_not_later_than_with_format);
+                    allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date , submission_not_later_than_with_format, bidders);
 
       this.rebidContent(current_date,  mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
-                    allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date , submission_not_later_than_with_format);
+                    allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date , submission_not_later_than_with_format , bidders);
 
     
    
@@ -277,7 +282,7 @@ export default {
     },
 
     awardContent(current_date, mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
-                allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format){
+                allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format, bidders){
 
       // Filter only awarded quotation
       const awarded_quotations = (this.procurement.quotations ).filter(quotation =>
@@ -285,7 +290,8 @@ export default {
       );
 
       const awarded_supplier_names = (awarded_quotations.map(quotation => quotation.supplier?.name).filter(Boolean).join(", ")).toUpperCase();
-      const bidder_count = new Set(awarded_quotations).size;
+      const bidder_count = new Set(bidders).size;
+
       const bid_type_label_cap = (bidder_count === 1) ? "SINGLE" : "LOWEST";
       const bid_type_label_small_cap = (bidder_count === 1) ? "single" : "lowest";
 
@@ -415,14 +421,14 @@ export default {
     },
 
     reawardContent(current_date, mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
-                        allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format){
+                        allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format, bidders){
       
         // Filter rfq suppliers who bid same bid items
       const reawarded_quotations = (this.procurement.quotations).filter(quotation =>
         (quotation.items).some(item => item.status_id == 40 || item.status?.id == 40 && item.bid_price != null)
       );
 
-      const bidder_count = new Set(reawarded_quotations).size;
+      const bidder_count = new Set(bidders).size;
       const bid_type_cap = (bidder_count === 1) ? "SINGLE" : "LOWEST";
       const bid_type_small_cap = (bidder_count === 1) ? "single" : "lowest";
 
@@ -449,6 +455,7 @@ export default {
       }).join("");
 
       const reawarded_supplier_names = (reawarded_quotations.map(quotation => quotation.supplier?.name).filter(Boolean).join(", ")).toUpperCase();
+  
 
       // === CORRECT total accumulation across reawarded bids ===
       const reawarded_bid_total_price = reawarded_quotations.reduce((total, bid) => {
@@ -554,7 +561,7 @@ export default {
     },
 
     rebidContent(current_date, mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
-                        allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format){
+                        allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format, bidders){
     
         // Filter only awarded quotation
       const awarded_quotations = (this.procurement.quotations).filter(quotation =>
@@ -562,7 +569,7 @@ export default {
       );
 
       const awarded_supplier_names = (awarded_quotations.map(quotation => quotation.supplier?.name).filter(Boolean).join(", ")).toUpperCase();
-      const bidder_count = new Set(awarded_quotations).size;
+      const bidder_count = new Set(bidders).size;
       const bid_type_label_cap = (bidder_count === 1) ? "SINGLE" : "LOWEST";
       const bid_type_label_small_cap = (bidder_count === 1) ? "single" : "lowest";
 
@@ -666,12 +673,15 @@ export default {
     submit() {
       if(this.editable){
         this.form.put('/faims/bac-resolutions/'+this.form.id);
+        
       }
       else{
         this.form.post('/faims/bac-resolutions');
       }
-      this.hide();
+      
       this.$emit('add', true);
+      this.hide();
+   
      
     },
   }

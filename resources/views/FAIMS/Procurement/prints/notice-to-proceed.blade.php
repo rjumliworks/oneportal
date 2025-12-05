@@ -73,7 +73,7 @@
         <div class="recipient-block text-left" style="margin-bottom: 20px; line-height: 1.4;">
             <p style="margin: 0;"> {{ $noa->procurement_quotation->supplier->conformes[0]->name }}</p>
             <p style="margin: 0;">{{ $noa->procurement_quotation->supplier->name }}</p>
-            <p style="margin: 0;">{{ $noa->procurement_quotation->supplier->address->address }}</p>
+            <p style="margin: 0;">{{ $noa->procurement_quotation->supplier->address?->address }}</p>
 
         </div>
 
