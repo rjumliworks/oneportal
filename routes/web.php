@@ -46,6 +46,11 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
         Route::resource('/suppliers', App\Http\Controllers\FAIMS\Procurement\SupplierController::class);
 
     });
+
+     Route::prefix('crms')->group(function () {
+        Route::resource('/services', App\Http\Controllers\CRMS\ServiceController::class);
+
+    });
 });
 
 require __DIR__.'/auth.php';

@@ -76,6 +76,25 @@
                 </Link>
             </li>
 
+            <li class="menu-title">
+                <i class="ri-more-fill" aria-expanded="false"></i>
+                <span data-key="t-menu">CRMS</span>
+            </li>
+
+            <li class="nav-item">
+                <Link href="/crms/dashboard" class="nav-link menu-link">
+                    <i class="ri-checkbox-circle-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
+                </Link>
+            </li>
+
+            <li class="nav-item">
+                <Link href="/crms/services" class="nav-link menu-link">
+                    <i class="ri-checkbox-circle-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Services</span>
+                </Link>
+            </li>
+
 
             <tempalte v-if="$page.props.user.data.signatory">
                 <li class="nav-item">
