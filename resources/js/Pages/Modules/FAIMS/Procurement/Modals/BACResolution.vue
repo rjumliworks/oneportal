@@ -241,6 +241,22 @@ export default {
         return result;
     },
 
+    // ordinal number converter
+    toOrdinal(n) {
+      const v = n % 100;
+      let suffix = 'th';
+
+      if (v < 11 || v > 13) {
+        switch (n % 10) {
+          case 1: suffix = 'st'; break;
+          case 2: suffix = 'nd'; break;
+          case 3: suffix = 'rd'; break;
+        }
+      }
+
+      return `${n}<sup>${suffix}</sup>`;
+    },
+
     Content() {
       const current_date = this.getFormattedDate();
 
@@ -333,7 +349,7 @@ export default {
 
       const awarded_table_rows = awarded_quotations
         .map(quotation => {
-          const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43 && item.is_rebid == 1);
+          const filtered_items = (quotation.items).filter(item => item.status_id == 43 && item.is_rebid == 1);
           if (filtered_items.length === 0) return null;
           const item_ids = filtered_items.map(bid_item => bid_item.item_no).join(", ");
           return `
@@ -425,16 +441,19 @@ export default {
       
         // Filter rfq suppliers who bid same bid items
       const reawarded_quotations = (this.procurement.quotations).filter(quotation =>
-        (quotation.items).some(item => item.status_id == 40 || item.status?.id == 40 && item.bid_price != null)
+        (quotation.items).some(item => item.status.id == 43 && item.bid_price != null)
       );
 
+      console.log(this.procurement.reawarded_count , 11);
+
       const bidder_count = new Set(bidders).size;
+
       const bid_type_cap = (bidder_count === 1) ? "SINGLE" : "LOWEST";
       const bid_type_small_cap = (bidder_count === 1) ? "single" : "lowest";
 
       let counter = 2;
       const reawarded_quotations_list = reawarded_quotations.map(quotation => {
-        const filtered_items = (quotation.items).filter(item => item.status_id == 40 || item.status?.id == 40);
+        const filtered_items = (quotation.items).filter(item => item.status_id == 43);
         if (filtered_items.length === 0) return "";
         const item_numbers = filtered_items.map(item => item.item.item_no).join(", ");
         const total_price = filtered_items.reduce((sum, item) => {
@@ -459,7 +478,7 @@ export default {
 
       // === CORRECT total accumulation across reawarded bids ===
       const reawarded_bid_total_price = reawarded_quotations.reduce((total, bid) => {
-        const filtered_bid_details = (bid.bid_items || []).filter(bid_item => bid_item.status_id == 40 || bid_item.status?.id == 40);
+        const filtered_bid_details = (bid.bid_items || []).filter(bid_item => bid_item.status_id == 43);
         const total_price_for_bid = filtered_bid_details.reduce((sum, detail) => {
           const bp = parseFloat(detail.item_bid_price) || 0;
           const bq = parseFloat(detail.item_quantity) || 0;
@@ -472,7 +491,7 @@ export default {
 
       const reawarded_table_rows = reawarded_quotations
         .map(bid => {
-          const filtered_bid_items = (bid.bid_items || []).filter(bid_item => bid_item.status_id == 40 || bid_item.status?.id == 40);
+          const filtered_bid_items = (bid.bid_items || []).filter(bid_item =>  bid_item.status_id == 43);
           if (filtered_bid_items.length === 0) return null;
           const bid_item_ids = filtered_bid_items.map(bid_item => bid_item.item_no).join(", ");
           return `
@@ -503,7 +522,7 @@ export default {
         <div style=" font-size: 16px;">
           <p style="text-align: justify ;   text-align-last: center;  margin-bottom: 2em; ">
             <b>
-              RECOMMENDING FOR RE-AWARD OF CONTRACT TO ${reawarded_supplier_names}, AS THE ${bid_type_cap} CALCULATED AND RESPONSIVE BIDDER FOR THE PROCUREMENT
+              RECOMMENDING FOR RE-AWARD OF CONTRACT TO ${reawarded_supplier_names}, AS THE ${this.toOrdinal(this.procurement.reawarded_count + 1)} ${bid_type_cap} CALCULATED AND RESPONSIVE BIDDER FOR THE PROCUREMENT
               "${this.procurement.title.toUpperCase()}" UNDERTAKEN THROUGH SECTION 53.9 (${mode_of_procurement_names})
               OF THE REVISED IMPLEMENTING RULES AND REGULATIONS OF (${mode_of_procurement_ra_nos})
             </b>

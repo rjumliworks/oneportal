@@ -83,7 +83,7 @@
                                         <i class="ri-edit-2-fill align-bottom me-1"></i>Edit 
                                     </li>
                                         <li
-                                        v-if="list.status.name == 'Pending' && list.type != 'Rebid'"
+                                        v-if="list.status.name == 'Pending'"
                                         @click="updateStatus(list)"
                                         class="dropdown-item d-flex align-items-center"
                                         role="button"

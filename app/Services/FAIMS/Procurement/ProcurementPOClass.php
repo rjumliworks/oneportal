@@ -204,41 +204,59 @@ class ProcurementPOClass
         $po->noa->update([
             'status_id' => 61, // set noa status to "PO Not Conformed"
         ]);
+
+        $po->noa->procurement_bac->update([
+            'status_id' => 61, // set bac resolution status to "PO Not Conformed"
+        ]);
     
         $po->comments()->create([
             'content' => $request->comment,
             'user_id' => $user->id, 
         ]);
 
-
         $procurement = $po->noa->procurement_bac->procurement;
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
-        $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
 
         // if updated status is "re-award" or "rebid"
-        if($updated_pr_status  == 59 || $updated_pr_status  == 60){
-            if($updated_pr_status  == 59){
+        if($current_pr_status  == 59 || $current_pr_status  == 60){
+            $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
+            if($updated_pr_substatus  == 59){
                 $procurement->update([
                     'reawarded_count' =>  $procurement->reawarded_count + 1,
+                    'sub_status_id' => null,
                 ]);
             }
-            else if($updated_pr_status  == 60){
+            else if($updated_pr_substatus  == 60){
                 $procurement->update([
                     'rebidded_count' =>  $procurement->rebidded_count + 1,
+                   'sub_status_id' => null,
                 ]);
             }
             // --- update the old BAC Resolution status to "PO Not Conformed" --
             $po->noa->update([
                 'status_id' => 61,
             ]);
+
         }
-
-
-        // update Procurement Request Status
-        $procurement->update([
-            'status_id' => $updated_pr_status,
-        ]); 
-
+        else{
+            $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
+            if($updated_pr_status  == 59){
+                $procurement->update([
+                    'reawarded_count' =>  $procurement->reawarded_count + 1,
+                    'status_id' =>  $updated_pr_status,
+                ]);
+            }
+            else if($updated_pr_status  == 60){
+                $procurement->update([
+                    'rebidded_count' =>  $procurement->rebidded_count + 1,
+                    'status_id' =>  $updated_pr_status,
+                ]);
+            }
+            //--- update the old BAC Resolution status to "PO Not Conformed" --
+            $po->noa->update([
+                'status_id' => 61,
+            ]);
+        }
         return [
             'data' =>new ProcurementNoaPoResource($po),
             'message' => 'Purchase Order Status updated successfully!', 

@@ -76,7 +76,7 @@
       <hr class="my-1" />
 
       <!-- Ranking section -->
-      <div class="mt-4"  v-if="unawardedWithBidPriceCount > 0">
+      <div class="mt-4"  v-if="(unawardedWithBidPriceCount > 0) && (checkedBidsDescriptions && checkedBidsPrice)">
         <div
           v-for="(group, groupIndex) in groupedUnawardedBids"
           :key="group.item_no"
@@ -273,7 +273,7 @@ export default {
             )
             .map((quotation, index) => ({
               ...quotation,
-              rank: index + 2,
+              rank: index + 1,
             })),
         }));
 

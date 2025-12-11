@@ -21,9 +21,6 @@ class ProcurementBac extends Model
         return $this->belongsTo('App\Models\Procurement', 'procurement_id')->with('quotations.items');
     }
 
-    
-    
-
     public function created_by()
     {
         return $this->belongsTo('App\Models\User', 'created_by_id')->with('profile');
@@ -39,8 +36,6 @@ class ProcurementBac extends Model
     {
         return $this->belongsTo('App\Models\ListStatus', 'status_id');
     }
-
-    
 
 
     public static function generateBACResolutionNumber($date = null)
@@ -67,13 +62,18 @@ class ProcurementBac extends Model
 
     public function overall_status($current_status)
     {
+           
         $noas = $this->notice_of_awards;
 
         //check ih items with status "Avaliable for Re-award"
         $hasAvailableReAwardItems = $this->procurement->quotations->flatMap->items
             ->contains(fn($item) => $item->status_id == 40);    
 
+        $availableQuotationItems = $this->procurement->quotations
+            ->flatMap->items
+            ->filter(fn($item) => $item->status_id == 40 || $item->status_id == 43 );
 
+ 
         // Some NOAs served → Partially Awarded
         if ($noas->contains(fn($noa) => $noa->status->name == 'Served to Supplier')) {
 
@@ -240,62 +240,60 @@ class ProcurementBac extends Model
             return 67; // Partially Completed/Awaiting for Inspection
         }
 
-        // Some NOAs has status "PO Not Conformed"
+      
+         // Some NOAs has status "PO Not Conformed"
         if ($noas->contains(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+
+            if(count($availableQuotationItems) > 0){
+                // STEP 1: Find the first Not Conformed NOA
+                foreach ($availableQuotationItems as $item) {
+                    if ($item->status_id == 40) {
+                        // Available for Re-Award → Awarded
+                        $item->update(['status_id' => 43]);
+                    }
+                    else if ($item->status_id == 43) {
+                        // Awarded → Not Conformed
+                        $item->update(['status_id' => 61]);
+                    }
+                }
+            }
+          
+
             if ($hasAvailableReAwardItems) {
                 return 59; // Re-Award 
             }
                         
-            // STEP 1: Find the first Not Conformed NOA
-            foreach ($noas as $noa) {
-            
-                    foreach ($noa->items as $item) {
-
-                        if ($item->status_id == 40) {
-                            // Available for Re-Award → Awarded
-                            $item->update(['status_id' => 43]);
-                        }
-
-                        if ($item->status_id == 43) {
-                            // Awarded → Not Conformed
-                            $item->update(['status_id' => 68]);
-                        }
-                    }
-
-            
-            }
             //dd('rebid');
             return 60; // Rebid
         }
 
-          // Some NOAs has status "PO Not Conformed"
+
+          // All NOAs has status "PO Not Conformed"
         if ($noas->every(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+       
+            if(count($availableQuotationItems) > 0){
+                // STEP 1: Find the first Not Conformed NOA
+                foreach ($availableQuotationItems as $item) {
+                    if ($item->status_id == 40) {
+                        // Available for Re-Award → Awarded
+                        $item->update(['status_id' => 43]);
+                    }
+                    else if ($item->status_id == 43) {
+                        // Awarded → Not Conformed
+                        $item->update(['status_id' => 61]);
+                    }
+                }
+            }
+
             if ($hasAvailableReAwardItems) {
                 return 59; // Re-Award 
             }
-                        
-            // STEP 1: Find the first Not Conformed NOA
-            foreach ($noas as $noa) {
-            
-                    foreach ($noa->items as $item) {
 
-                        if ($item->status_id == 40) {
-                            // Available for Re-Award → Awarded
-                            $item->update(['status_id' => 43]);
-                        }
-
-                        if ($item->status_id == 43) {
-                            // Awarded → Not Conformed
-                            $item->update(['status_id' => 68]);
-                        }
-                    }
-
-            
-            }
-            //dd('rebid');
             return 60; // Rebid
         }
 
+
+        
 
         return $current_status;
 
@@ -305,9 +303,14 @@ class ProcurementBac extends Model
     {
         $noas = $this->notice_of_awards;
 
+
         //check ih items with status "Avaliable for Re-award"
         $hasAvailableReAwardItems = $this->procurement->quotations->flatMap->items
             ->contains(fn($item) => $item->status_id == 40);    
+        
+        $availableQuotationItems = $this->procurement->quotations
+            ->flatMap->items
+            ->filter(fn($item) => $item->status_id == 40 || $item->status_id == 43 );
 
 
         // Some NOAs served → Partially Awarded
@@ -324,38 +327,27 @@ class ProcurementBac extends Model
             //  Any NOAs not confirmed / Not Conformed → Re-Award or Re-Bid
             if ($noas->contains(fn($n) => $n->status->name === 'Not Conformed') ) {
                 // STEP 1: Find the first Not Conformed NOA
-                foreach ($noas as $noa) {
                     if ($noa->status->name === 'Not Conformed') {
-                      
-                         // Check if ANY item in ANY NOA is Available for Re-Award (40)
-                        $hasReAwardItems = $noa->procurement_quotation->items
-                                            ->contains(fn($item) => $item->status_id == 40);
-        
-                        if ($hasReAwardItems) {
-                            return 59; // Re-Award 
-                               
-                        }
-                        // STEP 2: Update item statuses only after checking all NOAs
-                        foreach ($noas as $noa) {
-                            foreach ($noa->items as $item) {
-
-                                if ($item->status_id == 40) {
-                                    // Available for Re-Award → Awarded
-                                    $item->update(['status_id' => 43]);
-                                }
-
-                                if ($item->status_id == 43) {
-                                    // Awarded → Not Conformed
-                                    $item->update(['status_id' => 68]);
-                                }
+                        // STEP 1: Find the first Not Conformed NOA
+                        foreach ($availableQuotationItems as $item) {
+                            if ($item->status_id == 40) {
+                                // Available for Re-Award → Awarded
+                                $item->update(['status_id' => 43]);
+                            }
+                            if ($item->status_id == 43) {
+                                // Awarded → Not Conformed
+                                $item->update(['status_id' => 68]);
                             }
                         }
-                    return 60; // rebid
+                    
+                        if ($hasReAwardItems) {
+                            return 59; // Re-Award 
+                                
+                        }
+                        
+                        return 60; // rebid
 
                     }
-                
-                }
-
                 return 60; // Rebid
             }
 
@@ -365,29 +357,22 @@ class ProcurementBac extends Model
          // All NOAs confirmed → NOA Confirmed
         if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
 
+             // STEP 1: Find the first Not Conformed NOA
+            foreach ($availableQuotationItems as $item) {
+                if ($item->status_id == 40) {
+                    // Available for Re-Award → Awarded
+                    $item->update(['status_id' => 43]);
+                }
+                if ($item->status_id == 43) {
+                    // Awarded → Not Conformed
+                    $item->update(['status_id' => 68]);
+                }
+            }
+
             if ($hasAvailableReAwardItems) {
                 return 59; // Re-Award 
             }
                         
-            // STEP 1: Find the first Not Conformed NOA
-            foreach ($noas as $noa) {
-            
-                    foreach ($noa->items as $item) {
-
-                        if ($item->status_id == 40) {
-                            // Available for Re-Award → Awarded
-                            $item->update(['status_id' => 43]);
-                        }
-
-                        if ($item->status_id == 43) {
-                            // Awarded → Not Conformed
-                            $item->update(['status_id' => 68]);
-                        }
-                    }
-
-            
-            }
-            //dd('rebid');
             return 60; // Rebid
         }
 
@@ -425,6 +410,8 @@ class ProcurementBac extends Model
             }
             return 63; // Partially PO Pending
         }
+
+
 
         // Some NOAs PO Served To Supplier → PO Conformed
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Issued')) {
@@ -474,6 +461,52 @@ class ProcurementBac extends Model
                 return 53; // Completed
             }
             return 67; // Partially Completed/Awaiting for Inspection
+        }
+
+
+        // Some NOAs has status "PO Not Conformed"
+        if ($noas->contains(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+
+            // STEP 1: Find the first Not Conformed NOA
+            foreach ($availableQuotationItems as $item) {
+                if ($item->status_id == 40) {
+                    // Available for Re-Award → Awarded
+                    $item->update(['status_id' => 43]);
+                }
+                else if ($item->status_id == 43) {
+                    // Awarded → Not Conformed
+                    $item->update(['status_id' => 61]);
+                }
+            }
+
+            if ($hasAvailableReAwardItems) {
+                return 59; // Re-Award 
+            }
+                        
+            //dd('rebid');
+            return 60; // Rebid
+        }
+
+          // All NOAs has status "PO Not Conformed"
+        if ($noas->every(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+       
+            // STEP 1: Find the first Not Conformed NOA
+            foreach ($availableQuotationItems as $item) {
+                if ($item->status_id == 40) {
+                    // Available for Re-Award → Awarded
+                    $item->update(['status_id' => 43]);
+                }
+                else if ($item->status_id == 43) {
+                    // Awarded → Not Conformed
+                    $item->update(['status_id' => 61]);
+                }
+            }
+
+            if ($hasAvailableReAwardItems) {
+                return 59; // Re-Award 
+            }
+
+            return 60; // Rebid
         }
 
         return $current_status;

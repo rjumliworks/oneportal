@@ -121,7 +121,11 @@
                           </span>
                           <span else></span>
                         </td>
-                        <td></td>
+                        <td class="text-center">
+                          <span v-if="list.rebidded_count > 0">
+                            {{ list.rebidded_count }}
+                          </span>
+                        </td>
                         <td class="text-center">{{ list.date }}</td>
                         <td class="text-center">
                           <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>

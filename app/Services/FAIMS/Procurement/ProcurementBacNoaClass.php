@@ -30,7 +30,7 @@ class ProcurementBacNoaClass
     public function updateStatus($id, $request)
     { 
         $user = Auth::user();
-        $noa = ProcurementBacNoa::with('procurement_bac.procurement')->findOrFail($id);
+        $noa = ProcurementBacNoa::with('procurement_bac.procurement' , 'status')->findOrFail($id);
 
         if($request->status['name'] == "Pending"){
             $noa->update([
@@ -44,16 +44,19 @@ class ProcurementBacNoaClass
 
         }
 
+        
+
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $procurement = $noa->procurement_bac->procurement;
 
         // if current_pr_status "Re-award" or  "Rebid"
-       if($current_pr_status == 59  || $current_pr_status == 60){
+        if($current_pr_status == 59  || $current_pr_status == 60){
             $updated_pr_substatus = $noa->procurement_bac->overall_substatus($current_pr_status);
             // update Procurement Request Status
             $noa->procurement_bac->procurement->update([
                 'sub_status_id' =>  $updated_pr_substatus,
             ]);
+
         }
         else{
             $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
@@ -95,11 +98,13 @@ class ProcurementBacNoaClass
         if($updated_pr_status  == 59 || $updated_pr_status  == 60){
             if($updated_pr_status  == 59){
                 $procurement->update([
+                    'sub_status_id' => null,
                     'reawarded_count' =>  $procurement->reawarded_count + 1,
                 ]);
             }
             else if($updated_pr_status  == 60){
                 $procurement->update([
+                    'sub_status_id' => null,
                     'rebidded_count' =>  $procurement->rebidded_count + 1,
                 ]);
             }

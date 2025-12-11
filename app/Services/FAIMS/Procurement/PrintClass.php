@@ -92,6 +92,7 @@ class PrintClass
 
      public function printAOB($id){
         $quotations = ProcurementQuotation::with('supplier.address', 'supply_officer.profile', 'items' , 'procurement')
+                                        ->whereNot('status_id', 71) // status is not  "Failed RFQs"
                                         ->where('procurement_id', $id)->get(); // 
 
         $procurement = Procurement::findOrFail($id);

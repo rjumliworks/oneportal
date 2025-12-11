@@ -162,7 +162,6 @@
             >
           </BCol>
 
-          {{  regional_director  }} hey
 
           <div class="table-responsive">
             <table class="table table-nowrap mb-0">

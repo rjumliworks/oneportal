@@ -52,8 +52,6 @@ class ProcurementClass
                 $procurement_code_group->save();
             }
         }
-                                                                        
-
         return $procurement;
     }
     

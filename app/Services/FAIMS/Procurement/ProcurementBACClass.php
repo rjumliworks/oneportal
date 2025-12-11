@@ -149,7 +149,7 @@ class ProcurementBACClass
             break;
             case 'Rebid':
                 $procurement->update([
-                    'sub_status_id' => 46, // set sub_status to "For NOA"
+                    'sub_status_id' => 69, // set status to "For Quotations"
                 ]);
             break;
             default:

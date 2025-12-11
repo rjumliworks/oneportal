@@ -50,68 +50,32 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Purchase Orders</span>
                 </Link>
             </li>
-            <!-- <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
+
+            <li class="nav-item">
+                <Link href="/faims/suppliers" class="nav-link menu-link">
+                    <i class="ri-truck-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/procurement" class="nav-link menu-link">
+                    <i class="ri-file-text-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Quotations</span>
                 </Link>
             </li>
             <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
+                <Link href="/procurement" class="nav-link menu-link">
+                    <i class="ri-government-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">BAC Resolutions</span>
                 </Link>
             </li>
             <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
+                <Link href="/procurement" class="nav-link menu-link">
+                    <i class="ri-checkbox-circle-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Notice Of Awards</span>
                 </Link>
             </li>
 
-        
-
-            
-            <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">Notice to Proceeds</span>
-                </Link>
-            </li>
-
-            <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">Inspection Reports</span>
-                </Link>
-            </li>
-
-            <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">PAP Codes</span>
-                </Link>
-            </li>
-            <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">Groups</span>
-                </Link>
-            </li>
-                <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
-                    <i class="ri-team-fill"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
-                </Link>
-            </li> -->
 
             <tempalte v-if="$page.props.user.data.signatory">
                 <li class="nav-item">
