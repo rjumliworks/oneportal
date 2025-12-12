@@ -62,8 +62,8 @@ class ProcurementBac extends Model
 
     public function overall_status($current_status)
     {
-           
         $noas = $this->notice_of_awards;
+       
 
         //check ih items with status "Avaliable for Re-award"
         $hasAvailableReAwardItems = $this->procurement->quotations->flatMap->items
@@ -85,7 +85,7 @@ class ProcurementBac extends Model
                 return 48; // NOA Served to Supplier
             }
   
-            //  Any NOAs not confirmed / Not Conformed → Re-Award or Re-Bid
+            // Any NOAs not confirmed / Not Conformed → Re-Award or Re-Bid
             if ($noas->contains(fn($n) => $n->status->name === 'Not Conformed') ) {
                 // STEP 1: Find the first Not Conformed NOA
                 foreach ($noas as $noa) {
@@ -96,25 +96,23 @@ class ProcurementBac extends Model
                                             ->contains(fn($item) => $item->status_id == 40);
         
                         if ($hasReAwardItems) {
-                            return 59; // Re-Award 
-                               
+                            return 59; // Re-Award                  
                         }
-                        // STEP 2: Update item statuses only after checking all NOAs
-                        foreach ($noas as $noa) {
-                            foreach ($noa->items as $item) {
-
+                        if(count($availableQuotationItems) > 0){
+                            // STEP 2: Update item statuses only after checking all NOAs
+                            foreach ($availableQuotationItems as $item) {
                                 if ($item->status_id == 40) {
                                     // Available for Re-Award → Awarded
                                     $item->update(['status_id' => 43]);
                                 }
 
-                                if ($item->status_id == 43) {
+                                else if ($item->status_id == 43) {
                                     // Awarded → Not Conformed
                                     $item->update(['status_id' => 68]);
                                 }
                             }
                         }
-                    return 60; // rebid
+                        return 60; // rebid
 
                     }
                 
@@ -122,36 +120,34 @@ class ProcurementBac extends Model
 
                 return 60; // Rebid
             }
-
+         
             return 57; // Partially Awarded
         }
 
          // All NOAs confirmed → NOA Confirmed
         if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
+       
+            if(count($availableQuotationItems) > 0){
+                // STEP 1: Find the first Not Conformed NOA
+                foreach ($availableQuotationItems as $item) {
 
+                    if ($item->status_id == 40) {
+                        // Available for Re-Award → Awarded
+                        $item->update(['status_id' => 43]);
+                    }
+
+                    else if ($item->status_id == 43) {
+                        // Awarded → Not Conformed
+                        $item->update(['status_id' => 68]);
+                    }
+                }
+
+            }
+            
             if ($hasAvailableReAwardItems) {
                 return 59; // Re-Award 
             }
-                        
-            // STEP 1: Find the first Not Conformed NOA
-            foreach ($noas as $noa) {
-            
-                    foreach ($noa->items as $item) {
 
-                        if ($item->status_id == 40) {
-                            // Available for Re-Award → Awarded
-                            $item->update(['status_id' => 43]);
-                        }
-
-                        if ($item->status_id == 43) {
-                            // Awarded → Not Conformed
-                            $item->update(['status_id' => 68]);
-                        }
-                    }
-
-            
-            }
-            //dd('rebid');
             return 60; // Rebid
         }
 
@@ -291,9 +287,6 @@ class ProcurementBac extends Model
 
             return 60; // Rebid
         }
-
-
-        
 
         return $current_status;
 

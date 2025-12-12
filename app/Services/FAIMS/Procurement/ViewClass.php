@@ -42,7 +42,9 @@ class ViewClass
         $data = ProcurementQuotationResource::collection(
             ProcurementQuotation::query()
             ->with('supplier.address' ,'supply_officer')
-            ->where('procurement_id', $request->procurement_id)
+            ->when($request->procurement_id, function ($query, $procurement_id) {
+                $query->where('procurement_id', $procurement_id);
+            })
             ->when($request->keyword, function ($query, $keyword) {
                 $query->where('code', 'LIKE', "%{$keyword}%")
                       ->orWhere('date', 'LIKE', "%{$keyword}%")

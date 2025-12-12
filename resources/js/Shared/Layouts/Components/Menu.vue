@@ -57,8 +57,8 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
                 </Link>
             </li>
-            <li class="nav-item">
-                <Link href="/procurement" class="nav-link menu-link">
+            <!-- <li class="nav-item">
+                <Link href="/faims/quotations" class="nav-link menu-link">
                     <i class="ri-file-text-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Quotations</span>
                 </Link>
@@ -74,7 +74,7 @@
                     <i class="ri-checkbox-circle-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Notice Of Awards</span>
                 </Link>
-            </li>
+            </li> -->
 
 
             <tempalte v-if="$page.props.user.data.signatory">

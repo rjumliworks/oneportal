@@ -44,8 +44,6 @@ class ProcurementBacNoaClass
 
         }
 
-        
-
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $procurement = $noa->procurement_bac->procurement;
 
@@ -60,6 +58,7 @@ class ProcurementBacNoaClass
         }
         else{
             $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
+     
             // update Procurement Request Status
             $noa->procurement_bac->procurement->update([
                 'status_id' =>  $updated_pr_status,
@@ -92,7 +91,6 @@ class ProcurementBacNoaClass
         $procurement = $noa->procurement_bac->procurement;
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
-
     
         // if updated status is "re-award" or "rebid"
         if($updated_pr_status  == 59 || $updated_pr_status  == 60){

@@ -444,7 +444,6 @@ export default {
         (quotation.items).some(item => item.status.id == 43 && item.bid_price != null)
       );
 
-      console.log(this.procurement.reawarded_count , 11);
 
       const bidder_count = new Set(bidders).size;
 
@@ -618,7 +617,7 @@ export default {
 
       // === CORRECT total accumulation across awarded bids ===
       const award_bid_total_price = awarded_quotations.reduce((total, quotation) => {
-        const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.status?.id == 43 || item.is_rebid == 0);
+        const filtered_items = (quotation.items).filter(item => item.status_id == 43 || item.is_rebid == 0);
         const total_price = filtered_items.reduce((sum, item) => {
           const bp = parseFloat(item.bid_price) || 0;
           const bq = parseFloat(item.item.item_quantity) || 0;
@@ -690,16 +689,25 @@ export default {
 
 
     submit() {
-      if(this.editable){
-        this.form.put('/faims/bac-resolutions/'+this.form.id);
-        
-      }
-      else{
-        this.form.post('/faims/bac-resolutions');
-      }
-      
-      this.$emit('add', true);
-      this.hide();
+       if(this.editable){
+              this.form.put(`/faims/bac-resolutions/`+this.form.id,{
+                  preserveScroll: true,
+                  onSuccess: (response) => {
+                      this.$emit('update', true);
+                      this.form.reset();
+                      this.hide();
+                  }
+              });
+
+            }else{
+                this.form.post('/faims/bac-resolutions',{
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    this.$emit('add',true);
+                    this.hide();
+                },
+            });
+            }
    
      
     },

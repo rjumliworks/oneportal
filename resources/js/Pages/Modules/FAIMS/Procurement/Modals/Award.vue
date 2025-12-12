@@ -263,17 +263,17 @@ export default {
 
       // 🔽 Sort each group by lowest total bid price
       this.groupedUnawardedBids = Object.entries(grouped)
-        .sort(([a], [b]) => a - b)
+        .sort(([a], [b]) => parseInt(a) - parseInt(b))
         .map(([item_no, quotations]) => ({
           item_no,
           quotations: quotations
             .sort(
               (a, b) =>
-                a.bid_price * a.item_quantity - b.bid_price * b.item_quantity
+                parseFloat(a.bid_price) * a.item_quantity - parseFloat(b.bid_price) * b.item_quantity
             )
             .map((quotation, index) => ({
               ...quotation,
-              rank: index + 1,
+              rank: index + 2,
             })),
         }));
 
@@ -282,13 +282,13 @@ export default {
 
       // // Flatten for posting
       this.bidsNotForAward = Object.entries(grouped)
-        .sort(([a], [b]) => a - b)
+        .sort(([a], [b]) => parseInt(a) - parseInt(b))
         .flatMap(([item_no, quotations]) =>
           quotations
-            .sort((a, b) => a.bid_price * a.item_quantity - b.bid_price * b.item_quantity)
+            .sort((a, b) => parseFloat(a.bid_price) * a.item_quantity - parseFloat(b.bid_price) * b.item_quantity)
             .map((quotation, index) => ({
               ...quotation,
-              rank: index + 2,
+              rank: index + 1,
             }))
         );
 
@@ -297,7 +297,7 @@ export default {
    
     updateRanks(groupIndex) {
       this.groupedUnawardedBids[groupIndex].quotations.forEach((quotation, index) => {
-        quotation.rank = index + 2;
+        quotation.rank = index + 1;
       });
     },
 
@@ -309,7 +309,6 @@ export default {
         action: this.procurement.status_id == 13 ? "rebid" : "bid",
         option: "save_bid_for_award",
       };
-
       router.post("/faims/offers", data);
       this.hide();
     },

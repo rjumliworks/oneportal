@@ -209,7 +209,7 @@
 
 
   <Offer ref="editOffer" />
-  <Award ref="award" :procurement="procurement" />
+  <Award ref="award" :procurement="procurement"  />
   <BACResolution ref="BACReso" :procurement="procurement" :action="'Award'"/>
 </template>
 <script>

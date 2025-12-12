@@ -122,8 +122,8 @@
               </b-tabs>
     </b-card>
 
-<BACResolution  :procurement="procurement" @add="fetch()" ref="BACReso" />
-<UpdateStatus  :procurement="procurement"   @add="fetch()" ref="updateStatus"/>
+<BACResolution  :procurement="procurement" @add="fetch()" @update="fetch()"  ref="BACReso" />
+<UpdateStatus  :procurement="procurement"   @add="fetch()"  @update="fetch()"  ref="updateStatus"/>
 
 </template>
 <script>
