@@ -1,5 +1,5 @@
 <template>
-  <PageHeader class="mt-3 ms-3" title="Purchase Orders"  />
+  <PageHeader class="m-3 mt-4" title="Purchase Orders"  />
   <BRow>
     <div class="col-md-12">
       <div class="card bg-light-subtle shadow-none border">

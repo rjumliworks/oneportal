@@ -1,5 +1,5 @@
 <template>
-    <PageHeader class="mt-3 ms-3" title="BAC Resolutions"  />
+    <PageHeader class="m-3 mt-4" title="BAC Resolutions"  />
     <!-- <b-row>
         <h5>
             <div>

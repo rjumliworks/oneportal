@@ -1,5 +1,6 @@
 <template>
-  <PageHeader class="mt-3 ms-3" title="Notice of Awards"/>
+
+  <PageHeader class="m-3 mt-4" title="Notice of Awards"/>
 
 
   <b-row class="g-2 mb-3 mt-n2">
@@ -135,6 +136,7 @@
 
   <NOA :procurement="procurement" ref="NOA" />
   <UpdateStatus :procurement="procurement" @add="fetch()" ref="updateStatus" />
+
 </template>
 <script>
 import _ from "lodash";

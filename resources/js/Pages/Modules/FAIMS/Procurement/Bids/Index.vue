@@ -1,5 +1,5 @@
 <template>
-  <PageHeader class="mt-3 ms-3" title="Abstract of Bids" />
+  <PageHeader class="m-3 mt-4" title="Abstract of Bids" />
   <div>
     <b-row class="align-items-center">
       <!-- Left Content -->
