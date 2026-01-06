@@ -71,8 +71,6 @@ class ViewClass
         switch($request->option){
             
             case 'view':
-
-             
                  return inertia('Modules/FAIMS/Procurement/View', [
                     'dropdowns' => [
                         'divisions' => $this->dropdown->dropdowns('Division'),
@@ -86,6 +84,7 @@ class ViewClass
                         'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
                         'roles' => $this->dropdown->roles(),
                     ],
+                    'tab' => $request->tab,
                     'procurement' => $procurement,
                     'option' => $request->option,
                 ]); 

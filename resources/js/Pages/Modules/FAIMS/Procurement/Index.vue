@@ -407,7 +407,7 @@ export default {
     },
 
     goViewPage(data) {
-      router.get("/faims/procurements/"+ data.id, { option: "view" });
+      router.get("/faims/procurements/"+ data.id, { option: "view",  tab: 1 });
     },
 
     goEditPage(data) {
@@ -415,7 +415,7 @@ export default {
     },
 
     goReviewPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "review" });
+      router.get("/faims/procurements/" + data.id , { option: "review" }); 
     },
 
     goApprovePage(data) {

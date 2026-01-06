@@ -1,69 +1,123 @@
 <template>
-    <div class="card bg-light-subtle shadow-none border">
-        <div class="card-header bg-light-subtle">
-            <div class="d-flex mb-n3">
+    <div class="shadow-lg border-0" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; overflow: hidden;">
+        <div class=" bg-gradient-primary text-white border-0 py-4" style="border-radius: 20px 20px 0 0;">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3">
-                    <div style="height:2.5rem;width:2.5rem;">
-                        <span class="avatar-title bg-primary-subtle rounded p-2 mt-n1">
-                            <i class="ri-apps-2-fill align-middle  text-primary fs-24"></i>
-                        </span>
+                    <div class="bg-white bg-opacity-20 rounded-circle p-3">
+                        <i class="ri-shopping-bag-3-fill text-white fs-1"></i>
                     </div>
                 </div>
-                <div class="flex-grow-1">
-                    <h5 class="mb-0 fs-14"><span class="text-body">Procurement</span></h5>
-                    <p class="text-muted text-truncate-two-lines fs-12">Details  </p>
-                  
-                </div>
-                <div class="flex-shrink-0">
-                  
+                <div class="">
+                    <h5 class="mb-1 fw-bold">Procurement Details</h5>
+                    <p class="mb-0 opacity-75 text-dark">Comprehensive overview of the procurement process</p>
                 </div>
             </div>
         </div>
-        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 310px); overflow: auto;">
-              <BRow>
-                    <BCol class="col-md-6 ">
-                        <div class=" ">
-                            <span class="text-muted"> PR Number:</span> <b>{{ procurement.code }}</b>
-                        </div>
+        <div class="card-body p-2" >
+            <div class="row g-4">
+                <!-- Left Column -->
+                <div class="col-md-6">
+                    <div class="mb-4 p-3 bg-light rounded-3 shadow-sm">
+                        <h6 class="text-primary fw-bold mb-3"><i class="ri-file-list-3-line me-2"></i>Basic Information</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-hashtag text-primary me-3 fs-5"></i>
                             <div>
-                                <span class="text-muted text-end">PR Date:</span>  <b>{{ procurement.date }}</b>
+                                <small class="text-muted d-block">PR Number</small>
+                                <span class="fw-bold fs-6">{{ procurement.code }}</span>
+                            </div>
                         </div>
-                        <div>
-                                <span class="text-muted text-end">Division:</span>  <b>{{ procurement.division?.name }}</b>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-calendar-line text-success me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">PR Date</small>
+                                <span class="fw-bold">{{ procurement.date }}</span>
+                            </div>
                         </div>
-                        <div>
-                                <span class="text-muted text-end">Unit:</span>  <b>{{ procurement.unit?.name }}</b>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-building-line text-info me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">Division</small>
+                                <span class="fw-bold">{{ procurement.division?.name }}</span>
+                            </div>
                         </div>
-                        <div>
-                                <span class="text-muted text-end">PAP Codes:</span>  <b v-for="code in procurement.codes">
-                                <div class="ms-3">{{ code.procurement_code?.title }}</div>
-                                </b>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-group-line text-warning me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">Unit</small>
+                                <span class="fw-bold">{{ procurement.unit?.name }}</span>
+                            </div>
                         </div>
-                    </BCol>
+                    </div>
 
-                         <BCol class="col-md-6">
-                            <div>
-                                 <span class="text-muted text-end">Quotation Count</span>  <b>{{  procurement.quotation_count }}</b>
-                            </div>
-                            <div>
-                                 <span class="text-muted text-end">Reawarded Count:</span>  <b>{{ procurement.reawarded_count }}</b>
-                            </div>
-                             <div>
-                                 <span class="text-muted text-end">Rebid Count:</span>  <b>{{ procurement.rebidded_count }}</b>
-                            </div>
+                    <div class="p-3 bg-light rounded-3 shadow-sm text-dark">
+                        <h6 class="text-primary fw-bold mb-3"><i class="ri-price-tag-3-line me-2"></i>PAP Codes</h6>
+                        <div v-for="code in procurement.codes" :key="code.id" class="d-flex align-items-center mb-2 text-dark">
+                        
+                            <b-badge variant="primary" :class="procurement.status.bg + ' ms-1'">{{ code.procurement_code?.title }}</b-badge>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Right Column -->
+                <div class="col-md-6">
+                    <div class="mb-4 p-3 bg-light rounded-3 shadow-sm">
+                        <h6 class="text-primary fw-bold mb-3"><i class="ri-bar-chart-line me-2"></i>Statistics</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-file-text-line text-primary me-3 fs-5"></i>
                             <div>
-                                 <span class="text-muted text-end">Created By:</span>  <b>{{  procurement.created_by.profile.fullname }}</b>
+                                <small class="text-muted d-block">Quotation Count</small>
+                                <span class="fw-bold fs-5 text-primary">{{ procurement.quotation_count }}</span>
                             </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-refresh-line text-warning me-3 fs-5"></i>
                             <div>
-                                 <span class="text-muted text-end">Requested By:</span>  <b>{{ procurement.requested_by.profile.fullname }}</b>
+                                <small class="text-muted d-block">Reawarded Count</small>
+                                <span class="fw-bold">{{ procurement.reawarded_count }}</span>
                             </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-loop-left-line text-danger me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">Rebid Count</small>
+                                <span class="fw-bold">{{ procurement.rebidded_count }}</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="p-3 bg-light rounded-3 shadow-sm">
+                        <h6 class="text-primary fw-bold mb-3"><i class="ri-user-line me-2"></i>Personnel</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-user-add-line text-success me-3 fs-5"></i>
                             <div>
-                             <span class="text-muted text-end">Status:</span>  <b-badge>{{ procurement.status.name }}</b-badge>
+                                <small class="text-muted d-block">Created By</small>
+                                <span class="fw-bold">{{ procurement.created_by.profile.fullname }}</span>
                             </div>
-                        </BCol>
-                    </BRow>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-user-shared-line text-info me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">Requested By</small>
+                                <span class="fw-bold">{{ procurement.requested_by.profile.fullname }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="ri-information-line text-warning me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">Status</small>
+                                <b-badge :class="procurement.status.bg + ' px-3 py-2'" style="font-size: 0.9rem;">{{ procurement.status.name }}</b-badge>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="ri-information-line text-secondary me-3 fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block">Substatus</small>
+                                <b-badge :class="procurement?.sub_status?.bg + ' px-3 py-2'" style="font-size: 0.9rem;">{{ procurement?.sub_status?.name }}</b-badge>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
