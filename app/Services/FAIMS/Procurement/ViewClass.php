@@ -9,6 +9,7 @@ use App\Models\ProcurementBac;
 use App\Models\ProcurementBacNoa;
 use App\Models\ProcurementNoaPo;
 use App\Models\ProcurementPoNtp;
+use Spatie\Activitylog\Models\Activity;
 
 use App\Http\Resources\FAIMS\Procurement\ProcurementResource;
 use App\Http\Resources\FAIMS\Procurement\ProcurementQuotationResource;
@@ -65,10 +66,27 @@ class ViewClass
 
 
     public function show($id, $request){
-     
+
         $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by'
-                                    , 'bac_resolutions')->findOrFail($id);
-        switch($request->option){
+                                    , 'bac_resolutions', 'comments.user.profile', 'comments.replies.user.profile')->findOrFail($id);
+
+        $logs = Activity::where(function ($query) use ($id) {
+            $query->where('subject_type', Procurement::class)
+                  ->where('subject_id', $id);
+                    })->orWhere(function ($query) use ($id) {
+                        $query->where('subject_type', ProcurementQuotation::class)
+                            ->whereIn('subject_id', ProcurementQuotation::where('procurement_id', $id)->pluck('id'));
+                    })->orWhere(function ($query) use ($id) {
+                        $query->where('subject_type', ProcurementBac::class)
+                            ->whereIn('subject_id', ProcurementBac::where('procurement_id', $id)->pluck('id'));
+                    })->orWhere(function ($query) use ($id) {
+                        $query->where('subject_type', ProcurementBacNoa::class)
+                            ->whereIn('subject_id', ProcurementBacNoa::where('procurement_id', $id)->pluck('id'));
+                    })->orWhere(function ($query) use ($id) {
+                        $query->where('subject_type', ProcurementNoaPo::class)
+                            ->whereIn('subject_id', ProcurementNoaPo::where('procurement_id', $id)->pluck('id'));
+                    })->with('causer')->orderBy('created_at', 'desc')->get();
+                    switch($request->option){
             
             case 'view':
                  return inertia('Modules/FAIMS/Procurement/View', [
@@ -78,16 +96,17 @@ class ViewClass
                         'procurement_codes' => $this->dropdown->procurement_codes(),
                         'unit_types' => $this->dropdown->unit_types(),
                         'requesters' => $this->dropdown->requesters(),
-                        'approvers' => $this->dropdown->approvers(),   
-                        'supply_officers' => $this->dropdown->supply_officers(), 
-                        'suppliers' => $this->dropdown->suppliers(),   
-                        'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
+                        'approvers' => $this->dropdown->approvers(),
+                        'supply_officers' => $this->dropdown->supply_officers(),
+                        'suppliers' => $this->dropdown->suppliers(),
+                        'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'),
                         'roles' => $this->dropdown->roles(),
                     ],
                     'tab' => $request->tab,
                     'procurement' => $procurement,
+                    'logs' => $logs,
                     'option' => $request->option,
-                ]); 
+                ]);
             break;
 
              case 'view_notice_of_awards':

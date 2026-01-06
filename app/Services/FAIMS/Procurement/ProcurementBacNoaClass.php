@@ -9,6 +9,7 @@ use App\Models\ProcurementBacNoa;
 use App\Http\Resources\FAIMS\Procurement\ProcurementBacNoaResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Spatie\Activitylog\Models\Activity;
 
 class ProcurementBacNoaClass
 {
@@ -33,20 +34,30 @@ class ProcurementBacNoaClass
 
        
     public function updateStatus($id, $request)
-    { 
+    {
         $user = Auth::user();
         $noa = ProcurementBacNoa::with('procurement_bac.procurement' , 'status')->findOrFail($id);
 
-        if($request->status['name'] == "Pending"){
+        // Get current status name
+        $currentStatusName = is_array($request->status) ? $request->status['name'] : $request->status->name;
+       
+        if($currentStatusName == "Pending"){
             $noa->update([
                     'status_id' => 47, // set status to "served to supplier"
-                ]);
-            }
-        else{
+            ]);
+            activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Served to Supplier');
+        }
+        elseif($currentStatusName == "Served to Supplier"){
             $noa->update([
                 'status_id' => 54, // set status to "conformed"
             ]);
-
+            activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Conformed');
+        }
+        elseif($currentStatusName == "Conformed"){
+            $noa->update([
+                'status_id' => 52, // set status to "delivered/for inspection"
+            ]);
+            activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Delivered/For Inspection');
         }
 
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
@@ -88,9 +99,11 @@ class ProcurementBacNoaClass
             'updated_by_id' => $user->id,
         ]);
 
+        activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Not Conformed');
+
         $noa->comments()->create([
             'content' => $request->comment,
-            'user_id' => $user->id, 
+            'user_id' => $user->id,
         ]);
         
         $procurement = $noa->procurement_bac->procurement;

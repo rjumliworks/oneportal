@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Procurement extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'code',
         'date',
@@ -85,6 +88,11 @@ class Procurement extends Model
         return $this->belongsTo('App\Models\ListStatus', 'sub_status_id');
     }
 
+    public function comments()
+    {
+        return $this->morphMany('App\Models\RequestComment', 'commentable');
+    }
+
     
     public static function generateProcurementNumber($date = null)
     {
@@ -95,20 +103,21 @@ class Procurement extends Model
             $year = date("y", strtotime("now"));  // 'y' gives the last two digits of the year
             $month = date("m", strtotime("now"));
         }
-    
+
         $count = self::whereYear('date', date("Y", strtotime($date ?? "now")))
                      ->whereMonth('date', $month)
                      ->count() + 1;
-    
+
         return 'PR-' . $year . '-' . $month . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
-  
-
-
-
-    
-
- 
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()
+        ->logOnly(['code','date','purpose','title','division_id','unit_id','fund_cluster_id','created_by_id','requested_by_id','approved_by_id','reawarded_count','rebidded_count','quotation_count','status_id','sub_status_id'])
+        ->setDescriptionForEvent(fn(string $eventName) => "Procurement {$eventName}")
+        ->useLogName('Procurement')
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
+    }
 
 }

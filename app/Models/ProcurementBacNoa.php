@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ProcurementBacNoa extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'procurement_id',
         'procurement_bac_id',
@@ -58,6 +61,11 @@ class ProcurementBacNoa extends Model
         return $this->morphMany('App\Models\RequestComment', 'commentable');
     }
 
+    public function activity()
+    {
+        return $this->morphMany('Spatie\Activitylog\Models\Activity', 'subject');
+    }
+
 
     public static function generateNOANumber($date = null)
     {
@@ -76,7 +84,13 @@ class ProcurementBacNoa extends Model
         return 'NOA-' .$year . '-' . $month . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
-
-
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()
+        ->logOnly(['procurement_id','procurement_bac_id','procurement_quotation_id','code','created_by_id','approved_by_id','status_id'])
+        ->setDescriptionForEvent(fn(string $eventName) => "NOA {$eventName}")
+        ->useLogName('NOA')
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
+    }
 
 }

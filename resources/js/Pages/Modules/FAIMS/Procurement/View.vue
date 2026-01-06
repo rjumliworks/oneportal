@@ -333,14 +333,130 @@
               </button>
             </div>
             <div v-if="activeRightTab === 1" class="comments-section">
-              <div class="text-center text-muted mt-5">
+              <div
+                v-if="procurement.comments && procurement.comments.length > 0"
+                class="comments-list"
+              >
+                <div
+                  v-for="comment in procurement.comments"
+                  :key="comment.id"
+                  class="comment-item p-3 mb-3"
+                >
+                  <div class="d-flex align-items-start">
+                    <div class="comment-avatar me-3">
+                      <img
+                        :src="
+                          comment.user?.profile?.avatar || '/images/avatars/avatar.jpg'
+                        "
+                        :alt="comment.user?.profile?.firstname"
+                        class="rounded-circle"
+                        style="width: 40px; height: 40px; object-fit: cover"
+                      />
+                    </div>
+                    <div class="flex-grow-1">
+                      <div
+                        class="comment-header d-flex justify-content-between align-items-start mb-2"
+                      >
+                        <div>
+                          <strong
+                            >{{ comment.user?.profile?.firstname }}
+                            {{ comment.user?.profile?.lastname }}</strong
+                          >
+                          <small class="text-muted ms-2">{{
+                            formatDate(comment.created_at)
+                          }}</small>
+                        </div>
+                      </div>
+                      <div class="comment-content mb-2">
+                        <p class="mb-0">{{ comment.comment }}</p>
+                      </div>
+                      <div
+                        v-if="comment.replies && comment.replies.length > 0"
+                        class="replies-section mt-3"
+                      >
+                        <div
+                          v-for="reply in comment.replies"
+                          :key="reply.id"
+                          class="reply-item p-2 mb-2 ms-4 border-start"
+                        >
+                          <div class="d-flex align-items-start">
+                            <div class="reply-avatar me-2">
+                              <img
+                                :src="
+                                  reply.user?.profile?.avatar ||
+                                  '/images/avatars/avatar.jpg'
+                                "
+                                :alt="reply.user?.profile?.firstname"
+                                class="rounded-circle"
+                                style="width: 30px; height: 30px; object-fit: cover"
+                              />
+                            </div>
+                            <div class="flex-grow-1">
+                              <div class="reply-header mb-1">
+                                <strong class="small"
+                                  >{{ reply.user?.profile?.firstname }}
+                                  {{ reply.user?.profile?.lastname }}</strong
+                                >
+                                <small class="text-muted ms-2">{{
+                                  formatDate(reply.created_at)
+                                }}</small>
+                              </div>
+                              <div class="reply-content">
+                                <p class="mb-0 small">{{ reply.comment }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-center text-muted mt-5">
                 <i class="ri-chat-1-line fs-1"></i>
                 <p class="mt-2">No comments yet</p>
                 <small>Add a comment to start the discussion</small>
               </div>
             </div>
             <div v-if="activeRightTab === 2" class="logs-section">
-              <div class="text-center text-muted mt-5">
+              <div v-if="logs && logs.length > 0" class="logs-list">
+                <div v-for="log in logs" :key="log.id" class="log-item p-3 mb-3">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <div class="log-description mb-2">
+                        <strong>{{ log.description }}</strong>
+                      </div>
+                      <div class="log-details small text-muted">
+                        <span v-if="log.causer">
+                          <i class="ri-user-line me-1"></i>{{ log.causer.name }}
+                        </span>
+                        <span class="ms-2">
+                          <i class="ri-time-line me-1"></i
+                          >{{ formatDate(log.created_at) }}
+                        </span>
+                      </div>
+                      <div
+                        v-if="log.changes && Object.keys(log.changes).length > 0"
+                        class="log-changes mt-2"
+                      >
+                        <div class="small fw-bold text-muted mb-1">Changes:</div>
+                        <div
+                          v-for="(value, key) in log.changes"
+                          :key="key"
+                          class="change-item"
+                        >
+                          <span class="change-key">{{ key }}:</span>
+                          <span class="change-value">{{ value }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="log-icon">
+                      <i class="ri-file-list-line fs-4"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-center text-muted mt-5">
                 <i class="ri-file-list-line fs-1"></i>
                 <p class="mt-2">No logs available</p>
                 <small>Activity logs will appear here</small>
@@ -457,7 +573,7 @@ export default {
     NoticeOfAward,
     PurchaseOrder,
   },
-  props: ["dropdowns", "procurement", "tab"],
+  props: ["dropdowns", "procurement", "tab", "logs"],
   data() {
     return {
       currentUrl: window.location.origin,
@@ -571,6 +687,17 @@ export default {
     showRightTab(tab) {
       this.activeRightTab = tab;
       localStorage.setItem("activeRightTab", tab);
+    },
+
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     },
   },
 };
@@ -707,5 +834,54 @@ export default {
   50% {
     box-shadow: 0 2px 8px rgba(40, 167, 69, 0.6);
   }
+}
+
+.log-item {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.log-item:hover {
+  background: #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.log-description {
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.log-details {
+  color: #6c757d;
+}
+
+.log-changes {
+  background: #ffffff;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.change-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.change-key {
+  font-weight: 600;
+  color: #495057;
+}
+
+.change-value {
+  color: #007bff;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.log-icon {
+  margin-left: 1rem;
+  opacity: 0.7;
 }
 </style>

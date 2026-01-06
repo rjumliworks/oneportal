@@ -506,6 +506,13 @@ class ProcurementBac extends Model
 
     }
 
-    
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()
+        ->logOnly(['procurement_id','code','type','body','created_by_id','approved_by_id','status_id'])
+        ->setDescriptionForEvent(fn(string $eventName) => "BAC Resolution {$eventName}")
+        ->useLogName('BAC Resolution')
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
+    }
 
 }

@@ -54,7 +54,7 @@
 
         <BCol lg="4" class="mt-2">
           <InputLabel value="Unit Cost" />
-          <Amount @amount="amount" />
+          <Amount @amount="amount" ref="amountComponent" />
         </BCol>
         <BCol lg="12"><hr class="text-muted mt-4 mb-0" /></BCol>
       </BRow>
@@ -137,29 +137,29 @@ export default {
 
     show() {
       this.form.reset();
+      this.form.item_unit_cost = this.$refs.amountComponent.emitValue(0.0);
       this.showModal = true;
     },
 
-   addItem(item) {
-  // Step 1: Parse the existing array
-  this.itemsAdded = JSON.parse(localStorage.getItem("itemsAdded")) || [];
+    addItem(item) {
+      // Step 1: Parse the existing array
+      this.itemsAdded = JSON.parse(localStorage.getItem("itemsAdded")) || [];
 
-  // Step 2: Clone the item (avoid reactivity leaks)
-  const newItem = { ...item, id: Date.now(), is_new: true };
+      // Step 2: Clone the item (avoid reactivity leaks)
+      const newItem = { ...item, id: Date.now(), is_new: true };
 
-  // Step 3: Add the new item to the array
-  this.itemsAdded.push(newItem);
+      // Step 3: Add the new item to the array
+      this.itemsAdded.push(newItem);
 
-  // Step 4: Save it back to localStorage
-  localStorage.setItem("itemsAdded", JSON.stringify(this.itemsAdded));
+      // Step 4: Save it back to localStorage
+      localStorage.setItem("itemsAdded", JSON.stringify(this.itemsAdded));
 
-  // Step 5: Notify parent to refresh data
-  this.$emit("refresh");
+      // Step 5: Notify parent to refresh data
+      this.$emit("refresh");
 
-  // Step 6: Hide modal
-  this.hide();
-},
-
+      // Step 6: Hide modal
+      this.hide();
+    },
 
     getItemUnitType(unit_type_id) {
       axios
