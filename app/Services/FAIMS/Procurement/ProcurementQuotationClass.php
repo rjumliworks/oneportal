@@ -68,19 +68,20 @@ class ProcurementQuotationClass
         ];
     }
 
-    // public function destroy($id){
-    //     // Find the RFQ by ID
-    //     $quotation_request = QuotationRequest::findOrFail($id);
+    public function delete($id){
 
-    //     // Delete the RFQ
-    //     $quotation_request->delete();
+        // Find the RFQ by ID
+        $quotation_request = ProcurementQuotation::findOrFail($id);
+
+        // Delete the RFQ
+        $quotation_request->delete();
         
-    //     return [
-    //         'data' => new QuotationRequestResource($quotation_request),
-    //         'message' => 'Request for Quotations successfuly deleted!', 
-    //         'info' => "You've successfully deleted the Request for Quotation.",
-    //     ];
-    // }
+        return [
+            'data' => new ProcurementQuotationResource($quotation_request),
+            'message' => 'Request for Quotations successfuly deleted!', 
+            'info' => "You've successfully deleted the Request for Quotation.",
+        ];
+    }
 
 
 

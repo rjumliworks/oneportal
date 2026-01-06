@@ -16,7 +16,7 @@ AOS.init({
 const appName = import.meta.env.VITE_APP_NAME || 'LIMS';
 
 if (window.history.state === null) {
-  window.history.replaceState({}, '');
+  window.history.replaceState({ page: { component: '', props: {}, url: window.location.href, version: null, scrollRegions: {}, rememberedState: {}, resolvedErrors: {} } }, '');
 }
 
 createInertiaApp({

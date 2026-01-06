@@ -66,9 +66,13 @@ class ViewClass
 
     public function show($id, $request){
      
-        $procurement = Procurement::with('unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' )->findOrFail($id);
+        $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by'
+                                    , 'bac_resolutions')->findOrFail($id);
         switch($request->option){
+            
             case 'view':
+
+             
                  return inertia('Modules/FAIMS/Procurement/View', [
                     'dropdowns' => [
                         'divisions' => $this->dropdown->dropdowns('Division'),
@@ -76,9 +80,33 @@ class ViewClass
                         'procurement_codes' => $this->dropdown->procurement_codes(),
                         'unit_types' => $this->dropdown->unit_types(),
                         'requesters' => $this->dropdown->requesters(),
-                        'approvers' => $this->dropdown->approvers(),     
+                        'approvers' => $this->dropdown->approvers(),   
+                        'supply_officers' => $this->dropdown->supply_officers(), 
+                        'suppliers' => $this->dropdown->suppliers(),   
+                        'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
+                        'roles' => $this->dropdown->roles(),
                     ],
                     'procurement' => $procurement,
+                    'option' => $request->option,
+                ]); 
+            break;
+
+             case 'view_notice_of_awards':
+                $bac_resolution = ProcurementBac::findOrFail($request->bac_reso_id);
+                return inertia('Modules/FAIMS/Procurement/View', [
+                      'dropdowns' => [
+                        'divisions' => $this->dropdown->dropdowns('Division'),
+                        'fund_clusters' => $this->dropdown->dropdowns('Fund Cluster'),
+                        'procurement_codes' => $this->dropdown->procurement_codes(),
+                        'unit_types' => $this->dropdown->unit_types(),
+                        'requesters' => $this->dropdown->requesters(),
+                        'approvers' => $this->dropdown->approvers(),   
+                        'supply_officers' => $this->dropdown->supply_officers(), 
+                        'suppliers' => $this->dropdown->suppliers(),   
+                        'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
+                    ],
+                    'procurement' => $procurement,
+                    'bac_resolution' => $bac_resolution,
                     'option' => $request->option,
                 ]); 
             break;
@@ -93,6 +121,7 @@ class ViewClass
                         'unit_types' => $this->dropdown->unit_types(),
                         'requesters' => $this->dropdown->requesters(),
                         'approvers' => $this->dropdown->approvers(),     
+                        
                     ],
                     'procurement' => $procurement,
                     'option' => $request->option,

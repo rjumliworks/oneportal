@@ -1,19 +1,6 @@
 <template>
-  <PageHeader title="Notice of Awards" pageTitle="List" />
-  <b-row>
-    <h5>
-      <div>
-        <span class="font-weight-bold">
-          BAC Resolution No:
-          <u class="text-info">
-            <span class="bg-light p-1">
-              {{ bac_resolution.code }}
-            </span>
-          </u>
-        </span>
-      </div>
-    </h5>
-  </b-row>
+  <PageHeader class="mt-3 ms-3" title="Notice of Awards"/>
+
 
   <b-row class="g-2 mb-3 mt-n2">
     <b-col lg>
@@ -51,23 +38,25 @@
   </b-row>
 
   <b-card no-body>
-      <b-tabs card  >
-        <b-tab title="All" active >
-            <table class="table mb-0">
+
+     <table class="table mb-0">
         <thead class="table-light">
           <tr class="fs-11">
             <th>#</th>
             <th>NOA No.</th>
+            <th>BAC No.</th>
             <th>Date Created</th>
             <th>Status</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
 
+
         <tbody>
           <tr class="custom-hover-row" v-for="(list, index) in lists" v-bind:key="index" @click="selectRow(list.id)" :class="{ 'bg-info-subtle': selectedRow === list.id }">
             <td>{{ index + 1 }}</td>
             <td>{{ list.code }}</td>
+            <td>{{ list.bac_resolution }}</td>
             <td>{{ list.created_at }}</td>
             <td>
               <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
@@ -141,14 +130,6 @@
         :pagination="meta"
       />
                 
-        </b-tab>
-        <b-tab title="Comments" v-if="selectedRow">
-          <b-card-text>Comments</b-card-text>
-        </b-tab>
-        <b-tab title="Logs" v-if="selectedRow">
-          <b-card-text>Status Logs</b-card-text>
-        </b-tab>
-      </b-tabs>
   </b-card>
 
 
@@ -198,7 +179,7 @@ export default {
           params: {
             keyword: this.filter.keyword,
             option: "lists",
-            bac_resolution_id: this.bac_resolution.id,
+            procurement_id: this.procurement.id,
           },
         })
         .then((response) => {

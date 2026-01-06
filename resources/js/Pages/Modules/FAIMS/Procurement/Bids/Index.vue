@@ -1,9 +1,9 @@
 <template>
-  <PageHeader v-if="option == 'bids'" title="Abstract of Bids" pageTitle="Bids" />
+  <PageHeader class="mt-3 ms-3" title="Abstract of Bids" />
   <div>
     <b-row class="align-items-center">
       <!-- Left Content -->
-      <b-container card>
+      <!-- <b-container card>
         <b-col>
           <th class="font-weight-bold;" style="border: none">
             PROCUREMENT REQUEST NO:
@@ -14,8 +14,10 @@
             </u>
           </th>
         </b-col>
-      </b-container>
-
+        
+      </b-container> -->
+     
+ 
       <!-- Right-Aligned Action Button -->
       <b-col class="text-end">
         <b-dropdown size="sm" variant="success">
@@ -34,6 +36,7 @@
       </b-col>
     </b-row>
   </div>
+  
     <b-tabs class=" horizontal-scroll-tabs  bg-white" card>
       <template  v-for="(bid, bidIndex) in procurement.quotations" :key="bid.id" >
       <b-tab  v-if="bid.status_id == 36">
@@ -45,10 +48,11 @@
               {{ getCheckedBidsCount(bid.items) }}
             </b-badge>
           </template>
+          
           <div v-if="bid.status_id == 36">
             <div
-              class="file-manager-content w-100 pt-2 pb-0"
-              style="height: calc(80vh - 180px); overflow: auto"
+              class=" w-100 pt-0 pb-0 mb-3"
+              style="height: calc(100vh - 305px); overflow: auto"
               ref="box"
             >
               <div>
@@ -183,36 +187,24 @@
           </div>
       </b-tab>
       </template>
-          <b-row >
-        <b-col>
-          <div class="d-flex justify-content-start">
-            <b-button
-              type="button"
-              variant="primary"
-              style="background: grey; color: white"
-              @click="goBackPage()"
-            >
-              <i class="ri-arrow-left-line align-bottom me-1"></i> Back
-            </b-button>
-          </div>
-        </b-col>
-        <b-col v-if="procurement?.status.name == 'For Bids' || (this.procurement.status.name === 'Rebid' && this.procurement.sub_status?.name === 'For Bids') ">
-          <div class="d-flex justify-content-end">
-            <b-button @click="openRecommendAward()" variant="primary" block
+  
+        <div class="input-group mb-1  ">
+          <b-button class="me-2" type="button" variant="info" @click="goBackPage(procurement)">
+            <i class="ri-arrow-left-line align-bottom me-1"></i> Back
+          </b-button>
+
+           <b-button v-if="procurement?.status.name == 'For Bids'" class="text-end" @click="openRecommendAward()" variant="primary" block
               >Save Bids For Award</b-button
             >
-          </div>
-        </b-col>
-      </b-row>
+        </div>
     </b-tabs>
-  
-
-
+     
   <Offer ref="editOffer" />
   <Award ref="award" :procurement="procurement"  />
   <BACResolution ref="BACReso" :procurement="procurement" :action="'Award'"/>
 </template>
 <script>
+  
 import _ from "lodash";
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 import { useForm } from "@inertiajs/vue3";
@@ -335,14 +327,11 @@ export default {
   
     },
 
-
     printBids(data) {
       window.open(`/faims/procurements/${data.id}?option=print&type=abstract_of_bids`);
     },
 
-    // printPurchaseOrder(data){
-    //    window.open('/faims/po/print/'+data.id+'?pr_id='+ data.id +'&code='+data.code );
-    // },
+ 
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
-    <PageHeader title="BAC Resolutions" pageTitle="List" />
-    <b-row>
+    <PageHeader class="mt-3 ms-3" title="BAC Resolutions"  />
+    <!-- <b-row>
         <h5>
             <div>
                 <span class="font-weight-bold">
@@ -13,7 +13,7 @@
                 </span>
         </div>
         </h5>
-    </b-row>
+    </b-row> -->
     <b-row class="g-2 mb-3 mt-n2">
         <b-col lg>
             <div class="input-group mb-1">
@@ -33,8 +33,7 @@
     </b-row>
 
     <b-card no-body>
-              <b-tabs card  >
-                <b-tab title="All" active >
+  
                     <table class="table mb-0">
                         <thead class="table-light">
                             <tr class="fs-11">
@@ -112,14 +111,7 @@
                     </table>
                     <Pagination class="ms-2 me-2" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
                         
-                </b-tab>
-                <b-tab title="Comments" v-if="selectedRow">
-                  <b-card-text>Comments</b-card-text>
-                </b-tab>
-                <b-tab title="Logs" v-if="selectedRow">
-                  <b-card-text>Status Logs</b-card-text>
-                </b-tab>
-              </b-tabs>
+           
     </b-card>
 
 <BACResolution  :procurement="procurement" @add="fetch()" @update="fetch()"  ref="BACReso" />
@@ -224,6 +216,8 @@ methods: {
 
      goNOAPage(data) {
         router.get('/faims/procurements/'+this.procurement.id + '?bac_reso_id='+ data.id + '&option=notice_of_awards');
+
+    
     },
 
      selectRow(index) {

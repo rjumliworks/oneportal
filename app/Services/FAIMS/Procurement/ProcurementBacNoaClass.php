@@ -15,7 +15,12 @@ class ProcurementBacNoaClass
     public function lists($request){
         $data = ProcurementBacNoaResource::collection(
             ProcurementBacNoa::query()
-            ->where('procurement_bac_id', $request->bac_resolution_id)
+            ->when($request->procurement_id, function ($query, $procurement_id) {
+                $query->where('procurement_id', $procurement_id);
+            })
+            ->when($request->bac_resolution_id, function ($query, $bac_resolution_id) {
+                $query->where('procurement_bac_id', $bac_resolution_id);
+            })
             ->when($request->keyword, function ($query, $keyword) {
                 $query->where('code', 'LIKE', "%{$keyword}%");
             })

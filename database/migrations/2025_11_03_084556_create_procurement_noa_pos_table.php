@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('delivery_term'); 
             $table->string('payment_term'); 
             $table->date('date_of_delivery'); 
+            $table->integer('procurement_id')->unsigned()->index();
+            $table->foreign('procurement_id')->references('id')->on('procurements')->onDelete('cascade');
             $table->tinyInteger('place_of_delivery_id')->unsigned()->index();
             $table->foreign('place_of_delivery_id')->references('id')->on('list_dropdowns');
             $table->integer('noa_id')->unsigned()->index();

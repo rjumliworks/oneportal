@@ -142,7 +142,7 @@
                 <span>___________________________</span>
             </h3>
             <h3>
-                Address:{{ $supplier->address->address }}
+                Address:{{ $supplier->address?->address }}
             </h3>
             <h3 style="margin-bottom:-30px; margin-left:210px">
                 <span>_____________________________</span>

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProcurementBacNoa extends Model
 {
     protected $fillable = [
+        'procurement_id',
         'procurement_bac_id',
         'procurement_quotation_id',
         'code',

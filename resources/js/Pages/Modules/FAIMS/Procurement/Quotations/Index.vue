@@ -1,8 +1,8 @@
 <template>
-  <PageHeader title="Quotation Requests" pageTitle="List" />
-  <b-row>
+  <PageHeader class="mt-3 ms-3" title="Quotation Requests"  />
+  <!-- <b-row>
     <h5>
-      <div>
+      <div class>
         <span class="font-weight-bold">
           PR REQUEST NO:
           <u class="text-info">
@@ -13,7 +13,7 @@
         </span>
       </div>
     </h5>
-  </b-row>
+  </b-row> -->
   <b-row class="g-2 mb-3 mt-n2">
     <b-col lg>
       <div class="input-group mb-1">
@@ -43,12 +43,7 @@
       </div>
     </b-col>
   </b-row>
-  <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
-    <div
-      class="file-manager-content w-100 p-4 pb-0"
-      style="height: calc(90vh - 180px); overflow: auto"
-      ref="box"
-    >
+   <b-card no-body>
       <table class="table mb-0">
         <thead class="table-light">
           <tr class="fs-11">
@@ -89,10 +84,10 @@
                 <i class="ri-printer-fill align-bottom me-1"></i>
                 <!-- Icon for Print -->
               </b-button>
-              <b-button @click="editRFQ(list)" variant="success" size="sm" class="me-2">
+              <!-- <b-button @click="editRFQ(list, lists)" variant="success" size="sm" class="me-2">
                 <i class="ri-edit-2-fill align-bottom me-1"></i>
-              </b-button>
-              <b-button @click="removeRFQ(list.id)" variant="danger" size="sm">
+              </b-button> -->
+              <b-button @click="removeRFQ(list)" variant="danger" size="sm">
                 <i class="ri-delete-bin-line"></i>
               </b-button>
             </td>
@@ -107,7 +102,7 @@
         :links="links"
         :pagination="meta"
       />
-    </div>
+   
     <Quotation
       @add="fetch()"
       :procurement="procurement"
@@ -115,18 +110,26 @@
       :rfqs="lists"
       ref="create"
     />
-  </div>
+
+
+    <Delete
+      @delete="fetch()"
+      ref="delete"
+    />
+     </b-card >
+ 
 </template>
 <script>
+  
 import _ from "lodash";
-
+import Delete from "../Modals/Delete.vue";
 import Quotation from "../Modals/Quotation.vue";
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 import Pagination from "@/Shared/Components/Pagination.vue";
-import { router } from "@inertiajs/vue3";
 export default {
+  
   props: ["procurement", "dropdowns"],
-  components: { PageHeader, Pagination, Quotation },
+  components: { PageHeader, Pagination, Quotation, Delete },
   data() {
     return {
       currentUrl: window.location.origin,
@@ -175,9 +178,13 @@ export default {
       this.$refs.create.show();
     },
 
+    editRFQ(data , lists) {
+      this.$refs.create.edit(data, lists);
+    },
+
     // // remove RFQ
-    removeRFQ(id) {
-      router.delete(`/faims/quotations/${id}`);
+    removeRFQ(data) {
+      this.$refs.delete.show(data, 'Request for Quotation');
     },
 
     print(data) {
@@ -187,6 +194,8 @@ export default {
     goBackPage() {
       this.$inertia.visit("/faims/procurements");
     },
+
+    
   },
 };
 </script>

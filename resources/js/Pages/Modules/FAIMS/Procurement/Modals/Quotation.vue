@@ -75,6 +75,8 @@
 
         <BCol lg="12"><hr class="text-muted mt-4 mb-0" /></BCol>
       </BRow>
+
+ 
       <BRow>
         <div class="table-responsive">
           <table class="table align-middle mb-0">
@@ -140,12 +142,13 @@ export default {
       form: useForm({
         id: null,
         procurement_id: this.procurement.id,
-        supplier_ids: null,
+        supplier_ids: [],
         submission_not_later_than: this.getDatePlusWorkingDays(7),
         supply_officer_id: null,
         items: this.procurement.items,
         option: "quotation_request",
       }),
+      editable: false,
       showModal: false,
     };
   },
@@ -155,12 +158,12 @@ computed: {
     const all = this.dropdowns.suppliers || [];
 
     // 2. Suppliers selected in modal
-    const selected_ids = (this.form.supplier_ids || []).map(item =>
+    const selected_ids = (this.form.supplier_ids).map(item =>
       typeof item === "object" ? item.value : item
     );
 
     // 3. Suppliers already in RFQ list shown on page
-    const rfq_supplier_ids = (this.rfqs || []).map(r =>
+    const rfq_supplier_ids = (this.rfqs).map(r =>
       r.supplier?.id
     );
 
@@ -180,6 +183,8 @@ computed: {
     show() {
       this.showModal = true;
     },
+    
+
     hide() {
       this.form.reset();
       this.form.item_unit_cost = 0.0;
@@ -189,6 +194,7 @@ computed: {
     submit() {
       this.form.option = "save_quotations";
       this.form.post("/faims/quotations", {
+        preserveScroll: true,
         onSuccess: () => {
           this.$emit('add',true);
           this.hide();

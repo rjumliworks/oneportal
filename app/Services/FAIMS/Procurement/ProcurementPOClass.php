@@ -19,6 +19,9 @@ class ProcurementPOClass
     {
         $data = ProcurementNoaPoResource::collection(
             ProcurementNoaPo::with('noa')
+                ->when($request->procurement_id, function ($query, $procurement_id) {
+                    $query->where('procurement_id', $procurement_id);
+                })
                 ->when($request->keyword, function ($query) use ($request) {
                     $keyword = $request->keyword;
 
@@ -52,6 +55,7 @@ class ProcurementPOClass
         $code = ProcurementNoaPo::generatePONumber();
 
         $data = ProcurementNoaPo::create([
+            'procurement_id' => $request->procurement_id,
             'code' => $code,
             'po_date' => now()->toDateString(),
             'payment_term' => $request->payment_term,
@@ -184,6 +188,7 @@ class ProcurementPOClass
         // Loop through each awarded quotation
             $code = ProcurementPoNtp::generateNTPNumber();
             $noa = ProcurementPoNtp::create([
+                'procurement_id' => $po->procurement_id,
                 'code' => $code,
                 'po_id' => $po->id,
                 'created_by_id' => $user->id,

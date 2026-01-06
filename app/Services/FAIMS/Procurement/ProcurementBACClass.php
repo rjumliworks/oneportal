@@ -178,6 +178,7 @@ class ProcurementBACClass
             $code = ProcurementBacNoa::generateNOANumber();
             $noa = ProcurementBacNoa::create([
                 'code' => $code,
+                'procurement_id' => $bac_resolution->procurement_id,
                 'procurement_bac_id' => $bac_resolution->id,
                 'procurement_quotation_id' => $quotation['id'],
                 'created_by_id' => $user->id,

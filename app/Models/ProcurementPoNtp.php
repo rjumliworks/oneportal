@@ -13,6 +13,7 @@ class ProcurementPoNtp extends Model
         'approved_by_id',
         'updated_by_id',
         'status_id',
+        'procurement_id',
 
     ];
 

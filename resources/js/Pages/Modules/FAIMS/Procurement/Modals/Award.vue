@@ -156,8 +156,10 @@
 </template>
 
 <script>
+
 import { router } from "@inertiajs/vue3";
 import draggable from "vuedraggable";
+
 
 export default {
   components: { draggable },
@@ -165,6 +167,7 @@ export default {
 
   data() {
     return {
+      currentUrl: window.location.origin,
       showModal: false,
       checkedBidsDescriptions: false,
       checkedBidsPrice: false,
@@ -309,7 +312,12 @@ export default {
         action: this.procurement.status_id == 13 ? "rebid" : "bid",
         option: "save_bid_for_award",
       };
-      router.post("/faims/offers", data);
+      router.post("/faims/offers/", data, {
+          onSuccess: (response) => {
+            this.$emit("update", true);
+            this.hide();
+          },
+        });
       this.hide();
     },
 

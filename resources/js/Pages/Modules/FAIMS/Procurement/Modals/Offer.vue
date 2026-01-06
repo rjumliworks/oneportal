@@ -113,6 +113,7 @@ export default {
 
     updateItemBidOffer(data) {
       this.form.post("/faims/offers", {
+        preserveScroll: true,
         onSuccess: () => {
           this.hide(); // Hide only when successful
         },

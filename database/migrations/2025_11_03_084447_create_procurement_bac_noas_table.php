@@ -16,6 +16,8 @@ return new class extends Migration
             $table->increments('id');
             $table->string('code')->unique(); 
             $table->string('remarks')->nullable(); 
+            $table->integer('procurement_id')->unsigned()->index();
+            $table->foreign('procurement_id')->references('id')->on('procurements')->onDelete('cascade');
             $table->integer('procurement_bac_id')->unsigned()->index();
             $table->foreign('procurement_bac_id')->references('id')->on('procurement_bacs');
             $table->integer('procurement_quotation_id')->unsigned()->index();
