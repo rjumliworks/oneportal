@@ -28,7 +28,8 @@
           <b-dropdown-item
 
             v-if="
-              purchase_order && purchase_order.status.name != 'Delivered/For Inspection ' && purchase_order.status.name != 'Completed' 
+              (purchase_order && purchase_order.status.name != 'Delivered/For Inspection' && purchase_order.status.name != 'Completed') 
+              
             "
             @click="updateStatus(purchase_order)"
           >

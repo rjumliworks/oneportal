@@ -185,15 +185,16 @@ class ViewClass
 
             case 'purchase_order':
                 $noa = ProcurementBacNoa::with('purchase_order', 'procurement_quotation.supplier.address' , 'items', )->findOrFail($request->noa_id);
+                $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by', 'comments.user.profile', 'comments.replies.user.profile')->findOrFail($id);
                 return inertia('Modules/FAIMS/Procurement/View', [
                     'dropdowns' => [
-                        'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
+                        'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'),
                     ],
                     'tab' => 5,
                     'procurement' => $procurement,
                     'noa' => $noa,
                     'option' => $request->option,
-                ]); 
+                ]);
             break;
 
             

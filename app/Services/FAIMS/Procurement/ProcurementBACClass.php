@@ -148,9 +148,24 @@ class ProcurementBACClass
                 ]);
             break;
             case 'Rebid':
-                $procurement->update([
-                    'sub_status_id' => 69, // set status to "For Quotations"
-                ]);
+                if($procurement->sub_status->name ){
+                    if($procurement->sub_status->name == 'For Approval of Failure BAC Resolution'){
+                        $procurement->update([
+                            'sub_status_id' => 69, // set sub_status to "For Quotations"
+                        ]);
+                    }
+                    else{
+                        $procurement->update([
+                            'sub_status_id' => 46, // set status to "For NOA"
+                        ]);
+                    }
+                }
+                else{
+                    $procurement->update([
+                        'status_id' => 69, // set sub_status to "For Quotations"
+                    ]);
+                }
+            
             break;
             default:
                 $procurement->update([

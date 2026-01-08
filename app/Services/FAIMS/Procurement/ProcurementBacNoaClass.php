@@ -44,7 +44,7 @@ class ProcurementBacNoaClass
 
         // Get current status name
         $currentStatusName = is_array($request->status) ? $request->status['name'] : $request->status->name;
-       
+   
         if($currentStatusName == "Pending"){
             $noa->update([
                     'status_id' => 47, // set status to "served to supplier"
