@@ -26,7 +26,7 @@ class ProcurementBacNoa extends Model
 
     public function procurement_quotation()
     {
-        return $this->belongsTo('App\Models\ProcurementQuotation', 'procurement_quotation_id');
+        return $this->belongsTo('App\Models\ProcurementQuotation', 'procurement_quotation_id')->with('supplier.address' ,'supply_officer');
     }
     
 

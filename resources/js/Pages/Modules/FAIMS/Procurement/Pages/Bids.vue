@@ -3,19 +3,6 @@
   <div>
     <b-row class="align-items-center">
       <!-- Left Content -->
-      <!-- <b-container card>
-        <b-col>
-          <th class="font-weight-bold;" style="border: none">
-            PROCUREMENT REQUEST NO:
-            <u class="text-info">
-              <span class="bg-light p-1">
-                {{ procurement.code }}
-              </span>
-            </u>
-          </th>
-        </b-col>
-        
-      </b-container> -->
 
       <!-- Right-Aligned Action Button -->
       <b-col class="text-end">
@@ -32,7 +19,9 @@
             v-if="
               procurement.status?.name == 'For BAC Resolution' ||
               (this.procurement.status.name === 'Rebid' &&
-                this.procurement.sub_status?.name === 'For BAC Resolution')
+                this.procurement.sub_status?.name === 'For BAC Resolution' &&
+                $page.props.roles.includes('Procurement Officer')) ||
+              $page.props.roles.includes('Procurement Staff')
             "
           >
             <i class="ri-file-line align-bottom me-1"></i>
@@ -54,7 +43,7 @@
           </b-badge>
         </template>
 
-        <div v-if="bid.status_id == 36">
+        <div>
           <div
             class="w-100 pt-0 pb-0 mb-3"
             style="height: calc(100vh - 305px); overflow: auto"
@@ -77,9 +66,11 @@
 
                     <th
                       v-if="
-                        procurement.status.name == 'For Bids' ||
+                        (procurement.status.name == 'For Bids' ||
                         (this.procurement.status.name === 'Rebid' &&
-                          this.procurement.sub_status?.name === 'For Bids')
+                          this.procurement.sub_status?.name === 'For Bids')) &&
+                          $page.props.roles.includes('Procurement Officer') ||
+                          $page.props.roles.includes('Procurement Staff')
                       "
                     >
                       Recommend Bid For Award?
@@ -178,9 +169,12 @@
 
                     <td
                       v-if="
-                        procurement.status.name == 'For Bids' ||
+                        (procurement.status.name == 'For Bids' ||
                         (this.procurement.status.name === 'Rebid' &&
-                          this.procurement.sub_status?.name === 'For Bids')
+                          this.procurement.sub_status?.name === 'For Bids'))
+                          &&
+                          $page.props.roles.includes('Procurement Officer') ||
+                          $page.props.roles.includes('Procurement Staff')
                       "
                     >
                       <span class="d-flex justify-content-center">
@@ -216,20 +210,13 @@
       </b-tab>
     </template>
 
-    <div class="input-group mb-1">
-      <b-button
-        class="me-2"
-        type="button"
-        variant="info"
-        @click="goBackPage(procurement)"
-      >
-        <i class="ri-arrow-left-line align-bottom me-1"></i> Back
-      </b-button>
-
+    <div class="input-group mb-1 ">
       <b-button
         v-if="
-          procurement?.status.name == 'For Bids' ||
-          procurement?.sub_status.name == 'For Bids'
+          (procurement?.status.name == 'For Bids' ||
+          procurement?.sub_status?.name == 'For Bids')
+          &&   $page.props.roles.includes('Procurement Officer') ||
+               $page.props.roles.includes('Procurement Staff')
         "
         class="text-end"
         @click="openRecommendAward()"
@@ -328,10 +315,6 @@ export default {
         default:
           return "secondary"; // Default variant if none match
       }
-    },
-
-    goBackPage() {
-      this.$inertia.visit("/faims/procurements");
     },
 
     handleCheckboxChange(itemIndex, currentBid) {

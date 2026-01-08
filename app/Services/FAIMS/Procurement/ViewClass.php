@@ -184,12 +184,12 @@ class ViewClass
             break;
 
             case 'purchase_order':
-                $noa = ProcurementBacNoa::with('purchase_order', 'procurement_quotation.supplier.address' , 'items')->findOrFail($request->noa_id);
-                return inertia('Modules/FAIMS/Procurement/PurchaseOrder/Index', [
+                $noa = ProcurementBacNoa::with('purchase_order', 'procurement_quotation.supplier.address' , 'items', )->findOrFail($request->noa_id);
+                return inertia('Modules/FAIMS/Procurement/View', [
                     'dropdowns' => [
                         'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
                     ],
-                    
+                    'tab' => 5,
                     'procurement' => $procurement,
                     'noa' => $noa,
                     'option' => $request->option,

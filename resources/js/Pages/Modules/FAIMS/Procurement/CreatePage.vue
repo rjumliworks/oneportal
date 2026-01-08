@@ -15,11 +15,7 @@
     title="Approve Procurement Request"
     pageTitle="PR"
   />
-  <PageHeader
-    v-if="option == 'view'"
-    title="View Procurement Request"
-    pageTitle="PR"
-  />
+  <PageHeader v-if="option == 'view'" title="View Procurement Request" pageTitle="PR" />
   <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
     <div
       class="file-manager-content w-100 p-4 pb-0"
@@ -162,7 +158,6 @@
             >
           </BCol>
 
-
           <div class="table-responsive">
             <table class="table table-nowrap mb-0">
               <thead class="table-light">
@@ -180,16 +175,17 @@
                 <tr v-for="(item, index) in form.items" :key="index">
                   <td>{{ index + 1 }}</td>
                   <td>
-                <span >
-                  {{
-                    item.item_quantity > 1
-                      ? (item.item_unit_type?.[0]?.name_long || item.item_unit_type?.name_long || '')
-                      : (item.item_unit_type?.[0]?.name_short || item.item_unit_type?.name_short || '')
-                  }}
-                </span>
-
-
-
+                    <span>
+                      {{
+                        item.item_quantity > 1
+                          ? item.item_unit_type?.[0]?.name_long ||
+                            item.item_unit_type?.name_long ||
+                            ""
+                          : item.item_unit_type?.[0]?.name_short ||
+                            item.item_unit_type?.name_short ||
+                            ""
+                      }}
+                    </span>
                   </td>
                   <td>
                     <div v-html="item.item_description"></div>
@@ -382,7 +378,7 @@ export default {
       }
     },
 
-    'action': function (value) {
+    action: function (value) {
       console.log(value);
       if (value == "edit" || value == "review" || value == "approve" || value == "view") {
         this.form.id = this.procurement.id;
@@ -398,7 +394,7 @@ export default {
         );
         this.form.requested_by_id = this.procurement.requested_by_id;
         this.form.approved_by_id = this.procurement.approved_by_id;
-        this.form.items = this.procurement.items
+        this.form.items = this.procurement.items;
         this.getDataFromLocalStorage(); // update items
       }
     },
@@ -426,21 +422,20 @@ export default {
     },
 
     removeItem(index) {
-    // Get the current items
-    let items = JSON.parse(localStorage.getItem("itemsAdded")) || [];
+      // Get the current items
+      let items = JSON.parse(localStorage.getItem("itemsAdded")) || [];
 
-    // Remove 1 item at that index
-    if (index >= 0 && index < items.length) {
-      items.splice(index, 1);
-    }
+      // Remove 1 item at that index
+      if (index >= 0 && index < items.length) {
+        items.splice(index, 1);
+      }
 
-    // Save the updated array back to localStorage
-    localStorage.setItem("itemsAdded", JSON.stringify(items));
+      // Save the updated array back to localStorage
+      localStorage.setItem("itemsAdded", JSON.stringify(items));
 
-    // Update your form items immediately
-    this.form.items = items;
-  },
-
+      // Update your form items immediately
+      this.form.items = items;
+    },
 
     submit() {
       this.form.post("/faims/procurements", {
@@ -483,28 +478,26 @@ export default {
     },
 
     getDataFromLocalStorage() {
-  // Get existing items from localStorage
-  const storedItems = JSON.parse(localStorage.getItem("itemsAdded")) || [];
+      // Get existing items from localStorage
+      const storedItems = JSON.parse(localStorage.getItem("itemsAdded")) || [];
 
-  // If form.items is not set yet, initialize it
-  if (!Array.isArray(this.form.items)) {
-    this.form.items = [];
-  }
+      // If form.items is not set yet, initialize it
+      if (!Array.isArray(this.form.items)) {
+        this.form.items = [];
+      }
 
-  // Merge DB (form.items) with locally stored ones
-  const combined = [...this.form.items, ...storedItems];
+      // Merge DB (form.items) with locally stored ones
+      const combined = [...this.form.items, ...storedItems];
 
-  // Remove duplicates based on item id
-  const uniqueItems = combined.filter(
-    (item, index, self) => index === self.findIndex(t => t.id === item.id)
-  );
+      // Remove duplicates based on item id
+      const uniqueItems = combined.filter(
+        (item, index, self) => index === self.findIndex((t) => t.id === item.id)
+      );
 
-  // Update both localStorage and the form
-  this.form.items = uniqueItems;
-  localStorage.setItem("itemsAdded", JSON.stringify(uniqueItems));
-},
-
-
+      // Update both localStorage and the form
+      this.form.items = uniqueItems;
+      localStorage.setItem("itemsAdded", JSON.stringify(uniqueItems));
+    },
 
     getCurrentDate() {
       const today = new Date();

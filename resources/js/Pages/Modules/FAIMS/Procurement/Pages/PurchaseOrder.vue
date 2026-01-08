@@ -1,5 +1,5 @@
 <template>
-  <PageHeader class="m-3 mt-4" title="Purchase Orders"  />
+  <PageHeader class="m-3 mt-4" title="Purchase Orders" />
   <BRow>
     <div class="col-md-12">
       <div class="card bg-light-subtle shadow-none border">
@@ -26,7 +26,6 @@
                   :searchable="true"
                   placeholder="Select Status"
                 />
-                
 
                 <span
                   @click="refresh()"
@@ -37,9 +36,6 @@
                 >
                   <i class="bx bx-refresh search-icon"></i>
                 </span>
-                 <!-- <b-button type="button" variant="primary" @click="createPO()">
-                <i class="ri-add-circle-fill align-bottom me-1"></i> New
-                </b-button> -->
               </div>
             </b-col>
           </b-row>
@@ -60,7 +56,7 @@
                     <i class="ri-apps-2-line me-1 align-bottom"></i> All
                   </BLink>
                 </li>
-                 <li class="nav-item">
+                <li class="nav-item">
                   <BLink
                     v-if="!dropdowns.roles.includes('Procurement Officer')"
                     class="nav-link py-3"
@@ -69,10 +65,10 @@
                     aria-selected="true"
                     @click="viewStatus(52)"
                   >
-                    <i class="ri-file-search-line me-1 align-bottom"></i> Inspection and Acceptance
+                    <i class="ri-file-search-line me-1 align-bottom"></i> Inspection and
+                    Acceptance
                   </BLink>
                 </li>
-            
               </ul>
             </div>
             <div class="flex-shrink-0">
@@ -81,7 +77,6 @@
           </div>
         </div>
 
-     
         <div class="card-body bg-white rounded-bottom">
           <div
             class="table-responsive table-card"
@@ -117,13 +112,13 @@
                   <td class="text-center">{{ list.payment_term }}</td>
 
                   <td class="text-center">
-                    <span >
+                    <span>
                       {{ list.date_of_delivery }}
                     </span>
                     <span else></span>
                   </td>
                   <td class="text-center">
-                    {{  list.noa.code}}
+                    {{ list.noa.code }}
                   </td>
                   <td class="text-center">
                     <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
@@ -141,21 +136,21 @@
                         </button>
                         <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
                           <li
-                              @click="viewPO(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-eye-fill align-bottom me-1"></i>View
-                          </li>  
+                            @click="viewPO(list)"
+                            class="dropdown-item d-flex align-items-center"
+                            role="button"
+                          >
+                            <i class="ri-eye-fill align-bottom me-1"></i>View
+                          </li>
 
-                            <li
-                              @click="updateStatus(list)"
-                              v-if="list.status.name == 'Delivered/For Inspection'"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-eye-fill align-bottom me-1"></i>Update Status
-                          </li>  
+                          <li
+                            @click="updateStatus(list)"
+                            v-if="list.status.name == 'Delivered/For Inspection'"
+                            class="dropdown-item d-flex align-items-center"
+                            role="button"
+                          >
+                            <i class="ri-eye-fill align-bottom me-1"></i>Update Status
+                          </li>
 
                           <li><hr class="dropdown-divider" /></li>
                           <li>
@@ -166,10 +161,9 @@
                             >
                               <i class="ri-printer-fill me-2"></i> Print
                             </a>
-                          
                           </li>
 
-                            <li>
+                          <li>
                             <a
                               @click="openPrint(list)"
                               class="dropdown-item d-flex align-items-center"
@@ -177,7 +171,6 @@
                             >
                               <i class="ri-printer-fill me-2"></i> Print IAR
                             </a>
-                          
                           </li>
                         </ul>
                       </div>
@@ -201,8 +194,7 @@
       </div>
     </div>
   </BRow>
-    <Inspection :procurement="procurement" @add="fetch()" ref="inspection" />
-
+  <Inspection :procurement="procurement" @add="fetch()" ref="inspection" />
 </template>
 <script>
 import _ from "lodash";
@@ -215,7 +207,7 @@ import { router } from "@inertiajs/vue3";
 
 export default {
   components: { PageHeader, Pagination, Multiselect, Inspection },
-  props: ['dropdowns' , 'procurement'],
+  props: ["dropdowns", "procurement"],
   data() {
     return {
       currentUrl: window.location.origin,
@@ -258,7 +250,7 @@ export default {
     this.fetch();
   },
   methods: {
-   checkSearchStr: _.debounce(function (string) {
+    checkSearchStr: _.debounce(function (string) {
       this.fetch();
     }, 300),
     fetch(page_url) {
@@ -301,27 +293,26 @@ export default {
       return `${startStr}-${endStr}, ${year}`;
     },
 
-
     updateStatus(data) {
       this.$refs.inspection.show(data, "PO");
     },
 
     viewStatus(status) {
       this.filter.status = status;
-      console.log()
+      console.log();
       this.fetch();
     },
-    
+
     viewPO(data) {
-        router.get(
-            "/faims/procurements/" +
-            this.procurement.id +
-            "?noa_id=" +
-            data.id +
-            "&option=purchase_order"
-        );
+      router.get(
+        "/faims/procurements/" +
+          this.procurement.id +
+          "?noa_id=" +
+          data.id +
+          "&option=purchase_order"
+      );
     },
- 
+
     openPrint(data) {
       window.open(`/faims/purchase-orders/${data.id}?option=print&type=purchase_order`);
     },

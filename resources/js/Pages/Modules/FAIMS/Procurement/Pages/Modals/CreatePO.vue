@@ -11,7 +11,19 @@
   >
     <form class="customform">
       <BRow>
-        <BCol lg="12" class="mt-2">
+        <BCol lg="6" class="mt-2">
+          <InputLabel value="Notice of Award" :message="form.errors.noa_id" />
+          <Multiselect
+            :options="notice_of_awards"
+            v-model="form.noa_id"
+            :searchable="true"
+            :multiple="true"
+            label="name"
+            placeholder="Select NOAs"
+          />
+        </BCol>
+
+        <!-- <BCol lg="12" class="mt-2">
           <InputLabel value="NOA Number" />
           <TextInput
             v-model="noa.code"
@@ -20,7 +32,7 @@
             :light="true"
             readonly
           />
-        </BCol>
+        </BCol> -->
 
         <BCol lg="6" class="mt-2">
           <InputLabel value="Supplier" />
@@ -36,7 +48,7 @@
         <BCol lg="6" class="mt-2">
           <InputLabel value="Supplier Address" />
           <TextInput
-            v-model="form.supplier.address"
+            v-model="form.supplier_address"
             type="text"
             class="form-control"
             :light="true"
@@ -91,53 +103,6 @@
 
         <BCol lg="12"><hr class="text-muted mt-4 mb-0" /></BCol>
       </BRow>
-
-      <BRow>
-        <div class="table-responsive">
-          <table class="table align-middle mb-0">
-            <thead class="table-light">
-              <tr class="fs-11">
-                <th>Item No</th>
-                <th>Unit</th>
-                <th>Description</th>
-                <th>Quantity</th>
-                <th>Unit Cost</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-
-            <tbody style="vertical-align: top">
-              <tr v-for="(item, index) in form.items" :key="index">
-                <td>{{ item.item.item.item_no }}</td>
-                <td>
-                  {{
-                    item.item.item.item_quantity > 1
-                      ? item.item.item.item_unit_type.name_long
-                      : item.item.item.item_unit_type.name_short
-                  }}
-                </td>
-
-                <td>
-                  <div v-html="item.item.item.item_description"></div>
-                </td>
-                <td>{{ item.item.item.item_quantity }}</td>
-
-                <td>{{ formatCurrency(item.item.bid_price) }}</td>
-
-                <td>
-                  {{ formatCurrency(item.item.bid_price * item.item.item.item_quantity) }}
-                </td>
-              </tr>
-
-              <!-- Total Row -->
-              <tr class="fw-bold">
-                <td colspan="5" class="text-end">Total:</td>
-                <td>{{ formatCurrency(totalAmount) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </BRow>
     </form>
 
     <template v-slot:footer>
@@ -145,7 +110,7 @@
       <b-button
         @click="submit()"
         variant="primary"
-        :disabled="form.processing || !form.place_of_delivery_id"
+        :disabled="form.processing || !form.place_of_delivery_id || !form.noa_id.length"
         block
         >Save</b-button
       >
@@ -168,43 +133,50 @@ export default {
     TextInput,
     Multiselect,
   },
-  props: ["procurement", "noa", "dropdowns"],
+  props: ["procurement", "dropdowns", "noas"],
   data() {
     return {
       currentUrl: window.location.origin,
       form: useForm({
         id: null,
         procurement_id: this.procurement.id,
-        noa_id: null,
+        noa_id: [],
         po_date: null,
         code: null,
-        supplier: this.noa.procurement_quotation.supplier,
+        supplier: [],
         place_of_delivery_id: null,
         date_of_delivery: this.getDatePlusWorkingDays(15),
         delivery_term: null,
         payment_term: "within 30 calendar days after IAR",
-        items: this.noa.items,
         option: "",
       }),
+      notice_of_awards: [],
       showModal: false,
     };
   },
 
   computed: {
-    totalAmount() {
-      return this.noa.items.reduce((sum, item) => {
-        return sum + item.item.bid_price * item.item.item.item_quantity;
-      }, 0);
-    },
+    // totalAmount() {
+    //   return this.form.items.reduce((sum, item) => {
+    //     return sum + item.item.bid_price * item.item.item.item_quantity;
+    //   }, 0);
+    // },
   },
 
   methods: {
-    show() {
+    show(data) {
       this.showModal = true;
-      this.form.supplier = this.noa?.procurement_quotation?.supplier;
-      this.form.delivery_term = this.noa?.procurement_quotation?.delivery_term;
-      this.form.place_of_delivery_id = this.noa?.procurement_quotation?.place_of_delivery_id;
-      this.form.noa_id = this.noa?.id;
+      this.noas.map((noa) => {
+        if (noa) {
+          this.notice_of_awards.push({
+            value: noa.id,
+            name: noa.code + " - " + noa.procurement_quotation.supplier.name,
+          });
+        }
+      });
+      this.form.supplier = data.supplier;
+      this.form.delivery_term = data.procurement_quotation.delivery_term;
+      this.form.place_of_delivery_id = data.place_of_delivery_id;
     },
     hide() {
       this.form.reset();

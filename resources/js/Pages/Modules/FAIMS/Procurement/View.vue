@@ -17,7 +17,7 @@
           class="card-header bg-gradient-primary border-0 d-flex align-items-center justify-content-between"
           style="border-radius: 15px 15px 0 0 !important; padding: 1rem"
         >
-          <div v-if="!isCollapsed">
+          <div v-if="!isCollapsed" class="text-center">
             <span class="card-title mb-1"
               ><i class="ri-file-list-3-line me-2"></i
               ><span class="fs-5 text-muted">PR#:</span>
@@ -25,11 +25,23 @@
             </span>
             <p class="card-title mb-0 fs-10">
               <span>Status:</span>
+              <div>
               <b-badge
                 :class="procurement.status.bg + ' ms-1'"
                 style="font-size: 0.75rem; text-align: center"
                 >{{ procurement.status?.name }}</b-badge
               >
+              </div>
+            </p>
+            <p class="card-title mb-0 fs-10">
+              <span v-if="procurement.sub_status">Substatus:</span>
+             <div>
+              <b-badge
+                :class="procurement.status.bg + ' ms-1'"
+                style="font-size: 0.75rem; text-align: center"
+                >{{ procurement.sub_status?.name }}</b-badge
+              >
+             </div>
             </p>
           </div>
           <button
@@ -80,6 +92,7 @@
               >
                 <i class="ri-file-text-line align-middle me-3 fs-5"></i>Request of
                 Quotations(RFQs)
+               
               </button>
               <button
                 :class="[
@@ -262,7 +275,15 @@
       <NoticeOfAward
         :dropdowns="dropdowns"
         :procurement="procurement"
-        v-if="activeTab === 5"
+        v-if="activeTab === 5 && !showCreatePOFlag"
+        @changeTab="show"
+        @showCreatePO="handleShowCreatePO"
+      />
+      <CreatePO
+        :dropdowns="dropdowns"
+        :procurement="procurement"
+        :noa="selectedNoa"
+        v-if="showCreatePOFlag"
       />
       <PurchaseOrder
         :dropdowns="dropdowns"
@@ -554,12 +575,13 @@
 </template>
 <script>
 import { useForm } from "@inertiajs/vue3";
-import Overview from "./Components/Detail.vue";
-import Quotation from "./Quotations/Index.vue";
-import BACResolution from "./BACResolution/Index.vue";
-import AbstractOfBids from "./Bids/Index.vue";
-import NoticeOfAward from "./Components/NoticeOfAward.vue";
-import PurchaseOrder from "./Components/PurchaseOrder.vue";
+import Overview from "./Pages/Detail.vue";
+import Quotation from "./Pages/Quotation.vue";
+import BACResolution from "./Pages/BACResolution.vue";
+import AbstractOfBids from "./Pages/Bids.vue";
+import NoticeOfAward from "./Pages/NoticeOfAward.vue";
+import PurchaseOrder from "./Pages/PurchaseOrder.vue";
+import CreatePO from "./Pages/CreatePO.vue";
 import { router } from "@inertiajs/vue3";
 
 import PageHeader from "@/Shared/Components/PageHeader.vue";
@@ -572,6 +594,7 @@ export default {
     AbstractOfBids,
     NoticeOfAward,
     PurchaseOrder,
+    CreatePO,
   },
   props: ["dropdowns", "procurement", "tab", "logs"],
   data() {
@@ -581,6 +604,8 @@ export default {
       isCollapsed: false,
       isRightCollapsed: true,
       activeRightTab: 1,
+      selectedNoa: null,
+      showCreatePOFlag: false,
       statusOrder: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 49, 51, 52, 53], // Main statuses, partial statuses made optional/situational
       statusLabels: {
         36: "Pending",
@@ -659,6 +684,7 @@ export default {
   watch: {
     tab() {
       this.activeTab = parseInt(this.tab) || 1;
+      this.showCreatePOFlag = false; // Reset flag when tab changes
     },
   },
   mounted() {
@@ -698,6 +724,11 @@ export default {
         hour: "2-digit",
         minute: "2-digit",
       });
+    },
+
+    handleShowCreatePO(data) {
+      this.selectedNoa = data;
+      this.showCreatePOFlag = true;
     },
   },
 };

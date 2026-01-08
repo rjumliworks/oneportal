@@ -19,6 +19,9 @@ class ProcurementBacNoaResource extends JsonResource
         return [
             'id' => $this->id,
             'code'  => $this->code,
+            'bac_resolution'  => $this->procurement_bac,
+            'procurement_quotation' => $this->procurement_quotation,
+            'items' => $this->items,
             'created_by'  =>  $this->created_by,
             'approved_by'  => $this->approved_by ,
             'status'  => $this->status,

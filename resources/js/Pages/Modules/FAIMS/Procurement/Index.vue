@@ -14,7 +14,9 @@
               </div>
             </div>
             <div class="flex-grow-1">
-              <h5 class="mb-0 fs-14"><span class="text-body">Procurement Requests</span></h5>
+              <h5 class="mb-0 fs-14">
+                <span class="text-body">Procurement Requests</span>
+              </h5>
               <p class="text-muted text-truncate-two-lines fs-12">
                 A detailed list of submitted procurement requests including code, purpose,
                 title, and status.
@@ -62,129 +64,138 @@
             </b-col>
           </b-row>
         </div>
-            <b-card no-body>
-              <b-tabs card  >
-                <b-tab title="All" active >
-                  <div class="card-body bg-white rounded-bottom mt-3">
-                    <div
-                      class="table-responsive table-card"
-                      style="margin-top: -39px; height: calc(100vh - 455px); overflow: auto"
-                    >
-                    <table class="table align-middle table-striped table-centered mb-0">
-                    <thead class="table-light thead-fixed">
-                      <tr class="fs-11">
-                        <th style="width: 3%" class="text-center">#</th>
-                        <th style="width: 10%">Code</th>
-                        <th style="width: 14%" class="text-center">Purpose</th>
-                        <th style="width: 14%" class="text-center">Division</th>
-                        <th style="width: 10%" class="text-center">Requested By</th>
-                        <th style="width: 10%" class="text-center">PAP Code</th>
-                        <th style="width: 10%" class="text-center">Quotation Count</th>
-                        <th style="width: 10%" class="text-center">Reawarded Count</th>
-                        <th style="width: 10%" class="text-center">Rebid Count</th>
-                        <th style="width: 15%" class="text-center">Date Created</th>
-                        <th style="width: 10%" class="text-center">Status</th>
-                        <th style="width: 10%" class="text-center">Sub-status</th>
-                        <th style="width: 5%"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-white fs-12">
-                      <tr v-for="(list, index) in lists" v-bind:key="index" @click="selectRow(list.id)" :class="{ 'bg-info-subtle': selectedRow === list.id }" >
-                        <td class="text-center">
-                          {{ index + 1 }}
-                        </td>
-                        <td>
-                          <h5 class="fs-13 mb-0 fw-semibold text-primary">{{ list.code }}</h5>
-                        </td>
-                        <td class="text-center">{{ list.purpose }}</td>
-                        <td class="text-center">
-                          {{ list.division?.name }}
-                        </td>
-                        <td class="text-center">{{ list.requested_by }}</td>
-                        <td class="text-center">
-                          <div v-for="(list, index) in list.codes" v-bind:key="index">
-                            <b-badge>
-                              {{ list?.procurement_code?.mode_of_procurement?.name }}
-                            </b-badge>
-                          </div>
-                        </td>
-                        <td class="text-center">
-                          <span v-if="list.quotation_count > 0">
-                            {{ list.quotation_count }}
-                          </span>
-                          <span else></span>
-                        </td>
+        <b-card no-body>
+          <div class="card-body bg-white rounded-bottom mt-3">
+            <div
+              class="table-responsive table-card"
+              style="margin-top: -39px; height: calc(100vh - 305px); overflow: auto"
+            >
+              <table class="table align-middle table-striped table-centered mb-0">
+                <thead class="table-light thead-fixed">
+                  <tr class="fs-11">
+                    <th style="width: 3%" class="text-center">#</th>
+                    <th style="width: 10%">Code</th>
+                    <th style="width: 14%" class="text-center">Purpose</th>
+                    <th style="width: 14%" class="text-center">Division</th>
+                    <th style="width: 10%" class="text-center">Requested By</th>
+                    <th style="width: 10%" class="text-center">PAP Code</th>
+                    <th style="width: 10%" class="text-center">Quotation Count</th>
+                    <th style="width: 10%" class="text-center">Reawarded Count</th>
+                    <th style="width: 10%" class="text-center">Rebid Count</th>
+                    <th style="width: 15%" class="text-center">Date Created</th>
+                    <th style="width: 10%" class="text-center">Status</th>
+                    <th style="width: 10%" class="text-center">Sub-status</th>
+                    <th style="width: 5%"></th>
+                  </tr>
+                </thead>
+                <tbody class="table-white fs-12">
+                  <tr
+                    v-for="(list, index) in lists"
+                    v-bind:key="index"
+                    @click="selectRow(list.id)"
+                    :class="{ 'bg-info-subtle': selectedRow === list.id }"
+                  >
+                    <td class="text-center">
+                      {{ index + 1 }}
+                    </td>
+                    <td>
+                      <h5 class="fs-13 mb-0 fw-semibold text-primary">
+                        {{ list.code }}
+                      </h5>
+                    </td>
+                    <td class="text-center">{{ list.purpose }}</td>
+                    <td class="text-center">
+                      {{ list.division?.name }}
+                    </td>
+                    <td class="text-center">{{ list.requested_by }}</td>
+                    <td class="text-center">
+                      <div v-for="(list, index) in list.codes" v-bind:key="index">
+                        <b-badge>
+                          {{ list?.procurement_code?.mode_of_procurement?.name }}
+                        </b-badge>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span v-if="list.quotation_count > 0">
+                        {{ list.quotation_count }}
+                      </span>
+                      <span else></span>
+                    </td>
 
-                        <td class="text-center">
-                          <span v-if="list.reawarded_count > 0">
-                            {{ list.reawarded_count }}
-                          </span>
-                          <span else></span>
-                        </td>
-                        <td class="text-center">
-                          <span v-if="list.rebidded_count > 0">
-                            {{ list.rebidded_count }}
-                          </span>
-                        </td>
-                        <td class="text-center">{{ list.date }}</td>
-                        <td class="text-center">
-                          <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
-                        </td>
-                        <td class="text-center">
-                          <b-badge  :class="list.sub_status?.bg">{{ list.sub_status?.name }}</b-badge>
-                        </td>
-                        <td class="text-end">
-                          <div class="d-flex gap-3 justify-content-center">
-                            <div class="dropdown" @click.stop>
-                              <button
-                                class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
-                                type="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                              >
-                                <i class="ri-more-fill align-bottom"></i>
-                              </button>
-                              <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
-                                <li
-                                    @click="goViewPage(list)"
-                                    class="dropdown-item d-flex align-items-center"
-                                    role="button"
-                                  >
-                                    <i class="ri-eye-fill align-bottom me-1"></i>View
-                                </li>
-                                
-                                <li
-                                    v-if="list.status.name == 'Pending'"
-                                    @click="goEditPage(list)"
-                                    class="dropdown-item d-flex align-items-center"
-                                    role="button"
-                                  >
-                                    <i class="ri-edit-2-fill align-bottom me-1"></i>Edit
-                                </li>
-                                <li
-                                    v-if="
-                                      list.status.name == 'Pending' &&
-                                      roles.includes('Procurement Officer')
-                                    "
-                                    @click="goReviewPage(list)"
-                                    class="dropdown-item d-flex align-items-center"
-                                    role="button"
-                                  >
-                                    <i class="ri-check-double-fill align-bottom me-1"></i>Review
-                                </li>
-                                <li
-                                    v-if="
-                                      list.status.name == 'Reviewed' &&
-                                      roles.includes('Procurement Officer')
-                                    "
-                                    @click="goApprovePage(list)"
-                                    class="dropdown-item d-flex align-items-center"
-                                    role="button"
-                                  >
-                                    <i class="ri-check-fill align-bottom me-1"></i>Approve
-                                </li>
+                    <td class="text-center">
+                      <span v-if="list.reawarded_count > 0">
+                        {{ list.reawarded_count }}
+                      </span>
+                      <span else></span>
+                    </td>
+                    <td class="text-center">
+                      <span v-if="list.rebidded_count > 0">
+                        {{ list.rebidded_count }}
+                      </span>
+                    </td>
+                    <td class="text-center">{{ list.date }}</td>
+                    <td class="text-center">
+                      <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
+                    </td>
+                    <td class="text-center">
+                      <b-badge :class="list.sub_status?.bg">{{
+                        list.sub_status?.name
+                      }}</b-badge>
+                    </td>
+                    <td class="text-end">
+                      <div class="d-flex gap-3 justify-content-center">
+                        <div class="dropdown" @click.stop>
+                          <button
+                            class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <i class="ri-more-fill align-bottom"></i>
+                          </button>
+                          <ul
+                            class="dropdown-menu dropdownmenu-primary dropdown-menu-end"
+                          >
+                            <li
+                              @click="goViewPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-eye-fill align-bottom me-1"></i>View
+                            </li>
 
-                                <li
+                            <li
+                              v-if="list.status.name == 'Pending'"
+                              @click="goEditPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-edit-2-fill align-bottom me-1"></i>Edit
+                            </li>
+                            <li
+                              v-if="
+                                list.status.name == 'Pending' &&
+                                roles.includes('Procurement Officer')
+                              "
+                              @click="goReviewPage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-double-fill align-bottom me-1"></i>Review
+                            </li>
+                            <li
+                              v-if="
+                                list.status.name == 'Reviewed' &&
+                                roles.includes('Procurement Officer')
+                              "
+                              @click="goApprovePage(list)"
+                              class="dropdown-item d-flex align-items-center"
+                              role="button"
+                            >
+                              <i class="ri-check-fill align-bottom me-1"></i>Approve
+                            </li>
+
+                            <!-- <li
                                     v-if="
                                       list.status.name == 'Completed' || 
                                       (list.status.name == 'Rebid' && list.sub_status?.name == 'For Quotations') ||
@@ -247,54 +258,40 @@
                                     
                                     <span v-if=" list.status.name =='Re-award'">Re-award</span> 
                                     <span v-else-if=" list.status.name =='Rebid' ">Rebid</span> 
-                                </li>
+                                </li> -->
 
-
-
-                                <li><hr class="dropdown-divider" /></li>
-                                <li>
-                                  <a
-                                    @click="openPrint(list)"
-                                    class="dropdown-item d-flex align-items-center"
-                                    role="button"
-                                  >
-                                    <i class="ri-printer-fill me-2"></i> Print
-                                  </a>
-                                
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                    <div class="card-footer">
-                    <Pagination
-                      class="ms-2 me-2 mt-n1"
-                      v-if="meta"
-                      @fetch="fetch"
-                      :lists="lists.length"
-                      :links="links"
-                      :pagination="meta"
-                    />
-                 </div>
-                   </div>
-                </div>
-                </b-tab>
-                <b-tab title="Comments" v-if="selectedRow">
-                  <b-card-text>Comments</b-card-text>
-                </b-tab>
-                <b-tab title="Logs" v-if="selectedRow">
-                  <b-card-text>Status Logs</b-card-text>
-                </b-tab>
-              </b-tabs>
-            </b-card>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                              <a
+                                @click="openPrint(list)"
+                                class="dropdown-item d-flex align-items-center"
+                                role="button"
+                              >
+                                <i class="ri-printer-fill me-2"></i> Print
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="card-footer">
+                <Pagination
+                  class="ms-2 me-2 mt-n1"
+                  v-if="meta"
+                  @fetch="fetch"
+                  :lists="lists.length"
+                  :links="links"
+                  :pagination="meta"
+                />
+              </div>
+            </div>
           </div>
-      
-      
+        </b-card>
       </div>
- 
+    </div>
   </BRow>
 </template>
 <script>
@@ -307,7 +304,7 @@ import { router } from "@inertiajs/vue3";
 import { list } from "postcss";
 export default {
   components: { PageHeader, Pagination, Multiselect },
-  props: ["dropdowns", "roles" ],
+  props: ["dropdowns", "roles"],
   data() {
     return {
       currentUrl: window.location.origin,
@@ -329,7 +326,7 @@ export default {
         "ri-alarm-fill",
       ],
       selectedRow: null,
-      view_type: 'all',
+      view_type: "all",
       index: null,
       units: [],
     };
@@ -396,7 +393,6 @@ export default {
       const year = startDate.getFullYear(); // assume same year
       return `${startStr}-${endStr}, ${year}`;
     },
-    
 
     view(view_type) {
       this.view_type = view_type;
@@ -407,7 +403,7 @@ export default {
     },
 
     goViewPage(data) {
-      router.get("/faims/procurements/"+ data.id, { option: "view",  tab: 1 });
+      router.get("/faims/procurements/" + data.id, { option: "view", tab: 1 });
     },
 
     goEditPage(data) {
@@ -415,7 +411,7 @@ export default {
     },
 
     goReviewPage(data) {
-      router.get("/faims/procurements/" + data.id , { option: "review" }); 
+      router.get("/faims/procurements/" + data.id, { option: "review" });
     },
 
     goApprovePage(data) {
@@ -437,14 +433,14 @@ export default {
     goReawardPage(data) {
       router.get("/faims/procurements/" + data.id, { option: "bac_resolutions" });
     },
-    
+
     openPrint(data) {
       window.open(`/faims/procurements/${data.id}?option=print&type=procurement`);
     },
 
     selectRow(index) {
-         this.selectedRow = (this.selectedRow == index) ? null : index;
-      },
+      this.selectedRow = this.selectedRow == index ? null : index;
+    },
 
     refresh() {
       this.filter.expense = null;
