@@ -89,7 +89,9 @@
                 ]"
                 @click="show(2)"
                 style="transition: all 0.3s ease"
+
               >
+              
                 <i class="ri-file-text-line align-middle me-3 fs-5"></i>Request of
                 Quotations(RFQs)
                
@@ -116,6 +118,10 @@
                 ]"
                 @click="show(4)"
                 style="transition: all 0.3s ease"
+                v-if="
+                  dropdowns.roles.includes('Procurement Officer') ||
+                  dropdowns.roles.includes('Procurement Staff')
+                "
               >
                 <i class="ri-file-line align-middle me-3 fs-5"></i>BAC Resolutions
               </button>
@@ -140,6 +146,7 @@
                 ]"
                 @click="show(6)"
                 style="transition: all 0.3s ease"
+  
               >
                 <i class="ri-shopping-cart-line align-middle me-3 fs-5"></i>Purchase
                 Order(POs)

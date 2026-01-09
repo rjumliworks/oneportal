@@ -7,6 +7,7 @@ use App\Models\Procurement;
 use App\Models\ProcurementBacNoa;
 use App\Models\ProcurementNoaPo;
 use App\Models\ProcurementPoNtp;
+use App\Models\ProcurementPoIar;
 
 use App\Http\Resources\FAIMS\Procurement\ProcurementNoaPoResource;
 
@@ -134,11 +135,12 @@ class ProcurementPOClass
         else if($request->status['name'] == "Conformed"){
              $po->update([
                 'status_id' => 52, // set status to "Delivered/For Inspection"
-               
             ]);
             $po->noa->update([
                 'status_id' => 52, // set noa status to "PO Delivered/For Inspection"
             ]);
+            //Create IAR
+            $this->createIAR($po);
         }
         else if($request->status['name'] == "Delivered/For Inspection"){
              $po->update([
@@ -180,6 +182,17 @@ class ProcurementPOClass
             'message' => 'Purchase Order Status updated successfully!', 
             'info' => "You've successfully updated Purchase Order Status.",
         ];
+    }
+
+    Public function createIAR($po)
+    { 
+        // Loop through each awarded quotation
+            $code = ProcurementPoIar::generateIARNumber();
+            $iar = ProcurementPoIar::create([
+                'procurement_id' => $po->procurement_id,
+                'code' => $code,
+                'po_id' => $po->id,
+            ]);
     }
 
 

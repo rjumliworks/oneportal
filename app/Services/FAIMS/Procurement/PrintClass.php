@@ -46,6 +46,9 @@ class PrintClass
             case 'notice_to_proceed':
                 return $this->printNTP($id);
             break;
+            case 'iar':
+                return $this->printIAR($id);
+            break;
         }
     }
 
@@ -230,6 +233,39 @@ class PrintClass
 
         $pdf = \PDF::loadView('FAIMS.Procurement.prints.notice-to-proceed',$array)->setPaper('A4', 'portrait');
          return $pdf->stream($ntp->code.'.pdf');
+
+    }
+
+    public function printIAR($id){
+        $purchase_order = ProcurementNoaPo::with('noa.procurement_bac.procurement.codes' , 'noa.procurement_quotation.supplier', 'noa.items.item', 'iar', 'noa.procurement_quotation.supply_officer.profile' )->findOrFail($id); // 
+        $procurement =  $purchase_order->noa->procurement_bac->procurement;
+        $codes = $procurement->codes;
+        $items = $purchase_order->noa->items;
+        $supplier = $purchase_order->noa->procurement_quotation->supplier;
+
+        $total_amount = $items->sum(function ($item) {
+            return $item->item->bid_price * $item->item->item->item_quantity;
+        });
+
+        $amount_to_words = $this->numberToWords($total_amount );
+
+        $regional_director = $this->dropdown->regional_director();
+        $supply_officer =   $purchase_order->noa->procurement_quotation->supply_officer->profile;
+
+        $array = [
+            'iar' => $purchase_order?->iar,
+            'purchase_order' => $purchase_order,
+            'supplier' => $supplier, 
+             'procurement' => $procurement, 
+            'codes' => $codes,
+            'items' => $items,
+            'amount_to_words' => $amount_to_words,
+            'regional_director' => $regional_director, 
+            'supply_officer' => $supply_officer,
+        ];
+
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.iar',$array)->setPaper('A4', 'portrait');
+         return $pdf->stream($purchase_order?->iar?->code.'.pdf');
 
     }
 

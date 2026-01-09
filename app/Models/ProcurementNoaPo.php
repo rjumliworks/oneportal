@@ -35,6 +35,10 @@ class ProcurementNoaPo extends Model
         return $this->belongsTo('App\Models\procurementBacNoa', 'noa_id' );
     }
 
+    public function iar()
+    {
+        return $this->hasOne('App\Models\procurementPoIar', 'po_id' );
+    }
       
     public function status()
     {

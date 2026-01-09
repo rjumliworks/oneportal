@@ -165,7 +165,7 @@
 
                           <li>
                             <a
-                              @click="openPrint(list)"
+                              @click="openPrintIAR(list)"
                               class="dropdown-item d-flex align-items-center"
                               role="button"
                             >
@@ -315,6 +315,10 @@ export default {
 
     openPrint(data) {
       window.open(`/faims/purchase-orders/${data.id}?option=print&type=purchase_order`);
+    },
+
+    openPrintIAR(data) {
+      window.open(`/faims/purchase-orders/${data.id}?option=print&type=iar`);
     },
 
     refresh() {

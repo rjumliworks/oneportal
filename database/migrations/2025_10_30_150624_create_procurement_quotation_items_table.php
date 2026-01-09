@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('quotation_id')->references('id')->on('procurement_quotations')->onDelete('cascade');;
             $table->integer('procurement_item_id')->unsigned()->index();;
             $table->foreign('procurement_item_id')->references('id')->on('procurement_items')->onDelete('cascade');;
-            $table->string('technical_proposal')->nullable(); 
+            $table->text('technical_proposal')->nullable(); 
             $table->string('bid_price')->nullable(); 
             $table->boolean('is_checked')->default(0); 
             $table->boolean('is_rebid')->default(0); 
