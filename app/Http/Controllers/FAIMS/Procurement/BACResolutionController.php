@@ -29,12 +29,19 @@ class BACResolutionController extends Controller
     }
 
     public function index(Request $request){
-        switch($request->option){     
+        switch($request->option){
             case 'lists':
                   return $this->bac_resolution->lists($request);
             break;
 
-        }   
+            default:
+                return inertia('Modules/FAIMS/Procurement/BACResolution/AllIndex', [
+                    'dropdowns' => [
+                        'statuses' => $this->dropdown->statuses('BAC Resolution'),
+                    ],
+                ]);
+            break;
+        }
     }
 
      public function store(Request $request) {

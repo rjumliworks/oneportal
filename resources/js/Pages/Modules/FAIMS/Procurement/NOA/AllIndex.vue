@@ -1,6 +1,6 @@
 <template>
-  <Head title="Requests" />
-  <PageHeader title="Procurement Requests" pageTitle="List" />
+  <Head title="Notice of Awards" />
+  <PageHeader title="Notice of Awards" pageTitle="All" />
   <BRow>
     <div class="col-md-12">
       <div class="card bg-light-subtle shadow-none border">
@@ -8,26 +8,23 @@
           <div class="d-flex mb-n3">
             <div class="flex-shrink-0 me-3">
               <div style="height: 2.5rem; width: 2.5rem">
-                <span class="avatar-title bg-primary-subtle rounded p-2 mt-n1">
-                  <i class="ri-pin-distance-fill text-primary fs-24"></i>
+                <span class="avatar-title bg-success-subtle rounded p-2 mt-n1">
+                  <i class="ri-file-list-fill text-success fs-24"></i>
                 </span>
               </div>
             </div>
             <div class="flex-grow-1">
               <h5 class="mb-0 fs-14">
-                <span class="text-body">Procurement Requests</span>
+                <span class="text-body">All Notice of Awards</span>
               </h5>
               <p class="text-muted text-truncate-two-lines fs-12">
-                A detailed list of submitted procurement requests including code, purpose,
-                title, and status.
+                A comprehensive list of all Notice of Awards across all procurements.
               </p>
             </div>
-            <div class="flex-shrink-0" style="width: 45%"></div>
           </div>
         </div>
-    
-
-           <div class="car-body bg-white border-bottom shadow-none">
+        <div class="car-body bg-white border-bottom shadow-none">
+             <div class="car-body bg-white border-bottom shadow-none">
           <b-row class="mb-2 ms-1 me-1" style="margin-top: 12px">
             <b-col lg>
               <div class="input-group mb-1">
@@ -60,14 +57,10 @@
                 >
                   <i class="bx bx-refresh search-icon"></i>
                 </span>
-    
-                <b-button type="button" variant="primary" @click="goCreatePage">
-                  <i class="ri-add-circle-fill align-bottom me-1"></i> Create
-                </b-button>
               </div>
-              
             </b-col>
           </b-row>
+        </div>
         </div>
         <b-card no-body>
           <div class="card-body bg-white rounded-bottom mt-3">
@@ -79,19 +72,15 @@
                 <thead class="table-light thead-fixed">
                   <tr class="fs-12 fw-semibold">
                     <th style="width: 4%" class="text-center">#</th>
-                    <th style="width: 12%">Code</th>
+                    <th style="width: 15%">NOA No.</th>
+                    <th style="width: 15%">Procurement Code</th>
                     <th style="width: 18%">Purpose</th>
-                    <th style="width: 12%">Division</th>
-                    <th style="width: 12%">Requested By</th>
-                    <th style="width: 10%">PAP Code</th>
-                    <th style="width: 10%">Date Created</th>
+                    <th style="width: 12%">Supplier</th>
+                    <th style="width: 12%">Date Created</th>
                     <th style="width: 10%">Status</th>
-                    <th style="width: 10%">Sub-status</th>
                     <th style="width: 6%" class="text-center">Actions</th>
                   </tr>
                 </thead>
-
-        
 
                 <tbody class="table-group-divider">
                   <tr
@@ -105,42 +94,33 @@
                     <td>
                       <div class="d-flex align-items-center">
                         <div>
-                          <h6 class="mb-0 fs-14 fw-semibold text-primary">{{ list.code }}</h6>
+                          <h6 class="mb-0 fs-14 fw-semibold text-info">{{ list.code }}</h6>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <div class="text-truncate" style="max-width: 200px;" v-b-tooltip.hover :title="list.purpose">
-                        {{ list.purpose }}
-                      </div>
+                      <span class="badge bg-soft-primary text-primary px-2 py-1 fs-12 fw-medium rounded-pill">
+                        {{ list.procurement?.code }}
+                      </span>
                     </td>
-                    <td>{{ list.division?.name }}</td>
-                    <td>{{ list.requested_by }}</td>
                     <td>
-                      <div class="d-flex flex-wrap gap-1">
-                        <span
-                          v-for="(code, idx) in list.codes"
-                          :key="idx"
-                          class="badge bg-soft-primary text-primary px-2 py-1 fs-12 fw-medium rounded-pill"
-                        >
-                          {{ code?.procurement_code?.mode_of_procurement?.name }}
-                        </span>
+                      <div class="text-truncate" style="max-width: 200px;" v-b-tooltip.hover :title="list.procurement?.purpose">
+                        {{ list.procurement?.purpose }}
                       </div>
                     </td>
-                    <td>{{ formatDate(list.date) }}</td>
+                    <td>
+                      <div class="text-truncate" style="max-width: 150px;" v-b-tooltip.hover :title="list.procurement_quotation?.supplier?.name">
+                        {{ list.procurement_quotation?.supplier?.name }}
+                      </div>
+                    </td>
+                    <td>{{ formatDate(list.created_at) }}</td>
                     <td>
                       <b-badge :class="list.status.bg" class="fs-11">{{ list.status?.name }}</b-badge>
-                    </td>
-                    <td>
-                      <b-badge :class="list.sub_status?.bg" class="fs-11" v-if="list.sub_status">
-                        {{ list.sub_status?.name }}
-                      </b-badge>
-                      <span v-else class="text-muted">-</span>
                     </td>
                     <td class="text-center">
                       <div class="dropdown" @click.stop>
                         <button
-                          class="btn btn-ghost-primary btn-icon btn-sm"
+                          class="btn btn-ghost-info btn-icon btn-sm"
                           type="button"
                           data-bs-toggle="dropdown"
                           aria-expanded="false"
@@ -149,28 +129,12 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                           <li>
-                            <a @click="goViewPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-eye-line align-bottom me-2"></i>View Details
+                            <a @click="viewProcurement(list)" class="dropdown-item" role="button">
+                              <i class="ri-eye-line align-bottom me-2"></i>View Procurement
                             </a>
                           </li>
-                          <li v-if="list.status.name == 'Pending'">
-                            <a @click="goEditPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-edit-line align-bottom me-2"></i>Edit
-                            </a>
-                          </li>
-                          <li v-if="list.status.name == 'Pending' && roles.includes('Procurement Officer')">
-                            <a @click="goReviewPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-check-double-line align-bottom me-2"></i>Review
-                            </a>
-                          </li>
-                          <li v-if="list.status.name == 'Reviewed' && roles.includes('Procurement Officer')">
-                            <a @click="goApprovePage(list)" class="dropdown-item" role="button">
-                              <i class="ri-check-line align-bottom me-2"></i>Approve
-                            </a>
-                          </li>
-                          <li><hr class="dropdown-divider" /></li>
                           <li>
-                            <a @click="openPrint(list)" class="dropdown-item" role="button">
+                            <a @click="printNOA(list)" class="dropdown-item" role="button">
                               <i class="ri-printer-line align-bottom me-2"></i>Print
                             </a>
                           </li>
@@ -204,10 +168,10 @@ import Multiselect from "@vueform/multiselect";
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 import Pagination from "@/Shared/Components/Pagination.vue";
 import { router } from "@inertiajs/vue3";
-import { list } from "postcss";
+
 export default {
   components: { PageHeader, Pagination, Multiselect },
-  props: ["dropdowns", "roles"],
+  props: ["dropdowns"],
   data() {
     return {
       currentUrl: window.location.origin,
@@ -216,22 +180,9 @@ export default {
       links: {},
       filter: {
         keyword: null,
-        type: null,
         status: null,
-        mode: null,
-        expense: null,
-        leave: null,
       },
-      icons: [
-        "ri-flight-takeoff-fill",
-        "ri-car-fill",
-        "ri-calendar-2-fill",
-        "ri-alarm-fill",
-      ],
       selectedRow: null,
-      view_type: "all",
-      index: null,
-      units: [],
     };
   },
   watch: {
@@ -239,12 +190,6 @@ export default {
       this.checkSearchStr(newVal);
     },
     "filter.status"(newVal) {
-      this.fetch();
-    },
-    "filter.mode"(newVal) {
-      this.fetch();
-    },
-    "filter.expense"(newVal) {
       this.fetch();
     },
   },
@@ -256,15 +201,12 @@ export default {
       this.fetch();
     }, 300),
     fetch(page_url) {
-      page_url = page_url || "/faims/procurements";
+      page_url = page_url || "/faims/notice-of-awards";
       axios
         .get(page_url, {
           params: {
             keyword: this.filter.keyword,
-            type: this.filter.type,
             status: this.filter.status,
-            mode: this.filter.mode,
-            count: 10,
             option: "lists",
           },
         })
@@ -284,78 +226,17 @@ export default {
         day: 'numeric',
       });
     },
-
-    formatDateRange(start, end) {
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-
-      const options = { month: "long", day: "numeric" };
-      const startStr = startDate.toLocaleDateString("en-US", options);
-      const endStr = endDate.toLocaleDateString("en-US", { day: "numeric" });
-
-      if (start === end) {
-        return startDate.toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
-      }
-
-      const year = startDate.getFullYear(); // assume same year
-      return `${startStr}-${endStr}, ${year}`;
+    viewProcurement(list) {
+      router.get("/faims/procurements/" + list.procurement_id, { option: "view", tab: 1 });
     },
-
-    view(view_type) {
-      this.view_type = view_type;
+    printNOA(list) {
+      window.open(`/faims/notice-of-awards/${list.id}?option=print&type=noa`);
     },
-
-    goCreatePage() {
-      router.get("/faims/procurements/create", { option: "create" });
-    },
-
-    goViewPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "view", tab: 1 });
-    },
-
-    goEditPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "edit" });
-    },
-
-    goReviewPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "review" });
-    },
-
-    goApprovePage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "approve" });
-    },
-
-    goQuotationPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "quotations" });
-    },
-
-    goBidsPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "bids" });
-    },
-
-    goBACResolutionPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "bac_resolutions" });
-    },
-
-    goReawardPage(data) {
-      router.get("/faims/procurements/" + data.id, { option: "bac_resolutions" });
-    },
-
-    openPrint(data) {
-      window.open(`/faims/procurements/${data.id}?option=print&type=procurement`);
-    },
-
     selectRow(index) {
       this.selectedRow = this.selectedRow == index ? null : index;
     },
-
     refresh() {
-      this.filter.expense = null;
-      this.filter.mode = null;
+      this.filter.status = null;
       this.filter.keyword = null;
       this.fetch();
     },

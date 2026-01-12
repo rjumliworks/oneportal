@@ -43,18 +43,35 @@
                 </Link>
             </li>
 
+   
+
+            <li class="nav-item">
+                <Link href="/faims/suppliers" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/Suppliers') }">
+                    <i class="ri-truck-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/faims/bac-resolutions" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/BACResolution') }">
+                    <i class="ri-government-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">BAC Resolutions</span>
+                </Link>
+            </li>
+            <li class="nav-item">
+                <Link href="/faims/notice-of-awards" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/NOA') }">
+                    <i class="ri-file-text-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Notice of Awards</span>
+                </Link>
+            </li>
+
             <li class="nav-item">
                 <Link href="/faims/purchase-orders" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
                     <i class="ri-file-paper-2-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Purchase Orders</span>
-                </Link>
-            </li>
-
-            <li class="nav-item">
-                <Link href="/faims/suppliers" class="nav-link menu-link">
-                    <i class="ri-truck-line"></i>
-                    <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
                 </Link>
             </li>
             <!-- <li class="nav-item">

@@ -3,14 +3,26 @@
   <b-row class="g-2 mb-3 mt-n2">
     <b-col lg>
       <div class="input-group mb-1">
-        <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
+        <span class="input-group-text">
+          <i class="ri-search-line search-icon"></i
+        ></span>
         <input
           type="text"
           v-model="filter.keyword"
           placeholder="Search Suppliers"
           class="form-control"
-          style="width: 60%"
+          style="width: 40%"
         />
+        <Multiselect
+          class="white"
+          style="width: 15%"
+          :options="[{name: 'Active', id: 1}, {name: 'Inactive', id: 0}]"
+          v-model="filter.status"
+          label="name"
+          :searchable="true"
+          placeholder="Select Status"
+        />
+
         <span
           @click="refresh()"
           class="input-group-text"
@@ -52,8 +64,9 @@
             <td>{{ list.code }}</td>
             <td>{{ list.name }}</td>
             <td>{{ list.address }}</td>
-            <td>{{ list.conformes }}
-              <span v-for="conforme in list.conformes">
+            <td>
+              <span v-for="conforme in list.conformes" :key="conforme.id">
+                {{ conforme.name }}
               </span>
             </td>
             <td>{{ list.attachments }}</td>
@@ -97,10 +110,11 @@ import _ from "lodash";
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 import Pagination from "@/Shared/Components/Pagination.vue";
 import SupplierModal from "@/Pages/Modules/FAIMS/Procurement/Modals/Supplier.vue";
+import Multiselect from "@vueform/multiselect";
 
 export default {
   props: ["dropdowns"],
-  components: { SupplierModal, Pagination, PageHeader },
+  components: { SupplierModal, Pagination, PageHeader, Multiselect },
   data() {
     return {
       currentUrl: window.location.origin,
@@ -109,6 +123,7 @@ export default {
       links: {},
       filter: {
         keyword: null,
+        status: null,
       },
       mode_of_procurements: {},
       index: null,
@@ -117,6 +132,9 @@ export default {
   watch: {
     "filter.keyword"(newVal) {
       this.checkSearchStr(newVal);
+    },
+    "filter.status"(newVal) {
+      this.fetch();
     },
   },
 
@@ -129,11 +147,12 @@ export default {
       this.fetch();
     }, 300),
     fetch(page_url) {
-      page_url = "/faims/suppliers";
+      page_url = page_url || "/faims/suppliers";
       axios
         .get(page_url, {
           params: {
             keyword: this.filter.keyword,
+            status: this.filter.status,
             option: "lists",
           },
         })
@@ -153,6 +172,12 @@ export default {
 
     editSupplier(data) {
       this.$refs.create.edit(data);
+    },
+
+    refresh() {
+      this.filter.status = null;
+      this.filter.keyword = null;
+      this.fetch();
     },
 
 

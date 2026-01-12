@@ -15,7 +15,7 @@ class ProcurementBacNoaClass
 {
     public function lists($request){
         $data = ProcurementBacNoaResource::collection(
-            ProcurementBacNoa::with('procurement_bac')
+            ProcurementBacNoa::with('procurement_bac.procurement', 'procurement_quotation.supplier')
             ->when($request->procurement_id, function ($query, $procurement_id) {
                 $query->where('procurement_id', $procurement_id);
             })
@@ -24,11 +24,16 @@ class ProcurementBacNoaClass
             })
             ->when($request->keyword, function ($query, $keyword) {
                 $query->where('code', 'LIKE', "%{$keyword}%")
-                      ->whereHas('procurement_bac', function ($q) use ($keyword) {
+                      ->orWhereHas('procurement', function ($q) use ($keyword) {
                         $q->where('code', 'LIKE', "%{$keyword}%");
-                });
+                      })
+                      ->orWhereHas('procurement_quotation.supplier', function ($q) use ($keyword) {
+                        $q->where('name', 'LIKE', "%{$keyword}%");
+                      });
             })
-
+            ->when($request->status, function ($query, $status) {
+                $query->where('status_id', $status);
+            })
             ->orderBy('created_at','DESC')
             ->paginate($request->count)
         );

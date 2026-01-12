@@ -19,6 +19,11 @@ class ProcurementBacNoa extends Model
         'status_id',
     ];
 
+    public function procurement()
+    {
+        return $this->belongsTo('App\Models\Procurement', 'procurement_id');
+    }
+
     public function procurement_bac()
     {
         return $this->belongsTo('App\Models\ProcurementBac', 'procurement_bac_id');

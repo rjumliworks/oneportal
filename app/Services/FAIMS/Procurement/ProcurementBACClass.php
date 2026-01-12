@@ -19,12 +19,18 @@ class ProcurementBACClass
     public function lists($request){
         $data = ProcurementBacResource::collection(
             ProcurementBac::query()
-            ->where('procurement_id', $request->procurement_id)
+            ->when($request->procurement_id, function ($query, $procurement_id) {
+                $query->where('procurement_id', $procurement_id);
+            })
             ->when($request->keyword, function ($query, $keyword) {
                 $query->where('code', 'LIKE', "%{$keyword}%");
             })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status_id', $status);
+            })
+            ->with(['procurement', 'status'])
             ->orderBy('created_at','DESC')
-            ->paginate($request->count)
+            ->paginate($request->count ?? 10)
         );
 
         return $data;

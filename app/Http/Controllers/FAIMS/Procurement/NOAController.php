@@ -29,11 +29,18 @@ class NOAController extends Controller
     }
 
     public function index(Request $request){
-        switch($request->option){     
+        switch($request->option){
             case 'lists':
                   return $this->noa->lists($request);
             break;
-        }   
+            default:
+                return inertia('Modules/FAIMS/Procurement/NOA/AllIndex', [
+                    'dropdowns' => [
+                        'statuses' => $this->dropdown->statuses('ProcurementBacNoa'),
+                    ],
+                ]);
+            break;
+        }
     }
 
  

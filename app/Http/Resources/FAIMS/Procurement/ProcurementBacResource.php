@@ -21,6 +21,7 @@ class ProcurementBACResource extends JsonResource
             'code'  => $this->code,
             'type'  => $this->type,
             'body' => $this->body,
+            'procurement' => $this->whenLoaded('procurement'),
             'created_by'  =>  $this->created_by,
             'approved_by'  => $this->approved_by ,
             'status'  => $this->status,
