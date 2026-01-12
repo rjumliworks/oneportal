@@ -2,6 +2,33 @@ tin<template>
 	<Head title="Procurement Dashboard" />
 	<PageHeader title="Procurement Dashboard" pageTitle="Overview" />
 
+	<!-- Status Flow Panel -->
+	<BRow class="mb-4">
+		<BCol xl="12">
+			<BCard>
+				<BCardHeader>
+					<h4 class="card-title mb-0">Procurement Status Flow</h4>
+				</BCardHeader>
+				<BCardBody>
+					<div class="d-flex flex-wrap justify-content-center gap-3">
+						<div
+							v-for="status in dashboard.status_distribution"
+							:key="status.status"
+							class="text-center"
+						>
+							<div class="d-flex flex-column align-items-center">
+								<b-badge :class="status.bg" class="fs-6 px-1 py-1 mb-2" style="min-width: 80px;">
+									{{ status.status }}
+								</b-badge>
+								<h5 class="mb-0 fw-bold">{{ status.count }}</h5>
+							</div>
+						</div>
+					</div>
+				</BCardBody>
+			</BCard>
+		</BCol>
+	</BRow>
+
 	<!-- Dashboard Filters -->
 	<BRow class="mb-4">
 		<BCol xl="12">

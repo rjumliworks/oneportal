@@ -206,6 +206,19 @@ class ViewClass
         $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by'
                                     , 'bac_resolutions', 'comments.user.profile', 'comments.replies.user.profile')->findOrFail($id);
 
+        // Add status distribution for the status flow panel
+        $procurement->status_distribution = [
+            'pending' => 0, // Assuming pending is not counted here, or calculate based on logic
+            'for_review' => 0,
+            'for_approval' => 0,
+            'approved' => 0,
+            'rfq' => $procurement->quotations ? $procurement->quotations->count() : 0,
+            'bidding' => ($procurement->bids ? $procurement->bids->count() : 0) + ($procurement->quotations ? $procurement->quotations->count() : 0),
+            'bac_resolution' => $procurement->bac_resolutions ? $procurement->bac_resolutions->count() : 0,
+            'noa' => $procurement->noas ? $procurement->noas->count() : 0,
+            'po' => $procurement->pos ? $procurement->pos->count() : 0,
+        ];
+
         $logs = Activity::where(function ($query) use ($id) {
             $query->where('subject_type', Procurement::class)
                   ->where('subject_id', $id);

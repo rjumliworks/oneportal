@@ -1,6 +1,48 @@
- <template>
+<template>
   <Head title="Profile" />
   <PageHeader title="Procurement Overview" pageTitle="User" />
+
+  <!-- Status Flow Panel -->
+  <BRow class="mb-4">
+    <BCol xl="12">
+      <BCard>
+        <BCardHeader>
+          <h4 class="card-title mb-0">Procurement Status Flow</h4>
+        </BCardHeader>
+        <BCardBody>
+          <div class="status-flow-container">
+            <div class="status-flow-wrapper">
+              <div
+                v-for="(status, index) in statusFlow"
+                :key="status.name"
+                class="status-step-modern"
+                :class="{ 'current-status': status.isCurrent, 'past-status': status.isPast, 'future-status': !status.isCurrent && !status.isPast }"
+                :style="{ animationDelay: `${index * 0.15}s` }"
+              >
+                <div class="status-card">
+                  <div class="status-icon-wrapper">
+                    <i v-if="status.isPast" class="ri-check-line status-icon completed"></i>
+                    <i v-else-if="status.isCurrent" class="ri-star-fill status-icon current"></i>
+                    <i v-else class="ri-circle-line status-icon pending"></i>
+                  </div>
+                  <div class="status-content">
+                    <h6 class="status-title">{{ status.name }}</h6>
+                  </div>
+                </div>
+                <div v-if="index < statusFlow.length - 1" class="status-connector-modern">
+                  <div class="connector-line" :class="{ 'active': status.isPast || status.isCurrent }"></div>
+                  <div class="connector-arrow" :class="{ 'active': status.isPast || status.isCurrent }">
+                    <i class="ri-arrow-right-line"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </BCardBody>
+      </BCard>
+    </BCol>
+  </BRow>
+
   <div class="row">
     <div
       :class="['transition-all', isCollapsed ? 'col-md-1' : 'col-md-3']"
@@ -120,10 +162,6 @@
                 ]"
                 @click="show(4)"
                 style="transition: all 0.3s ease"
-                v-if="
-                  dropdowns.roles.includes('Procurement Officer') ||
-                  dropdowns.roles.includes('Procurement Staff')
-                "
               >
                 <i class="ri-file-line align-middle me-3 fs-5"></i>BAC Resolutions
                 <span v-if="bacResolutionsCount > 0" :class="activeTab === 4 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ bacResolutionsCount }}</span>
@@ -360,12 +398,7 @@
               >
                 <i class="ri-file-list-line me-1"></i>Logs
               </button>
-              <button
-                :class="['nav-link', activeRightTab === 3 ? 'active' : '']"
-                @click="showRightTab(3)"
-              >
-                <i class="ri-flow-chart me-1"></i>Status
-              </button>
+         
             </div>
             <div v-if="activeRightTab === 1" class="comments-section">
               <div
@@ -497,36 +530,7 @@
                 <small>Activity logs will appear here</small>
               </div>
             </div>
-            <div v-if="activeRightTab === 3" class="status-flow-section">
-              <h6 class="text-muted mb-3 fw-bold text-center">Procurement Status Flow</h6>
-              <div class="status-flow">
-                <template v-for="(statusId, index) in statusOrder" :key="statusId">
-                  <div
-                    class="status-step"
-                    :class="{
-                      active: procurement.status?.id === statusId,
-                      past: procurement.status?.id > statusId,
-                    }"
-                  >
-                    <div class="status-circle">
-                      <i
-                        v-if="procurement.status?.id > statusId"
-                        class="ri-check-line"
-                      ></i>
-                      <i v-else :class="statusIcons[statusId]"></i>
-                    </div>
-                    <span class="status-label">{{ statusLabels[statusId] }}</span>
-                    <span v-if="procurement.status?.id === statusId" class="current-badge"
-                      >Current</span
-                    >
-                  </div>
-                  <div
-                    v-if="index < statusOrder.length - 1"
-                    class="status-connector"
-                  ></div>
-                </template>
-              </div>
-            </div>
+
           </div>
         </div>
         <div
@@ -567,20 +571,7 @@
             >
               <i class="ri-file-list-line fs-5"></i>
             </button>
-            <button
-              :class="[
-                'nav-link mb-2 rounded-pill border-0 transition-all p-2',
-                activeRightTab === 3
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-white text-dark hover-bg-light',
-              ]"
-              @click="showRightTab(3)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
-              v-b-tooltip.hover
-              title="Status Flow"
-            >
-              <i class="ri-flow-chart fs-5"></i>
-            </button>
+           
           </div>
         </div>
       </div>
@@ -620,77 +611,7 @@ export default {
       activeRightTab: 1,
       selectedNoa: null,
       showCreatePOFlag: false,
-      statusOrder: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 49, 51, 52, 53], // Main statuses, partial statuses made optional/situational
-      statusLabels: {
-        36: "Pending",
-        37: "Reviewed",
-        38: "Approved",
-        39: "Available of Award",
-        40: "Available for Re-award",
-        41: "Not Available for Award/Re-award",
-        42: "For Bids",
-        43: "Awarded",
-        44: "For BAC Resolution",
-        45: "For Approval of BAC Resolution",
-        46: "For NOA",
-        47: "Served to Supplier",
-        48: "NOA Served to Supplier",
-        49: "PO Issued",
-        50: "Partially NOA Conformed",
-        51: "PO Conformed",
-        52: "Delivered/For Inspection",
-        53: "Completed",
-        54: "Conformed",
-        55: "Not Conformed",
-        56: "NOA Conformed",
-        57: "Partially Awarded",
-        58: "Partially NOA Conformed",
-        59: "Re-award",
-        60: "Rebid",
-        61: "Not Conformed",
-        62: "PO Pending",
-        63: "Partially PO Pending",
-        64: "PO Partially Issued",
-        65: "PO Partially Conformed",
-        66: "Partially Delivered/For Inspection",
-        67: "Partially Completed/Awaiting for Inspection",
-        68: "Not Conformed",
-      },
-      statusIcons: {
-        36: "ri-time-line",
-        37: "ri-eye-line",
-        38: "ri-check-circle-line",
-        39: "ri-trophy-line",
-        40: "ri-trophy-line",
-        41: "ri-close-circle-line",
-        42: "ri-file-text-line",
-        43: "ri-auction-line",
-        44: "ri-file-line",
-        45: "ri-file-line",
-        46: "ri-trophy-line",
-        47: "ri-send-plane-line",
-        48: "ri-send-plane-line",
-        49: "ri-shopping-cart-line",
-        50: "ri-check-line",
-        51: "ri-check-line",
-        52: "ri-truck-line",
-        53: "ri-check-line",
-        54: "ri-check-line",
-        55: "ri-close-line",
-        56: "ri-check-line",
-        57: "ri-auction-line",
-        58: "ri-check-line",
-        59: "ri-trophy-line",
-        60: "ri-refresh-line",
-        61: "ri-close-line",
-        62: "ri-time-line",
-        63: "ri-time-line",
-        64: "ri-shopping-cart-line",
-        65: "ri-check-line",
-        66: "ri-truck-line",
-        67: "ri-check-line",
-        68: "ri-close-line",
-      },
+
       form: useForm({}),
     };
   },
@@ -710,6 +631,29 @@ export default {
     },
     posCount() {
       return this.procurement.pos ? this.procurement.pos.length : 0;
+    },
+    statusFlow() {
+      // Define the procurement status flow with counts
+      const currentStatus = this.procurement.status?.name;
+      const statusFlow = [
+        { name: 'Pending', bg: 'badge bg-secondary', count: this.procurement.status_distribution?.pending || 0, isCurrent: currentStatus === 'Pending' },
+        { name: 'Reviewed', bg: 'badge bg-warning', count: this.procurement.status_distribution?.for_approval || 0, isCurrent: currentStatus === 'Reviewed' },
+        { name: 'Approved', bg: 'badge bg-success', count: this.procurement.status_distribution?.approved || 0, isCurrent: currentStatus === 'Approved' },
+        { name: 'For Bids', bg: 'badge bg-info', count: this.procurement.status_distribution?.rfq || 0, isCurrent: currentStatus === 'For Bids' },
+        { name: 'For BAC Resolution', bg: 'badge bg-primary', count: this.procurement.status_distribution?.bidding || 0, isCurrent: currentStatus === 'For BAC Resolution' },
+        { name: 'For Approval of BAC Resolution', bg: 'badge bg-primary', count: this.procurement.for_approval_of_bac_resolution || 0, isCurrent: currentStatus === 'For Approval of BAC Resolution' },
+        { name: 'For NOA', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'For NOA' },
+        { name: 'NOA Served to Supplier', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'NOA Served to Supplier' },
+        { name: 'NOA Conformed', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'NOA Conformed' },
+        { name: 'PO Issued', bg: 'badge bg-danger', count: this.procurement.status_distribution?.po || 0, isCurrent: currentStatus === 'PO Issued' },
+        { name: 'Delivered/For Inspection', bg: 'badge bg-danger', count: this.procurement.status_distribution?.po || 0, isCurrent: currentStatus === 'Delivered/For Inspection' },
+        { name: 'Completed', bg: 'badge bg-success', count: this.procurement.completed?.po || 0, isCurrent: currentStatus === 'Completed' },
+      ];
+      const currentIndex = statusFlow.findIndex(s => s.isCurrent);
+      statusFlow.forEach((status, index) => {
+        status.isPast = index < currentIndex;
+      });
+      return statusFlow;
     },
   },
   watch: {
@@ -760,6 +704,17 @@ export default {
     handleShowCreatePO(data) {
       this.selectedNoa = data;
       this.showCreatePOFlag = true;
+    },
+
+    getStatusBadgeClass(status) {
+      if (status.isCurrent) {
+        return status.bg;
+      } else if (status.isPast) {
+        return status.bg;
+      } else {
+        // Gray for future statuses
+        return 'badge bg-secondary';
+      }
     },
   },
 };
@@ -945,5 +900,286 @@ export default {
 .log-icon {
   margin-left: 1rem;
   opacity: 0.7;
+}
+
+.status-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.current-status .status-badge {
+  animation: pulseCurrent 2s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseCurrent {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 193, 7, 0.8);
+  }
+}
+
+.status-flow-container {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 1rem 0;
+}
+
+.status-flow-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  min-width: max-content;
+}
+
+.status-step-modern {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideInUp 0.6s ease-out forwards;
+}
+
+.status-step-modern.current-status {
+  animation: slideInUp 0.6s ease-out forwards, pulseGlow 2s ease-in-out infinite;
+}
+
+.status-step-modern.past-status {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.status-step-modern.future-status {
+  opacity: 0.6;
+}
+
+.status-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 1rem;
+  min-width: 140px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.status-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff, #6610f2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.status-step-modern.current-status .status-card::before {
+  opacity: 1;
+}
+
+.status-step-modern.current-status .status-card {
+  border-color: #007bff;
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.status-step-modern.past-status .status-card {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-color: #28a745;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.15);
+}
+
+.status-step-modern.future-status .status-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-color: #6c757d;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.1);
+}
+
+.status-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  position: relative;
+}
+
+.status-icon {
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.status-icon.completed {
+  color: #28a745;
+  animation: checkPulse 1.5s ease-in-out infinite;
+}
+
+.status-icon.current {
+  color: #ffc107;
+  animation: starSpin 3s linear infinite;
+}
+
+.status-icon.pending {
+  color: #6c757d;
+}
+
+.status-content {
+  margin-top: 0.5rem;
+}
+
+.status-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.status-count {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+  background: rgba(108, 117, 125, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.status-step-modern.current-status .status-count {
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+}
+
+.status-step-modern.past-status .status-count {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.status-connector-modern {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.connector-line {
+  width: 60px;
+  height: 3px;
+  background: #dee2e6;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.connector-line.active {
+  background: linear-gradient(90deg, #28a745, #20c997);
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+.connector-arrow {
+  color: #dee2e6;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.connector-arrow.active {
+  color: #28a745;
+  animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(0, 123, 255, 0.4);
+  }
+}
+
+@keyframes checkPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes starSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arrowPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .status-flow-wrapper {
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .status-card {
+    min-width: 120px;
+    padding: 0.75rem;
+  }
+
+  .status-title {
+    font-size: 0.8rem;
+  }
+
+  .connector-line {
+    width: 40px;
+  }
 }
 </style>

@@ -9,11 +9,12 @@
     "
   >
     <div class="card">
-      <div class="card-header bg-primary text-white p-3">
+      <div class="card-header bg-primary text-white p-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
           <i class="ri-information-line me-2 text-white"></i>
           <span class="text-white">Procurement Details</span>
         </h5>
+ 
       </div>
     </div>
     <div class="card-body p-2">
@@ -153,7 +154,79 @@
 export default {
   props: ["dropdowns", "procurement"],
   data() {
-    return {};
+    return {
+      statusOrder: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 49, 51, 52, 53], // Main statuses, partial statuses made optional/situational
+      statusLabels: {
+        36: "Pending",
+        37: "Reviewed",
+        38: "Approved",
+        39: "Available of Award",
+        40: "Available for Re-award",
+        41: "Not Available for Award/Re-award",
+        42: "For Bids",
+        43: "Awarded",
+        44: "For BAC Resolution",
+        45: "For Approval of BAC Resolution",
+        46: "For NOA",
+        47: "Served to Supplier",
+        48: "NOA Served to Supplier",
+        49: "PO Issued",
+        50: "Partially NOA Conformed",
+        51: "PO Conformed",
+        52: "Delivered/For Inspection",
+        53: "Completed",
+        54: "Conformed",
+        55: "Not Conformed",
+        56: "NOA Conformed",
+        57: "Partially Awarded",
+        58: "Partially NOA Conformed",
+        59: "Re-award",
+        60: "Rebid",
+        61: "Not Conformed",
+        62: "PO Pending",
+        63: "Partially PO Pending",
+        64: "PO Partially Issued",
+        65: "PO Partially Conformed",
+        66: "Partially Delivered/For Inspection",
+        67: "Partially Completed/Awaiting for Inspection",
+        68: "Not Conformed",
+      },
+      statusIcons: {
+        36: "ri-time-line",
+        37: "ri-eye-line",
+        38: "ri-check-circle-line",
+        39: "ri-trophy-line",
+        40: "ri-trophy-line",
+        41: "ri-close-circle-line",
+        42: "ri-file-text-line",
+        43: "ri-auction-line",
+        44: "ri-file-line",
+        45: "ri-file-line",
+        46: "ri-trophy-line",
+        47: "ri-send-plane-line",
+        48: "ri-send-plane-line",
+        49: "ri-shopping-cart-line",
+        50: "ri-check-line",
+        51: "ri-check-line",
+        52: "ri-truck-line",
+        53: "ri-check-line",
+        54: "ri-check-line",
+        55: "ri-close-line",
+        56: "ri-check-line",
+        57: "ri-auction-line",
+        58: "ri-check-line",
+        59: "ri-trophy-line",
+        60: "ri-refresh-line",
+        61: "ri-close-line",
+        62: "ri-time-line",
+        63: "ri-time-line",
+        64: "ri-shopping-cart-line",
+        65: "ri-check-line",
+        66: "ri-truck-line",
+        67: "ri-check-line",
+        68: "ri-close-line",
+      },
+    };
   },
 };
 </script>
