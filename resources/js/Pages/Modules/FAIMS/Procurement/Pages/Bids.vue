@@ -322,7 +322,6 @@ export default {
       if (currentBid.items[itemIndex].is_checked) {
         this.checkedItems[itemIndex] = currentBid;
       } else {
-        this.not_checked_items[itemIndex] = currentBid;
         delete this.checkedItems[itemIndex];
       }
     },

@@ -1,4 +1,4 @@
-<template>
+ <template>
   <Head title="Profile" />
   <PageHeader title="Procurement Overview" pageTitle="User" />
   <div class="row">
@@ -91,10 +91,11 @@
                 style="transition: all 0.3s ease"
 
               >
-              
+
                 <i class="ri-file-text-line align-middle me-3 fs-5"></i>Request of
                 Quotations(RFQs)
-               
+                <span v-if="quotationsCount > 0" :class="activeTab === 2 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ quotationsCount }}</span>
+
               </button>
               <button
                 :class="[
@@ -108,6 +109,7 @@
               >
                 <i class="ri-auction-line align-middle me-3 fs-5"></i>Abstract of
                 Bids(AOBs)
+                <span v-if="bidsCount > 0" :class="activeTab === 3 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ bidsCount }}</span>
               </button>
               <button
                 :class="[
@@ -124,6 +126,7 @@
                 "
               >
                 <i class="ri-file-line align-middle me-3 fs-5"></i>BAC Resolutions
+                <span v-if="bacResolutionsCount > 0" :class="activeTab === 4 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ bacResolutionsCount }}</span>
               </button>
               <button
                 :class="[
@@ -136,6 +139,7 @@
                 style="transition: all 0.3s ease"
               >
                 <i class="ri-trophy-line align-middle me-3 fs-5"></i>Notice of Award(NOAs)
+                <span v-if="noasCount > 0" :class="activeTab === 5 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ noasCount }}</span>
               </button>
               <button
                 :class="[
@@ -200,11 +204,12 @@
                   : 'bg-white text-dark hover-bg-light',
               ]"
               @click="show(3)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
+              style="transition: all 0.3s ease; width: 50px; height: 50px; position: relative;"
               v-b-tooltip.hover
               title="Abstract of Bids(AOBs)"
             >
               <i class="ri-auction-line fs-5"></i>
+              <span v-if="bidsCount > 0" :class="activeTab === 3 ? 'badge bg-light text-dark' : 'badge bg-dark text-light'" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ bidsCount }}</span>
             </button>
             <button
               :class="[
@@ -228,11 +233,12 @@
                   : 'bg-white text-dark hover-bg-light',
               ]"
               @click="show(5)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
+              style="transition: all 0.3s ease; width: 50px; height: 50px; position: relative;"
               v-b-tooltip.hover
               title="Notice of Award(NOAs)"
             >
               <i class="ri-trophy-line fs-5"></i>
+              <span v-if="noasCount > 0" :class="activeTab === 5 ? 'badge bg-light text-dark' : 'badge bg-dark text-light'" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ noasCount }}</span>
             </button>
             <button
               :class="[
@@ -242,11 +248,12 @@
                   : 'bg-white text-dark hover-bg-light',
               ]"
               @click="show(6)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
+              style="transition: all 0.3s ease; width: 50px; height: 50px; position: relative;"
               v-b-tooltip.hover
               title="Purchase Order(POs)"
             >
               <i class="ri-shopping-cart-line fs-5"></i>
+              <span v-if="posCount > 0" :class="activeTab === 6 ? 'badge bg-light text-dark' : 'badge bg-dark text-light'" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ posCount }}</span>
             </button>
           </div>
         </div>
@@ -688,6 +695,23 @@ export default {
     };
   },
 
+  computed: {
+    quotationsCount() {
+      return this.procurement.quotations ? this.procurement.quotations.length : 0;
+    },
+    bidsCount() {
+      return (this.procurement.bids ? this.procurement.bids.length : 0) + (this.procurement.quotations ? this.procurement.quotations.length : 0);
+    },
+    bacResolutionsCount() {
+      return this.procurement.bac_resolutions ? this.procurement.bac_resolutions.length : 0;
+    },
+    noasCount() {
+      return this.procurement.noas ? this.procurement.noas.length : 0;
+    },
+    posCount() {
+      return this.procurement.pos ? this.procurement.pos.length : 0;
+    },
+  },
   watch: {
     tab() {
       this.activeTab = parseInt(this.tab) || 1;
