@@ -158,8 +158,8 @@
             >
           </BCol>
 
-          <div class="table-responsive">
-            <table class="table table-nowrap mb-0">
+          <div>
+            <table class="table  mb-0">
               <thead class="table-light">
                 <tr class="fs-11">
                   <th>Item No.</th>
@@ -168,7 +168,7 @@
                   <th>Quantity</th>
                   <th>Unit Cost</th>
                   <th>Total Cost</th>
-                  <th></th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -196,15 +196,15 @@
 
                   <td>
                     <b-button
-                      @click="removeItem(index)"
+                      @click="editItem(index)"
                       variant="success"
                       size="sm"
-                      class="me-2"
+                      class="me-2 mb-2"
                     >
                       <i class="ri-edit-2-line"></i>
                     </b-button>
 
-                    <b-button @click="removeItem(index)" variant="danger" size="sm">
+                    <b-button  class="me-2 mb-2"  @click="removeItem(index)" variant="danger" size="sm">
                       <i class="ri-delete-bin-line"></i>
                     </b-button>
                   </td>
@@ -421,6 +421,10 @@ export default {
       this.$refs.item.show();
     },
 
+    editItem(index) {
+      this.$refs.item.edit(this.form.items[index], index);
+    },
+
     removeItem(index) {
       // Get the current items
       let items = JSON.parse(localStorage.getItem("itemsAdded")) || [];
@@ -486,8 +490,8 @@ export default {
         this.form.items = [];
       }
 
-      // Merge DB (form.items) with locally stored ones
-      const combined = [...this.form.items, ...storedItems];
+      // Merge locally stored ones with DB (form.items), giving priority to stored items
+      const combined = [...storedItems, ...this.form.items];
 
       // Remove duplicates based on item id
       const uniqueItems = combined.filter(

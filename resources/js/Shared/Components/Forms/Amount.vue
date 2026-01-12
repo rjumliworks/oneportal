@@ -13,7 +13,7 @@ export default {
                 thousands: ',',
                 prefix: '₱',
                 precision: 2,
-                masked: false
+                masked: true
             },
         }
     },

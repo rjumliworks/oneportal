@@ -68,7 +68,7 @@
           <div class="card-body bg-white rounded-bottom mt-3">
             <div
               class="table-responsive table-card"
-              style="margin-top: -39px; height: calc(100vh - 305px); overflow: auto"
+              style="margin-top: -39px; height: calc(100vh - 350px); overflow: auto"
             >
               <table class="table align-middle table-striped table-centered mb-0">
                 <thead class="table-light thead-fixed">
@@ -88,6 +88,8 @@
                     <th style="width: 5%"></th>
                   </tr>
                 </thead>
+
+        
                 <tbody class="table-white fs-12">
                   <tr
                     v-for="(list, index) in lists"

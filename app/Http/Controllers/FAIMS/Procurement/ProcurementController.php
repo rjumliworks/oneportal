@@ -33,7 +33,7 @@ class ProcurementController extends Controller
     }
 
     public function index(Request $request){
-        switch($request->option){     
+        switch($request->option){
             case 'lists':
                 return $this->view->procurements($request);
             break;
@@ -42,17 +42,23 @@ class ProcurementController extends Controller
                 return $this->view->quotations($request);
             break;
 
+            case 'dashboard':
+                return $this->view->dashboard($request);
+            break;
+
             default:
                 return inertia('Modules/FAIMS/Procurement/Index', [
                     'dropdowns' => [
                         'roles'  =>  \Auth::user()->roles,
                         'designation'  =>  \Auth::user()->designation,
-                       
+                        'statuses' => $this->dropdown->statuses('Procurement'),
+                        'types' => $this->dropdown->dropdowns('Type'),
+                        'modes' => $this->dropdown->dropdowns('Mode'),
                     ],
                      'regional_director'  =>  $this->dropdown->regional_director(),
-                   
-                ]); 
-        }   
+
+                ]);
+        }
     }
 
     public function create_index(Request $request){
@@ -125,6 +131,15 @@ class ProcurementController extends Controller
 
     }
 
+    public function dashboard(Request $request){
+        return inertia('Modules/FAIMS/Procurement/Dashboard', [
+            'dropdowns' => [
+                'roles'  =>  \Auth::user()->roles,
+                'designation'  =>  \Auth::user()->designation,
+            ],
+        ]);
+    }
+
     public function show($id, Request $request){
         if($request->type){
             return $this->print->print($id, $request);
@@ -132,7 +147,7 @@ class ProcurementController extends Controller
         else{
             return $this->view->show($id, $request);
         }
-        
+
     }
 
 

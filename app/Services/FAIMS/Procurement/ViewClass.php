@@ -33,11 +33,16 @@ class ViewClass
                       ->orWhere('created_at', 'LIKE', "%{$keyword}%")
                       ->orWhere('updated_at', 'LIKE', "%{$keyword}%");
             })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status_id', $status);
+            })
             ->orderBy('created_at','DESC')
             ->paginate($request->count)
         );
         return $data;
     }
+
+
 
     public function quotations($request){
         $data = ProcurementQuotationResource::collection(
@@ -62,6 +67,137 @@ class ViewClass
         );
 
         return $data;
+    }
+
+    public function dashboard($request){
+        $query = Procurement::query();
+
+        // Apply period filters
+        switch ($request->period) {
+            case 'today':
+                $query->whereDate('created_at', today());
+                break;
+            case 'this_week':
+                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                break;
+            case 'this_month':
+                $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+                break;
+            case 'monthly':
+                $year = $request->year ?? now()->year;
+                $month = $request->month ?? now()->month;
+                $query->whereYear('created_at', $year)->whereMonth('created_at', $month);
+                break;
+            case 'quarterly':
+                $year = $request->year ?? now()->year;
+                $quarter = $request->quarter ?? 1;
+                switch ($quarter) {
+                    case 1:
+                        $query->whereYear('created_at', $year)->whereMonth('created_at', '>=', 1)->whereMonth('created_at', '<=', 3);
+                        break;
+                    case 2:
+                        $query->whereYear('created_at', $year)->whereMonth('created_at', '>=', 4)->whereMonth('created_at', '<=', 6);
+                        break;
+                    case 3:
+                        $query->whereYear('created_at', $year)->whereMonth('created_at', '>=', 7)->whereMonth('created_at', '<=', 9);
+                        break;
+                    case 4:
+                        $query->whereYear('created_at', $year)->whereMonth('created_at', '>=', 10)->whereMonth('created_at', '<=', 12);
+                        break;
+                }
+                break;
+            case 'yearly':
+                $year = $request->year ?? now()->year;
+                $query->whereYear('created_at', $year);
+                break;
+            case 'custom':
+                if ($request->start_date && $request->end_date) {
+                    $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                }
+                break;
+            default:
+                // 'all' - no filter
+                break;
+        }
+
+        // Total procurements
+        $total_procurements = $query->count();
+
+        // Status distribution
+        $status_distribution = (clone $query)->with('status')
+            ->selectRaw('status_id, COUNT(*) as count')
+            ->groupBy('status_id')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'status' => $item->status->name,
+                    'count' => $item->count,
+                    'bg' => $item->status->bg ?? 'bg-secondary'
+                ];
+            });
+
+        // Monthly trends
+        $monthly_trends_query = Procurement::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->orderBy('month');
+
+        // For quarters, limit to the quarter months
+        if ($request->period === 'quarterly') {
+            $year = $request->year ?? now()->year;
+            $monthly_trends_query->whereYear('created_at', $year);
+        } elseif ($request->period === 'monthly') {
+            $year = $request->year ?? now()->year;
+            $monthly_trends_query->whereYear('created_at', $year);
+        } elseif ($request->period === 'yearly') {
+            $year = $request->year ?? now()->year;
+            $monthly_trends_query->whereYear('created_at', $year);
+        } elseif ($request->period === 'custom' && $request->start_date && $request->end_date) {
+            $monthly_trends_query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        } else {
+            // For other periods, show current year trends
+            $monthly_trends_query->whereYear('created_at', now()->year);
+        }
+
+        $monthly_trends = $monthly_trends_query->get()
+            ->map(function ($item) {
+                return [
+                    'month' => date('M', mktime(0, 0, 0, $item->month, 1)),
+                    'count' => $item->count
+                ];
+            });
+
+        // Recent procurements (always show latest 5, not filtered)
+        $recent_procurements = Procurement::with('status', 'division')
+            ->orderBy('created_at', 'DESC')
+            ->limit(5)
+            ->get();
+
+        // Key metrics
+        $pending_approvals = (clone $query)->whereHas('status', function ($query) {
+            $query->where('name', 'Pending');
+        })->count();
+
+        $completed_procurements = (clone $query)->whereHas('status', function ($query) {
+            $query->where('name', 'Completed');
+        })->count();
+
+        $total_quotations = ProcurementQuotation::whereIn('procurement_id', $query->pluck('id'))->count();
+        $total_bac_resolutions = ProcurementBac::whereIn('procurement_id', $query->pluck('id'))->count();
+        $total_notice_of_awards = ProcurementBacNoa::whereIn('procurement_id', $query->pluck('id'))->count();
+        $total_purchase_orders = ProcurementNoaPo::whereIn('procurement_id', $query->pluck('id'))->count();
+
+        return response()->json([
+            'total_procurements' => $total_procurements,
+            'status_distribution' => $status_distribution,
+            'monthly_trends' => $monthly_trends,
+            'recent_procurements' => $recent_procurements,
+            'pending_approvals' => $pending_approvals,
+            'completed_procurements' => $completed_procurements,
+            'total_quotations' => $total_quotations,
+            'total_bac_resolutions' => $total_bac_resolutions,
+            'total_notice_of_awards' => $total_notice_of_awards,
+            'total_purchase_orders' => $total_purchase_orders,
+        ]);
     }
 
 

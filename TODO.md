@@ -1,2 +1,2 @@
-- [x] Fix font size logic in procurement request print template for adjustable description font size
-- [x] Make header and footer duplicate on new pages in procurement request print template
+- [x] REvert back to whe the procurement request page has not been added quicks stats
+

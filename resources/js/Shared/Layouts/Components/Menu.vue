@@ -22,8 +22,8 @@
                 <span data-key="t-menu">Procurement</span>
             </li>
             <li class="nav-item">
-                <Link href="/procurement-dashboard" class="nav-link menu-link"
-                :class="{'active': $page.component.startsWith('Modules/HumanResource/Dashboard') }">
+                <Link href="/faims/procurement-dashboard" class="nav-link menu-link"
+                :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/Dashboard') }">
                 <i class="ri-apps-fill"></i>
                 <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
                 </Link>
@@ -92,8 +92,7 @@
                     <span data-key="t-menu">Human Resource</span>
                 </li>
                 <li class="nav-item">
-                    <Link href="/humanresource" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/HumanResource/Dashboard') }">
+                    <Link href="/procurements" class="nav-link menu-link">
                     <i class="ri-apps-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
                     </Link>

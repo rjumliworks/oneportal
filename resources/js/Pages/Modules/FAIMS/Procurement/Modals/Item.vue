@@ -2,7 +2,7 @@
   <b-modal
     v-model="showModal"
     header-class="p-3"
-    title="Add Item"
+    :title="isEditing ? 'Edit Item' : 'Add Item'"
     :size="modal_size"
     class="v-modal-custom"
     modal-class="zoomIn"
@@ -54,7 +54,7 @@
 
         <BCol lg="4" class="mt-2">
           <InputLabel value="Unit Cost" />
-          <Amount @amount="amount" ref="amountComponent" />
+          <Amount @change="amount" ref="amountComponent" />
         </BCol>
         <BCol lg="12"><hr class="text-muted mt-4 mb-0" /></BCol>
       </BRow>
@@ -63,7 +63,7 @@
     <template v-slot:footer>
       <b-button @click="hide()" variant="light" block>Cancel</b-button>
       <b-button @click="addItem(form)" variant="primary" :disabled="form.processing" block
-        >add</b-button
+        >{{ isEditing ? 'Update' : 'add' }}</b-button
       >
     </template>
   </b-modal>
@@ -105,6 +105,7 @@ export default {
       modal_size: "lg",
       editorData: "",
       editor: ClassicEditor,
+      isEditing: false,
     };
   },
 
@@ -141,15 +142,36 @@ export default {
       this.showModal = true;
     },
 
+    edit(item, index) {
+      this.isEditing = true;
+      this.editItem = item;
+      this.editIndex = index;
+      this.form.reset();
+      this.form.item_description = item.item_description;
+      this.form.item_quantity = item.item_quantity;
+      this.form.item_unit_cost = parseFloat(item.item_unit_cost).toFixed(2);
+      this.$refs.amountComponent.emitValue(this.form.item_unit_cost);
+      this.form.item_unit_type_id = item.item_unit_type_id;
+      this.form.item_unit_type = item.item_unit_type;
+      this.form.total_cost = item.total_cost;
+      this.form.id = item.id;
+      this.showModal = true;
+    },
+
     addItem(item) {
       // Step 1: Parse the existing array
       this.itemsAdded = JSON.parse(localStorage.getItem("itemsAdded")) || [];
 
-      // Step 2: Clone the item (avoid reactivity leaks)
-      const newItem = { ...item, id: Date.now(), is_new: true };
+      if (this.isEditing) {
+        // Update existing item
+        this.itemsAdded[this.editIndex] = { ...item, id: this.editItem.id };
+      } else {
+        // Step 2: Clone the item (avoid reactivity leaks)
+        const newItem = { ...item, id: Date.now(), is_new: true };
 
-      // Step 3: Add the new item to the array
-      this.itemsAdded.push(newItem);
+        // Step 3: Add the new item to the array
+        this.itemsAdded.push(newItem);
+      }
 
       // Step 4: Save it back to localStorage
       localStorage.setItem("itemsAdded", JSON.stringify(this.itemsAdded));
@@ -180,6 +202,9 @@ export default {
     hide() {
       this.form.reset();
       this.form.item_unit_cost = 0.0;
+      this.isEditing = false;
+      this.editItem = null;
+      this.editIndex = null;
       this.showModal = false;
     },
   },
