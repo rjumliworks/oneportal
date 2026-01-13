@@ -3,13 +3,19 @@
   <PageHeader title="Procurement Overview" pageTitle="User" />
 
   <!-- Status Flow Panel -->
-  <BRow class="mb-4">
+  <BRow class="mb-1">
     <BCol xl="12">
-      <BCard>
-        <BCardHeader>
-          <h4 class="card-title mb-0">Procurement Status Flow</h4>
+      <BCard v-if="procurement.status">
+        <BCardHeader class="d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0">Status Flow</h4>
+          <button
+            @click="toggleStatusFlow"
+            class="btn btn-sm btn-outline-primary"
+          >
+            <i :class="showStatusFlow ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+          </button>
         </BCardHeader>
-        <BCardBody>
+        <BCardBody v-if="showStatusFlow">
           <div class="status-flow-container">
             <div class="status-flow-wrapper">
               <div
@@ -32,6 +38,53 @@
                 <div v-if="index < statusFlow.length - 1" class="status-connector-modern">
                   <div class="connector-line" :class="{ 'active': status.isPast || status.isCurrent }"></div>
                   <div class="connector-arrow" :class="{ 'active': status.isPast || status.isCurrent }">
+                    <i class="ri-arrow-right-line"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </BCardBody>
+      </BCard>
+    </BCol>
+  </BRow>
+
+  <!-- Sub Status Flow Panel -->
+  <BRow class="mb-4" v-if="procurement.sub_status">
+    <BCol xl="12">
+      <BCard>
+        <BCardHeader class="d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0">Sub-Status Flow</h4>
+          <button
+            @click="toggleSubStatusFlow"
+            class="btn btn-sm btn-outline-primary"
+          >
+            <i :class="showSubStatusFlow ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+          </button>
+        </BCardHeader>
+        <BCardBody v-if="showSubStatusFlow">
+          <div class="status-flow-container">
+            <div class="status-flow-wrapper">
+              <div
+                v-for="(subStatus, index) in subStatusFlow"
+                :key="subStatus.name"
+                class="status-step-modern"
+                :class="{ 'current-status': subStatus.isCurrent, 'past-status': subStatus.isPast, 'future-status': !subStatus.isCurrent && !subStatus.isPast }"
+                :style="{ animationDelay: `${index * 0.15}s` }"
+              >
+                <div class="status-card">
+                  <div class="status-icon-wrapper">
+                    <i v-if="subStatus.isPast" class="ri-check-line status-icon completed"></i>
+                    <i v-else-if="subStatus.isCurrent" class="ri-star-fill status-icon current"></i>
+                    <i v-else class="ri-circle-line status-icon pending"></i>
+                  </div>
+                  <div class="status-content">
+                    <h6 class="status-title">{{ subStatus.name }}</h6>
+                  </div>
+                </div>
+                <div v-if="index < subStatusFlow.length - 1" class="status-connector-modern">
+                  <div class="connector-line" :class="{ 'active': subStatus.isPast || subStatus.isCurrent }"></div>
+                  <div class="connector-arrow" :class="{ 'active': subStatus.isPast || subStatus.isCurrent }">
                     <i class="ri-arrow-right-line"></i>
                   </div>
                 </div>
@@ -133,10 +186,8 @@
                 style="transition: all 0.3s ease"
 
               >
-
-                <i class="ri-file-text-line align-middle me-3 fs-5"></i>Request of
+                <i class="ri-check-line text-success me-2" v-if="procurement.status?.name === 'Approved'"></i><i class="ri-file-text-line align-middle me-3 fs-5"></i>Request of
                 Quotations(RFQs)
-                <span v-if="quotationsCount > 0" :class="activeTab === 2 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ quotationsCount }}</span>
 
               </button>
               <button
@@ -149,9 +200,9 @@
                 @click="show(3)"
                 style="transition: all 0.3s ease"
               >
-                <i class="ri-auction-line align-middle me-3 fs-5"></i>Abstract of
+                <i class="ri-check-line text-success me-2" v-if="procurement.status?.name === 'For BAC Resolution'"></i><i class="ri-auction-line align-middle me-3 fs-5"></i>Abstract of
                 Bids(AOBs)
-                <span v-if="bidsCount > 0" :class="activeTab === 3 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ bidsCount }}</span>
+
               </button>
               <button
                 :class="[
@@ -163,8 +214,7 @@
                 @click="show(4)"
                 style="transition: all 0.3s ease"
               >
-                <i class="ri-file-line align-middle me-3 fs-5"></i>BAC Resolutions
-                <span v-if="bacResolutionsCount > 0" :class="activeTab === 4 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ bacResolutionsCount }}</span>
+                <i class="ri-check-line text-success me-2" v-if="procurement.status?.name === 'For Approval of BAC Resolution'"></i><i class="ri-file-line align-middle me-3 fs-5"></i>BAC Resolutions
               </button>
               <button
                 :class="[
@@ -176,8 +226,7 @@
                 @click="show(5)"
                 style="transition: all 0.3s ease"
               >
-                <i class="ri-trophy-line align-middle me-3 fs-5"></i>Notice of Award(NOAs)
-                <span v-if="noasCount > 0" :class="activeTab === 5 ? 'badge bg-light text-dark ms-auto' : 'badge bg-dark text-light ms-auto'">{{ noasCount }}</span>
+                <i class="ri-check-line text-success me-2" v-if="procurement.status?.name === 'For NOA' || procurement.status?.name === 'NOA Served to Supplier' || procurement.status?.name === 'NOA Conformed'"></i><i class="ri-trophy-line align-middle me-3 fs-5"></i>Notice of Award(NOAs)
               </button>
               <button
                 :class="[
@@ -247,7 +296,6 @@
               title="Abstract of Bids(AOBs)"
             >
               <i class="ri-auction-line fs-5"></i>
-              <span v-if="bidsCount > 0" :class="activeTab === 3 ? 'badge bg-light text-dark' : 'badge bg-dark text-light'" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ bidsCount }}</span>
             </button>
             <button
               :class="[
@@ -308,7 +356,22 @@
       ]"
       style="margin-top: 6px; transition: all 0.3s ease"
     >
-      <Overview :procurement="procurement" v-if="activeTab === 1" />
+      <div v-if="activeTab === 1">
+        <BCard>
+          <BCardHeader class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Procurement Overview</h4>
+            <button
+              @click="toggleOverview"
+              class="btn btn-sm btn-outline-primary"
+            >
+              <i :class="showOverview ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+            </button>
+          </BCardHeader>
+          <BCardBody v-if="showOverview">
+            <Overview :procurement="procurement" />
+          </BCardBody>
+        </BCard>
+      </div>
       <Quotation
         :dropdowns="dropdowns"
         :procurement="procurement"
@@ -611,6 +674,9 @@ export default {
       activeRightTab: 1,
       selectedNoa: null,
       showCreatePOFlag: false,
+      showStatusFlow: true,
+      showSubStatusFlow: true,
+      showOverview: true,
 
       form: useForm({}),
     };
@@ -645,6 +711,8 @@ export default {
         { name: 'For NOA', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'For NOA' },
         { name: 'NOA Served to Supplier', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'NOA Served to Supplier' },
         { name: 'NOA Conformed', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'NOA Conformed' },
+        { name: 'Re-award', bg: 'badge bg-warning', count: this.procurement.status_distribution?.reaward || 0, isCurrent: currentStatus === 'Re-award' },
+        { name: 'Rebid', bg: 'badge bg-danger', count: this.procurement.status_distribution?.rebid || 0, isCurrent: currentStatus === 'Rebid' },
         { name: 'PO Issued', bg: 'badge bg-danger', count: this.procurement.status_distribution?.po || 0, isCurrent: currentStatus === 'PO Issued' },
         { name: 'Delivered/For Inspection', bg: 'badge bg-danger', count: this.procurement.status_distribution?.po || 0, isCurrent: currentStatus === 'Delivered/For Inspection' },
         { name: 'Completed', bg: 'badge bg-success', count: this.procurement.completed?.po || 0, isCurrent: currentStatus === 'Completed' },
@@ -654,6 +722,60 @@ export default {
         status.isPast = index < currentIndex;
       });
       return statusFlow;
+    },
+    subStatusFlow() {
+      // Define the procurement sub-status flow based on main status
+      const currentStatus = this.procurement.status?.name;
+      const currentSubStatus = this.procurement.sub_status?.name;
+      let subStatusFlow = [];
+
+      if (currentStatus === 'Rebid') {
+        // Rebid flow: full flow from For Quotations to Completed
+        subStatusFlow = [
+          { name: 'For Quotations', isCurrent: currentSubStatus === 'For Quotations' },
+          { name: 'For Bids', isCurrent: currentSubStatus === 'For Bids' },
+          { name: 'For BAC Resolution', isCurrent: currentSubStatus === 'For BAC Resolution' },
+          { name: 'For Approval of BAC Resolution', isCurrent: currentSubStatus === 'For Approval of BAC Resolution' },
+          { name: 'For Approval of Failure BAC Resolution', isCurrent: currentSubStatus === 'For Approval of Failure BAC Resolution' },
+          { name: 'For NOA', isCurrent: currentSubStatus === 'For NOA' },
+          { name: 'NOA Served to Supplier', bg: 'badge bg-success', isCurrent: currentSubStatus === 'NOA Served to Supplier' },
+        { name: 'NOA Conformed', bg: 'badge bg-success',  isCurrent: currentSubStatus === 'NOA Conformed' },
+        { name: 'Re-award', bg: 'badge bg-warning',  isCurrent: currentSubStatus === 'Re-award' },
+        { name: 'Rebid', bg: 'badge bg-danger', isCurrent: currentSubStatus === 'Rebid' },
+        { name: 'PO Issued', bg: 'badge bg-danger', isCurrent: currentSubStatus === 'PO Issued' },
+        { name: 'Delivered/For Inspection', bg: 'badge bg-danger',   isCurrent: currentSubStatus === 'Delivered/For Inspection' },
+          { name: 'Completed', isCurrent: currentSubStatus === 'Completed' },
+        ];
+      } else if (currentStatus === 'Re-award') {
+        // Re-award flow: starts with creating BAC resolution of failure of bidding
+        subStatusFlow = [
+        { name: 'For NOA', isCurrent: currentSubStatus === 'For NOA' },
+        { name: 'NOA Served to Supplier', bg: 'badge bg-success',  isCurrent: currentSubStatus === 'NOA Served to Supplier' },
+        { name: 'NOA Conformed', bg: 'badge bg-success', isCurrent: currentSubStatus === 'NOA Conformed' },
+        { name: 'Re-award', bg: 'badge bg-warning',  isCurrent: currentSubStatus === 'Re-award' },
+        { name: 'Rebid', bg: 'badge bg-danger',  isCurrent: currentSubStatus === 'Rebid' },
+        { name: 'PO Issued', bg: 'badge bg-danger',  isCurrent: currentSubStatus === 'PO Issued' },
+        { name: 'Delivered/For Inspection', bg: 'badge bg-danger', isCurrent: currentSubStatus === 'Delivered/For Inspection' },
+          { name: 'Completed', isCurrent: currentSubStatus === 'Completed' },
+        ];
+      } else {
+        // Default flow for other statuses
+        subStatusFlow = [
+          { name: 'For Quotations', isCurrent: currentSubStatus === 'For Quotations' },
+          { name: 'For Bids', isCurrent: currentSubStatus === 'For Bids' },
+          { name: 'For BAC Resolution', isCurrent: currentSubStatus === 'For BAC Resolution' },
+          { name: 'For Approval of BAC Resolution', isCurrent: currentSubStatus === 'For Approval of BAC Resolution' },
+          { name: 'For Approval of Failure BAC Resolution', isCurrent: currentSubStatus === 'For Approval of Failure BAC Resolution' },
+          { name: 'For NOA', isCurrent: currentSubStatus === 'For NOA' },
+          { name: 'Completed', isCurrent: currentSubStatus === 'Completed' },
+        ];
+      }
+
+      const currentIndex = subStatusFlow.findIndex(s => s.isCurrent);
+      subStatusFlow.forEach((subStatus, index) => {
+        subStatus.isPast = index < currentIndex;
+      });
+      return subStatusFlow;
     },
   },
   watch: {
@@ -683,6 +805,18 @@ export default {
     toggleRightSidebar() {
       this.isRightCollapsed = !this.isRightCollapsed;
       localStorage.setItem("isRightCollapsed", this.isRightCollapsed);
+    },
+
+    toggleStatusFlow() {
+      this.showStatusFlow = !this.showStatusFlow;
+    },
+
+    toggleSubStatusFlow() {
+      this.showSubStatusFlow = !this.showSubStatusFlow;
+    },
+
+    toggleOverview() {
+      this.showOverview = !this.showOverview;
     },
 
     showRightTab(tab) {

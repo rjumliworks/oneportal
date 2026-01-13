@@ -192,16 +192,16 @@ class ProcurementBac extends Model
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Issued')) {
                 return 49; // PO Issued
             }
-            else  if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed/NTP Created/Awaiting for Delivery')) {
+            else  if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
                 return 65; // PO Partially Conformed
             }
             return 64; // Partially PO Issued
         }
 
         // Some NOAs PO Served To Supplier → PO Conformed
-        if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed/NTP Created/Awaiting for Delivery')) {
+        if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
              // All NOAs confirmed → NOA Confirmed
-            if ($noas->every(fn($noa) => $noa->status->name == 'PO Conformed/NTP Created/Awaiting for Delivery')) {
+            if ($noas->every(fn($noa) => $noa->status->name == 'PO Conformed')) {
                 return 51; // PO Conformed
             }
             // Some NOAs Delivered/For Inspection 
@@ -412,16 +412,16 @@ class ProcurementBac extends Model
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Issued')) {
                 return 49; // PO Issued
             }
-            else  if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed/NTP Created/Awaiting for Delivery')) {
+            else  if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
                 return 65; // PO Partially Conformed
             }
             return 64; // Partially PO Issued
         }
 
         // Some NOAs PO Served To Supplier → PO Conformed
-        if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed/NTP Created/Awaiting for Delivery')) {
+        if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
              // All NOAs confirmed → NOA Confirmed
-            if ($noas->every(fn($noa) => $noa->status->name == 'PO Conformed/NTP Created/Awaiting for Delivery')) {
+            if ($noas->every(fn($noa) => $noa->status->name == 'PO Conformed')) {
                 return 51; // PO Conformed
             }
             // Some NOAs Delivered/For Inspection 

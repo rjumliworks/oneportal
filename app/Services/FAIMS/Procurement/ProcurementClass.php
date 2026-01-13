@@ -57,6 +57,7 @@ class ProcurementClass
     
 
     protected function saveProcurementItems($request ,$procurement_id ){
+    
         foreach ($request->items as $index => $item) {
             $data = new ProcurementItem();
             $data->item_no = $index + 1;
@@ -166,16 +167,19 @@ class ProcurementClass
     }
 
     protected function updatePRItems($id, $request ){
-  
+
         $data = ProcurementItem::findOrFail($id);
-  
+
         $data->update(array_merge($request->only(
             'item_description',
             'item_unit_type_id',
             'item_quantity',
             'item_unit_cost',
             'total_cost',
-        )));
+        ), [
+            'item_unit_cost' => $request->item_unit_cost ?? 0,
+            'total_cost' => $request->total_cost ?? 0,
+        ]));
 
         return  $data;
     }

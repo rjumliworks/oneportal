@@ -22,7 +22,7 @@
 
           <!-- Purchase Order -->
           <span v-if="type == 'PO' || type == 'PO Not Conformed'">
-            Purchase Order No.:
+                 Purchase Order No.:
           </span>
 
           <span class="text-danger flex">{{ form.code }}</span></b

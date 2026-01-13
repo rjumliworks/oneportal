@@ -271,6 +271,7 @@ class ViewClass
                         'supply_officers' => $this->dropdown->supply_officers(), 
                         'suppliers' => $this->dropdown->suppliers(),   
                         'delivery_places' => $this->dropdown->dropdowns('Place of Delivery'), 
+                        'roles' => $this->dropdown->roles(),
                     ],
                     'procurement' => $procurement,
                     'bac_resolution' => $bac_resolution,

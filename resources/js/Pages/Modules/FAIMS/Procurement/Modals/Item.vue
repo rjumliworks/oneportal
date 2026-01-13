@@ -54,7 +54,7 @@
 
         <BCol lg="4" class="mt-2">
           <InputLabel value="Unit Cost" />
-          <Amount @change="amount" ref="amountComponent" />
+          <Amount @amount="amount" ref="amountComponent" />
         </BCol>
         <BCol lg="12"><hr class="text-muted mt-4 mb-0" /></BCol>
       </BRow>
@@ -115,6 +115,9 @@ export default {
         this.getItemUnitType(value);
       }
     },
+    "form.item_quantity": function (value) {
+      this.calculateTotalCost();
+    },
   },
 
   computed: {
@@ -126,7 +129,11 @@ export default {
   methods: {
     amount(val) {
       this.form.item_unit_cost = this.cleanCurrency(val);
-      this.form.total_cost = this.form.item_quantity * this.form.item_unit_cost;
+      this.calculateTotalCost();
+    },
+
+    calculateTotalCost() {
+      this.form.total_cost = (this.form.item_quantity || 0) * (this.form.item_unit_cost || 0);
     },
 
     cleanCurrency(value) {
@@ -149,11 +156,11 @@ export default {
       this.form.reset();
       this.form.item_description = item.item_description;
       this.form.item_quantity = item.item_quantity;
-      this.form.item_unit_cost = parseFloat(item.item_unit_cost).toFixed(2);
-      this.$refs.amountComponent.emitValue(this.form.item_unit_cost);
+      this.form.item_unit_cost = parseFloat(item.item_unit_cost);
+      this.$refs.amountComponent.emitValue((this.form.item_unit_cost).toFixed(2));
       this.form.item_unit_type_id = item.item_unit_type_id;
       this.form.item_unit_type = item.item_unit_type;
-      this.form.total_cost = item.total_cost;
+      this.calculateTotalCost();
       this.form.id = item.id;
       this.showModal = true;
     },

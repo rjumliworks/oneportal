@@ -304,13 +304,8 @@ export default {
     },
 
     viewPO(data) {
-      router.get(
-        "/faims/procurements/" +
-          this.procurement.id +
-          "?noa_id=" +
-          data.id +
-          "&option=purchase_order"
-      );
+          this.$emit("showCreatePO", data);
+ 
     },
 
     openPrint(data) {

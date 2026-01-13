@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('code')->unitque(); 
             $table->string('title')->nullable(); 
             $table->date('date'); 
-            $table->string('purpose'); 
+            $table->text('purpose'); 
             $table->tinyInteger('division_id')->unsigned()->index();
             $table->foreign('division_id')->references('id')->on('list_dropdowns');
             $table->tinyInteger('unit_id')->unsigned()->index();

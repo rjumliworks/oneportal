@@ -32,7 +32,7 @@
       </div>
     </b-col>
   </b-row>
-
+    
   <b-card no-body>
     <table class="table mb-0">
       <thead class="table-light">
@@ -100,14 +100,14 @@
                   >
                     <i class="ri-edit-2-fill align-bottom me-1"></i>Not Conformed
                   </li>
-
+             
                   <li
                     v-if="
                       list.status.name == 'Conformed' ||
+                      list.status.name == 'PO Conformed' ||
                       list.status.name == 'PO Issued' ||
-                      list.status.name == 'PO Pending' ||
-                      list.status.name ==
-                        'PO Conformed/NTP Created/Awaiting for Delivery' ||
+                      list.status.name == '' ||
+                      list.status.name == 'PO Conformed' ||
                       list.status.name == 'Delivered/For Inspection' ||
                        list.status.name == 'Completed'
                     "
@@ -115,7 +115,7 @@
                     class="dropdown-item d-flex align-items-center"
                     role="button"
                   >
-                    <i class="ri-eye-2-fill align-bottom me-1"></i> Purchase Order
+                    <i class="ri-eye-2-fill align-bottom me-1"></i> Purchase Order 
                   </li>
                 </ul>
               </div>

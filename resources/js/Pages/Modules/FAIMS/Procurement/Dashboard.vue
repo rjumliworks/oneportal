@@ -2,32 +2,7 @@ tin<template>
 	<Head title="Procurement Dashboard" />
 	<PageHeader title="Procurement Dashboard" pageTitle="Overview" />
 
-	<!-- Status Flow Panel -->
-	<BRow class="mb-4">
-		<BCol xl="12">
-			<BCard>
-				<BCardHeader>
-					<h4 class="card-title mb-0">Procurement Status Flow</h4>
-				</BCardHeader>
-				<BCardBody>
-					<div class="d-flex flex-wrap justify-content-center gap-3">
-						<div
-							v-for="status in dashboard.status_distribution"
-							:key="status.status"
-							class="text-center"
-						>
-							<div class="d-flex flex-column align-items-center">
-								<b-badge :class="status.bg" class="fs-6 px-1 py-1 mb-2" style="min-width: 80px;">
-									{{ status.status }}
-								</b-badge>
-								<h5 class="mb-0 fw-bold">{{ status.count }}</h5>
-							</div>
-						</div>
-					</div>
-				</BCardBody>
-			</BCard>
-		</BCol>
-	</BRow>
+
 
 	<!-- Dashboard Filters -->
 	<BRow class="mb-4">
@@ -281,110 +256,6 @@ tin<template>
 		</BCol>
 	</BRow>
 
-	<!-- Recent Procurements and Actions -->
-	<BRow>
-		<BCol xl="4">
-			<BCard>
-				<BCardHeader>
-					<h4 class="card-title mb-0">Recent Procurements</h4>
-				</BCardHeader>
-				<BCardBody class="p-0">
-					<div class="list-group list-group-flush">
-						<div
-							v-for="procurement in dashboard.recent_procurements"
-							:key="procurement.id"
-							class="list-group-item px-4 py-3"
-						>
-							<div class="d-flex align-items-center">
-								<div class="flex-shrink-0 me-3">
-									<div class="avatar-xs">
-										<div class="avatar-title bg-primary-subtle text-primary rounded-circle">
-											{{ procurement.code.charAt(0).toUpperCase() }}
-										</div>
-									</div>
-								</div>
-								<div class="flex-grow-1">
-									<h6 class="mb-1">{{ procurement.title }}</h6>
-									<p class="text-muted mb-0">{{ procurement.purpose }}</p>
-									<small class="text-muted">{{ formatDate(procurement.created_at) }}</small>
-								</div>
-								<div class="flex-shrink-0">
-									<b-badge :class="procurement.status.bg" style="font-size: 0.75rem;">
-										{{ procurement.status.name }}
-									</b-badge>
-								</div>
-							</div>
-						</div>
-					</div>
-				</BCardBody>
-			</BCard>
-		</BCol>
-
-		<BCol xl="8">
-			<BCard>
-				<BCardHeader>
-					<div class="d-flex align-items-center">
-						<div class="flex-grow-1">
-							<h4 class="card-title mb-0">Procurement Requests</h4>
-						</div>
-						<div class="flex-shrink-0">
-							<b-button type="button" variant="primary" @click="goCreatePage">
-								<i class="ri-add-circle-fill align-bottom me-1"></i> Create
-							</b-button>
-						</div>
-					</div>
-				</BCardHeader>
-				<BCardBody>
-					<div class="table-responsive">
-						<table class="table table-nowrap align-middle mb-0">
-							<thead class="table-light">
-								<tr>
-									<th scope="col">Code</th>
-									<th scope="col">Purpose</th>
-									<th scope="col">Division</th>
-									<th scope="col">Status</th>
-									<th scope="col">Date</th>
-									<th scope="col">Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr v-for="procurement in lists" :key="procurement.id">
-									<td>{{ procurement.code }}</td>
-									<td>{{ procurement.purpose }}</td>
-									<td>{{ procurement.division?.name }}</td>
-									<td>
-										<b-badge :class="procurement.status.bg" style="font-size: 0.75rem;">
-											{{ procurement.status.name }}
-										</b-badge>
-									</td>
-									<td>{{ formatDate(procurement.date) }}</td>
-									<td>
-										<b-dropdown variant="link" toggle-class="text-reset" no-caret>
-											<template #button-content>
-												<i class="ri-more-2-fill"></i>
-											</template>
-											<b-dropdown-item @click="goViewPage(procurement)">
-												<i class="ri-eye-line align-bottom me-1"></i> View
-											</b-dropdown-item>
-											<b-dropdown-item @click="openPrint(procurement)">
-												<i class="ri-printer-line align-bottom me-1"></i> Print
-											</b-dropdown-item>
-										</b-dropdown>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<Pagination
-						v-if="meta"
-						:pagination="meta"
-						:links="links"
-						@fetch="fetch"
-					/>
-				</BCardBody>
-			</BCard>
-		</BCol>
-	</BRow>
 </template>
 
 <script>

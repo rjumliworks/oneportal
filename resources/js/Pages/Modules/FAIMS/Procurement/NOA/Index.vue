@@ -117,7 +117,7 @@
    
                     <li
                       v-if="list.status.name == 'Conformed' || list.status.name == 'PO Issued' ||
-                            list.status.name == 'PO Pending' ||  list.status.name == 'PO Conformed/NTP Created/Awaiting for Delivery' ||
+                            list.status.name == 'PO Pending' ||  list.status.name == 'PO Conformed' ||
                             list.status.name == 'Delivered/For Inspection' 	"
                       @click="goPOPage(list)"
                       class="dropdown-item d-flex align-items-center"
