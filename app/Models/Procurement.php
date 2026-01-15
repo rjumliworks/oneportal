@@ -78,6 +78,16 @@ class Procurement extends Model
         return $this->hasMany('App\Models\ProcurementBac', 'procurement_id');
     }
 
+    public function noas()
+    {
+        return $this->hasMany('App\Models\ProcurementBacNoa', 'procurement_id');
+    }
+
+    public function pos()
+    {
+        return $this->hasMany('App\Models\ProcurementNoaPo', 'procurement_id');
+    }
+
     public function status()
     {
         return $this->belongsTo('App\Models\ListStatus', 'status_id');

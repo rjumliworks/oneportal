@@ -2,99 +2,6 @@
   <Head title="Profile" />
   <PageHeader title="Procurement Overview" pageTitle="User" />
 
-  <!-- Status Flow Panel -->
-  <BRow class="mb-1">
-    <BCol xl="12">
-      <BCard v-if="procurement.status">
-        <BCardHeader class="d-flex justify-content-between align-items-center">
-          <h4 class="card-title mb-0">Status Flow</h4>
-          <button
-            @click="toggleStatusFlow"
-            class="btn btn-sm btn-outline-primary"
-          >
-            <i :class="showStatusFlow ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
-          </button>
-        </BCardHeader>
-        <BCardBody v-if="showStatusFlow">
-          <div class="status-flow-container">
-            <div class="status-flow-wrapper">
-              <div
-                v-for="(status, index) in statusFlow"
-                :key="status.name"
-                class="status-step-modern"
-                :class="{ 'current-status': status.isCurrent, 'past-status': status.isPast, 'future-status': !status.isCurrent && !status.isPast }"
-                :style="{ animationDelay: `${index * 0.15}s` }"
-              >
-                <div class="status-card">
-                  <div class="status-icon-wrapper">
-                    <i v-if="status.isPast" class="ri-check-line status-icon completed"></i>
-                    <i v-else-if="status.isCurrent" class="ri-star-fill status-icon current"></i>
-                    <i v-else class="ri-circle-line status-icon pending"></i>
-                  </div>
-                  <div class="status-content">
-                    <h6 class="status-title">{{ status.name }}</h6>
-                  </div>
-                </div>
-                <div v-if="index < statusFlow.length - 1" class="status-connector-modern">
-                  <div class="connector-line" :class="{ 'active': status.isPast || status.isCurrent }"></div>
-                  <div class="connector-arrow" :class="{ 'active': status.isPast || status.isCurrent }">
-                    <i class="ri-arrow-right-line"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </BCardBody>
-      </BCard>
-    </BCol>
-  </BRow>
-
-  <!-- Sub Status Flow Panel -->
-  <BRow class="mb-4" v-if="procurement.sub_status">
-    <BCol xl="12">
-      <BCard>
-        <BCardHeader class="d-flex justify-content-between align-items-center">
-          <h4 class="card-title mb-0">Sub-Status Flow</h4>
-          <button
-            @click="toggleSubStatusFlow"
-            class="btn btn-sm btn-outline-primary"
-          >
-            <i :class="showSubStatusFlow ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
-          </button>
-        </BCardHeader>
-        <BCardBody v-if="showSubStatusFlow">
-          <div class="status-flow-container">
-            <div class="status-flow-wrapper">
-              <div
-                v-for="(subStatus, index) in subStatusFlow"
-                :key="subStatus.name"
-                class="status-step-modern"
-                :class="{ 'current-status': subStatus.isCurrent, 'past-status': subStatus.isPast, 'future-status': !subStatus.isCurrent && !subStatus.isPast }"
-                :style="{ animationDelay: `${index * 0.15}s` }"
-              >
-                <div class="status-card">
-                  <div class="status-icon-wrapper">
-                    <i v-if="subStatus.isPast" class="ri-check-line status-icon completed"></i>
-                    <i v-else-if="subStatus.isCurrent" class="ri-star-fill status-icon current"></i>
-                    <i v-else class="ri-circle-line status-icon pending"></i>
-                  </div>
-                  <div class="status-content">
-                    <h6 class="status-title">{{ subStatus.name }}</h6>
-                  </div>
-                </div>
-                <div v-if="index < subStatusFlow.length - 1" class="status-connector-modern">
-                  <div class="connector-line" :class="{ 'active': subStatus.isPast || subStatus.isCurrent }"></div>
-                  <div class="connector-arrow" :class="{ 'active': subStatus.isPast || subStatus.isCurrent }">
-                    <i class="ri-arrow-right-line"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </BCardBody>
-      </BCard>
-    </BCol>
-  </BRow>
 
   <div class="row">
     <div
@@ -102,10 +9,11 @@
       style="transition: all 0.3s ease"
     >
       <div
-        class="card h-90 mb-3 shadow-lg border-0"
+        class="card shadow-lg border-0"
         style="
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           border-radius: 15px;
+          height: 100vh;
         "
       >
         <div
@@ -132,7 +40,7 @@
               <span v-if="procurement.sub_status">Substatus:</span>
              <div>
               <b-badge
-                :class="procurement.status.bg + ' ms-1'"
+                :class="procurement.sub_status?.bg + ' ms-1'"
                 style="font-size: 0.75rem; text-align: center"
                 >{{ procurement.sub_status?.name }}</b-badge
               >
@@ -277,11 +185,12 @@
                   : 'bg-white text-dark hover-bg-light',
               ]"
               @click="show(2)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
+              style="transition: all 0.3s ease; width: 50px; height: 50px; position: relative;"
               v-b-tooltip.hover
               title="Request of Quotations(RFQs)"
             >
               <i class="ri-file-text-line fs-5"></i>
+              <span v-if="quotationsCount > 0" class="badge bg-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ quotationsCount }}</span>
             </button>
             <button
               :class="[
@@ -296,6 +205,7 @@
               title="Abstract of Bids(AOBs)"
             >
               <i class="ri-auction-line fs-5"></i>
+              <span v-if="bidsCount > 0" class="badge bg-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ bidsCount }}</span>
             </button>
             <button
               :class="[
@@ -305,11 +215,12 @@
                   : 'bg-white text-dark hover-bg-light',
               ]"
               @click="show(4)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
+              style="transition: all 0.3s ease; width: 50px; height: 50px; position: relative;"
               v-b-tooltip.hover
               title="BAC Resolutions"
             >
               <i class="ri-file-line fs-5"></i>
+              <span v-if="bacResolutionsCount > 0" class="badge bg-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ bacResolutionsCount }}</span>
             </button>
             <button
               :class="[
@@ -324,7 +235,7 @@
               title="Notice of Award(NOAs)"
             >
               <i class="ri-trophy-line fs-5"></i>
-              <span v-if="noasCount > 0" :class="activeTab === 5 ? 'badge bg-light text-dark' : 'badge bg-dark text-light'" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ noasCount }}</span>
+              <span v-if="noasCount > 0" class="badge bg-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ noasCount }}</span>
             </button>
             <button
               :class="[
@@ -339,7 +250,7 @@
               title="Purchase Order(POs)"
             >
               <i class="ri-shopping-cart-line fs-5"></i>
-              <span v-if="posCount > 0" :class="activeTab === 6 ? 'badge bg-light text-dark' : 'badge bg-dark text-light'" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ posCount }}</span>
+              <span v-if="posCount > 0" class="badge bg-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.6rem; padding: 0.1rem 0.2rem;">{{ posCount }}</span>
             </button>
           </div>
         </div>
@@ -354,13 +265,14 @@
           ? 'col-md-8'
           : 'col-md-6',
       ]"
-      style="margin-top: 6px; transition: all 0.3s ease"
+      style="transition: all 0.3s ease; overflow-x: auto"
     >
       <div
-        class="card h-90 mb-3 shadow-lg border-0"
+        class="card mb-3 shadow-lg border-0"
         style="
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           border-radius: 15px;
+          height: 100vh;
         "
       >
         <div
@@ -425,275 +337,10 @@
         </div>
       </div>
     </div>
-    <div
-      :class="['transition-all', isRightCollapsed ? 'col-md-1' : 'col-md-3']"
-      style="margin-top: 3px; transition: all 0.3s ease"
-    >
-      <div
-        class="card h-90 mb-3 shadow-lg border-0"
-        style="
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-          border-radius: 15px;
-        "
-      >
-        <div
-          class="card-header bg-gradient-primary text-white border-0 d-flex align-items-center justify-content-between"
-          style="border-radius: 15px 15px 0 0 !important; padding: 1rem"
-        >
-          <div v-if="!isRightCollapsed">
-            <h5 class="card-title mb-1">
-              <i class="ri-chat-1-line me-2"></i
-              ><span class="text-white">Comments & Logs</span>
-            </h5>
-          </div>
-          <button
-            @click="toggleRightSidebar"
-            class="btn btn-sm btn-light rounded-circle p-2 ms-2"
-            style="width: 40px; height: 40px"
-          >
-            <i
-              :class="isRightCollapsed ? 'ri-arrow-left-line' : 'ri-arrow-right-line'"
-              class="text-primary fs-6"
-            ></i>
-          </button>
-        </div>
-        <div
-          v-if="!isRightCollapsed"
-          class="card-body p-0"
-          style="
-            height: 100vh;
-            overflow: auto;
-            border-radius: 0 0 15px 15px;
-          "
-        >
-          <div class="p-3">
-            <div class="nav nav-tabs nav-justified mb-3">
-              <button
-                :class="['nav-link', activeRightTab === 1 ? 'active' : '']"
-                @click="showRightTab(1)"
-              >
-                <i class="ri-chat-1-line me-1"></i>Comments
-              </button>
-              <button
-                :class="['nav-link', activeRightTab === 2 ? 'active' : '']"
-                @click="showRightTab(2)"
-              >
-                <i class="ri-file-list-line me-1"></i>Logs
-              </button>
-         
-            </div>
-            <div v-if="activeRightTab === 1" class="comments-section">
-              <!-- Comment Input Form -->
-              <div class="comment-form mb-4">
-                <div class="d-flex align-items-start">
-                  <div class="comment-avatar me-3">
-                    <img
-                      :src="$page.props.user.data.avatar"
-                      :alt="$page.props.user.data.name || 'User'"
-                      class="rounded-circle"
-                      style="width: 40px; height: 40px; object-fit: cover"
-                    />
-                  </div>
-                  <div class="flex-grow-1">
-                    <textarea
-                      v-model="newComment"
-                      class="form-control mb-2"
-                      rows="3"
-                      placeholder="Add a comment..."
-                      :disabled="form.processing"
-                    ></textarea>
-                    <div class="d-flex justify-content-end">
-                      <button
-                        @click="submitComment"
-                        :disabled="!newComment.trim() || form.processing"
-                        class="btn btn-primary btn-sm"
-                      >
-                        <i class="ri-send-plane-line me-1"></i>
-                        {{ form.processing ? 'Posting...' : 'Post Comment' }}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                v-if="sortedComments && sortedComments.length > 0"
-                class="comments-list"
-              >
-                <div
-                  v-for="comment in sortedComments"
-                  :key="comment.id"
-                  class="comment-item p-3 mb-3"
-                >
-           
-                  <div class="d-flex align-items-start">
-                    <div class="comment-avatar me-3">
-
-                      <img
-                        :src="comment.user?.profile?.avatar ? '/storage/' + comment.user.profile.avatar : '/images/avatars/avatar.jpg'"
-                        alt="image"
-                        class="rounded-circle"
-                        style="width: 40px; height: 40px; object-fit: cover"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <div
-                        class="comment-header d-flex justify-content-between align-items-start mb-2"
-                      >
-                        <div>
-                          <p>
-                            <strong
-                              >{{ comment.user?.profile?.fullname }}</strong
-                            >
-                          </p>
-                          <small class="text-muted ms-2">{{
-                            formatDate(comment.created_at)
-                          }}</small>
-                        </div>
-                      </div>
-                      <div class="comment-content mb-2">
-                        <p class="mb-0">{{ comment.content }}</p>
-                      </div>
-                      <div
-                        v-if="comment.replies && comment.replies.length > 0"
-                        class="replies-section mt-3"
-                      >
-                        <div
-                          v-for="reply in comment.replies"
-                          :key="reply.id"
-                          class="reply-item p-2 mb-2 ms-4 border-start"
-                        >
-                          <div class="d-flex align-items-start">
-                            <div class="reply-avatar me-2">
-                              <img
-                                :src="
-                                  reply.user?.profile?.avatar ||
-                                  '/images/avatars/avatar.jpg'
-                                "
-                                :alt="reply.user?.profile?.firstname"
-                                class="rounded-circle"
-                                style="width: 30px; height: 30px; object-fit: cover"
-                              />
-                            </div>
-                            <div class="flex-grow-1">
-                              <div class="reply-header mb-1">
-                                <strong class="small"
-                                  >{{ reply.user?.profile?.firstname }}
-                                  {{ reply.user?.profile?.lastname }}</strong
-                                >
-                                <small class="text-muted ms-2">{{
-                                  formatDate(reply.created_at)
-                                }}</small>
-                              </div>
-                              <div class="reply-content">
-                                <p class="mb-0 small">{{ reply.content }}</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div v-else class="text-center text-muted mt-3">
-                <small>No comments yet. Be the first to comment!</small>
-              </div>
-            </div>
-            <div v-if="activeRightTab === 2" class="logs-section">
-              <div v-if="logs && logs.length > 0" class="logs-list">
-                <div v-for="log in logs" :key="log.id" class="log-item p-3 mb-3">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                      <div class="log-description mb-2">
-                        <strong>{{ log.description }}</strong>
-                      </div>
-                      <div class="log-details small text-muted">
-                        <span v-if="log.causer">
-                          <i class="ri-user-line me-1"></i>{{ log.causer.name }}
-                        </span>
-                        <span class="ms-2">
-                          <i class="ri-time-line me-1"></i
-                          >{{ formatDate(log.created_at) }}
-                        </span>
-                      </div>
-                      <div
-                        v-if="log.changes && Object.keys(log.changes).length > 0"
-                        class="log-changes mt-2"
-                      >
-                        <div class="small fw-bold text-muted mb-1">Changes:</div>
-                        <div
-                          v-for="(value, key) in log.changes"
-                          :key="key"
-                          class="change-item"
-                        >
-                          <span class="change-key">{{ key }}:</span>
-                          <span class="change-value">{{ value }}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="log-icon">
-                      <i class="ri-file-list-line fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div v-else class="text-center text-muted mt-5">
-                <i class="ri-file-list-line fs-1"></i>
-                <p class="mt-2">No logs available</p>
-                <small>Activity logs will appear here</small>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        <div
-          v-else
-          class="card-body p-0"
-          style="
-            height: 100vh;
-            overflow: auto;
-            border-radius: 0 0 15px 15px;
-          "
-        >
-          <div class="p-2 d-flex flex-column align-items-center">
-            <button
-              :class="[
-                'nav-link mb-2 rounded-pill border-0 transition-all p-2',
-                activeRightTab === 1
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-white text-dark hover-bg-light',
-              ]"
-              @click="showRightTab(1)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
-              v-b-tooltip.hover
-              title="Comments"
-            >
-              <i class="ri-chat-1-line fs-5"></i>
-            </button>
-            <button
-              :class="[
-                'nav-link mb-2 rounded-pill border-0 transition-all p-2',
-                activeRightTab === 2
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-white text-dark hover-bg-light',
-              ]"
-              @click="showRightTab(2)"
-              style="transition: all 0.3s ease; width: 50px; height: 50px"
-              v-b-tooltip.hover
-              title="Logs"
-            >
-              <i class="ri-file-list-line fs-5"></i>
-            </button>
-           
-          </div>
-        </div>
-      </div>
-    </div>
+    <RightSidebar :procurement="procurement" :logs="logs" :isRightCollapsed="isRightCollapsed" @toggleRightSidebar="toggleRightSidebar" />
   </div>
 </template>
 <script>
-import { useForm } from "@inertiajs/vue3";
 import Overview from "./Pages/Detail.vue";
 import Quotation from "./Pages/Quotation.vue";
 import BACResolution from "./Pages/BACResolution.vue";
@@ -701,6 +348,7 @@ import AbstractOfBids from "./Pages/Bids.vue";
 import NoticeOfAward from "./Pages/NoticeOfAward.vue";
 import PurchaseOrder from "./Pages/PurchaseOrder.vue";
 import CreatePO from "./Pages/CreatePO.vue";
+import RightSidebar from "./Pages/RightSidebar.vue";
 import { router } from "@inertiajs/vue3";
 
 import PageHeader from "@/Shared/Components/PageHeader.vue";
@@ -714,41 +362,26 @@ export default {
     NoticeOfAward,
     PurchaseOrder,
     CreatePO,
+    RightSidebar,
   },
   props: ["dropdowns", "procurement", "tab", "logs"],
   data() {
     return {
-      currentUrl: window.location.origin,
       activeTab: parseInt(this.tab) || 1,
       isCollapsed: false,
       isRightCollapsed: true,
-      activeRightTab: 1,
       selectedNoa: null,
       showCreatePOFlag: false,
-      showStatusFlow: true,
-      showSubStatusFlow: true,
       showOverview: true,
-      newComment: '',
-
-      form: useForm({
-        content: '',
-      }),
     };
   },
 
   computed: {
-    sortedComments() {
-      if (!this.procurement.comments) return [];
-      return [...this.procurement.comments].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    },
-    commentCount() {
-      return this.procurement.comments ? this.procurement.comments.length : 0;
-    },
     quotationsCount() {
       return this.procurement.quotations ? this.procurement.quotations.length : 0;
     },
     bidsCount() {
-      return (this.procurement.bids ? this.procurement.bids.length : 0) + (this.procurement.quotations ? this.procurement.quotations.length : 0);
+      return (this.procurement.bids ? this.procurement.bids.length : 0) + (this.procurement.quotations ? this.procurement.quotations.filter(quotation => quotation.status_id == 36).length : 0);
     },
     bacResolutionsCount() {
       return this.procurement.bac_resolutions ? this.procurement.bac_resolutions.length : 0;
@@ -759,85 +392,6 @@ export default {
     posCount() {
       return this.procurement.pos ? this.procurement.pos.length : 0;
     },
-    statusFlow() {
-      // Define the procurement status flow with counts
-      const currentStatus = this.procurement.status?.name;
-      const statusFlow = [
-        { name: 'Pending', bg: 'badge bg-secondary', count: this.procurement.status_distribution?.pending || 0, isCurrent: currentStatus === 'Pending' },
-        { name: 'Reviewed', bg: 'badge bg-warning', count: this.procurement.status_distribution?.for_approval || 0, isCurrent: currentStatus === 'Reviewed' },
-        { name: 'Approved', bg: 'badge bg-success', count: this.procurement.status_distribution?.approved || 0, isCurrent: currentStatus === 'Approved' },
-        { name: 'For Bids', bg: 'badge bg-info', count: this.procurement.status_distribution?.rfq || 0, isCurrent: currentStatus === 'For Bids' },
-        { name: 'For BAC Resolution', bg: 'badge bg-primary', count: this.procurement.status_distribution?.bidding || 0, isCurrent: currentStatus === 'For BAC Resolution' },
-        { name: 'For Approval of BAC Resolution', bg: 'badge bg-primary', count: this.procurement.for_approval_of_bac_resolution || 0, isCurrent: currentStatus === 'For Approval of BAC Resolution' },
-        { name: 'For NOA', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'For NOA' },
-        { name: 'NOA Served to Supplier', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'NOA Served to Supplier' },
-        { name: 'NOA Conformed', bg: 'badge bg-success', count: this.procurement.status_distribution?.noa || 0, isCurrent: currentStatus === 'NOA Conformed' },
-        { name: 'Re-award', bg: 'badge bg-warning', count: this.procurement.status_distribution?.reaward || 0, isCurrent: currentStatus === 'Re-award' },
-        { name: 'Rebid', bg: 'badge bg-danger', count: this.procurement.status_distribution?.rebid || 0, isCurrent: currentStatus === 'Rebid' },
-        { name: 'PO Issued', bg: 'badge bg-danger', count: this.procurement.status_distribution?.po || 0, isCurrent: currentStatus === 'PO Issued' },
-        { name: 'Delivered/For Inspection', bg: 'badge bg-danger', count: this.procurement.status_distribution?.po || 0, isCurrent: currentStatus === 'Delivered/For Inspection' },
-        { name: 'Completed', bg: 'badge bg-success', count: this.procurement.completed?.po || 0, isCurrent: currentStatus === 'Completed' },
-      ];
-      const currentIndex = statusFlow.findIndex(s => s.isCurrent);
-      statusFlow.forEach((status, index) => {
-        status.isPast = index < currentIndex;
-      });
-      return statusFlow;
-    },
-    subStatusFlow() {
-      // Define the procurement sub-status flow based on main status
-      const currentStatus = this.procurement.status?.name;
-      const currentSubStatus = this.procurement.sub_status?.name;
-      let subStatusFlow = [];
-
-      if (currentStatus === 'Rebid') {
-        // Rebid flow: full flow from For Quotations to Completed
-        subStatusFlow = [
-          { name: 'For Quotations', isCurrent: currentSubStatus === 'For Quotations' },
-          { name: 'For Bids', isCurrent: currentSubStatus === 'For Bids' },
-          { name: 'For BAC Resolution', isCurrent: currentSubStatus === 'For BAC Resolution' },
-          { name: 'For Approval of BAC Resolution', isCurrent: currentSubStatus === 'For Approval of BAC Resolution' },
-          { name: 'For Approval of Failure BAC Resolution', isCurrent: currentSubStatus === 'For Approval of Failure BAC Resolution' },
-          { name: 'For NOA', isCurrent: currentSubStatus === 'For NOA' },
-          { name: 'NOA Served to Supplier', bg: 'badge bg-success', isCurrent: currentSubStatus === 'NOA Served to Supplier' },
-        { name: 'NOA Conformed', bg: 'badge bg-success',  isCurrent: currentSubStatus === 'NOA Conformed' },
-        { name: 'Re-award', bg: 'badge bg-warning',  isCurrent: currentSubStatus === 'Re-award' },
-        { name: 'Rebid', bg: 'badge bg-danger', isCurrent: currentSubStatus === 'Rebid' },
-        { name: 'PO Issued', bg: 'badge bg-danger', isCurrent: currentSubStatus === 'PO Issued' },
-        { name: 'Delivered/For Inspection', bg: 'badge bg-danger',   isCurrent: currentSubStatus === 'Delivered/For Inspection' },
-          { name: 'Completed', isCurrent: currentSubStatus === 'Completed' },
-        ];
-      } else if (currentStatus === 'Re-award') {
-        // Re-award flow: starts with creating BAC resolution of failure of bidding
-        subStatusFlow = [
-        { name: 'For NOA', isCurrent: currentSubStatus === 'For NOA' },
-        { name: 'NOA Served to Supplier', bg: 'badge bg-success',  isCurrent: currentSubStatus === 'NOA Served to Supplier' },
-        { name: 'NOA Conformed', bg: 'badge bg-success', isCurrent: currentSubStatus === 'NOA Conformed' },
-        { name: 'Re-award', bg: 'badge bg-warning',  isCurrent: currentSubStatus === 'Re-award' },
-        { name: 'Rebid', bg: 'badge bg-danger',  isCurrent: currentSubStatus === 'Rebid' },
-        { name: 'PO Issued', bg: 'badge bg-danger',  isCurrent: currentSubStatus === 'PO Issued' },
-        { name: 'Delivered/For Inspection', bg: 'badge bg-danger', isCurrent: currentSubStatus === 'Delivered/For Inspection' },
-          { name: 'Completed', isCurrent: currentSubStatus === 'Completed' },
-        ];
-      } else {
-        // Default flow for other statuses
-        subStatusFlow = [
-          { name: 'For Quotations', isCurrent: currentSubStatus === 'For Quotations' },
-          { name: 'For Bids', isCurrent: currentSubStatus === 'For Bids' },
-          { name: 'For BAC Resolution', isCurrent: currentSubStatus === 'For BAC Resolution' },
-          { name: 'For Approval of BAC Resolution', isCurrent: currentSubStatus === 'For Approval of BAC Resolution' },
-          { name: 'For Approval of Failure BAC Resolution', isCurrent: currentSubStatus === 'For Approval of Failure BAC Resolution' },
-          { name: 'For NOA', isCurrent: currentSubStatus === 'For NOA' },
-          { name: 'Completed', isCurrent: currentSubStatus === 'Completed' },
-        ];
-      }
-
-      const currentIndex = subStatusFlow.findIndex(s => s.isCurrent);
-      subStatusFlow.forEach((subStatus, index) => {
-        subStatus.isPast = index < currentIndex;
-      });
-      return subStatusFlow;
-    },
   },
   watch: {
     tab() {
@@ -847,8 +401,6 @@ export default {
   },
   mounted() {
     this.isRightCollapsed = localStorage.getItem("isRightCollapsed") === "true" || true;
-    this.activeRightTab = parseInt(localStorage.getItem("activeRightTab")) || 1;
-    this.listenForComments();
   },
   methods: {
     show(tab) {
@@ -869,74 +421,13 @@ export default {
       localStorage.setItem("isRightCollapsed", this.isRightCollapsed);
     },
 
-    toggleStatusFlow() {
-      this.showStatusFlow = !this.showStatusFlow;
-    },
-
-    toggleSubStatusFlow() {
-      this.showSubStatusFlow = !this.showSubStatusFlow;
-    },
-
     toggleOverview() {
       this.showOverview = !this.showOverview;
-    },
-
-    showRightTab(tab) {
-      this.activeRightTab = tab;
-      localStorage.setItem("activeRightTab", tab);
-    },
-
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
     },
 
     handleShowCreatePO(data) {
       this.selectedNoa = data;
       this.showCreatePOFlag = true;
-    },
-
-    getStatusBadgeClass(status) {
-      if (status.isCurrent) {
-        return status.bg;
-      } else if (status.isPast) {
-        return status.bg;
-      } else {
-        // Gray for future statuses
-        return 'badge bg-secondary';
-      }
-    },
-
-    submitComment() {
-      if (!this.newComment.trim()) return;
-
-      this.form.content = this.newComment;
-      this.form.post(`/faims/procurements/${this.procurement.id}/comments`, {
-        onSuccess: () => {
-          this.newComment = '';
-          this.form.reset();
-          // No need to reload since we listen for real-time updates
-        },
-        onError: () => {
-          // Handle error if needed
-        }
-      });
-    },
-
-    listenForComments() {
-      if (window.Echo) {
-        window.Echo.private(`procurement.${this.procurement.id}`)
-          .listen('.comment.added', (e) => {
-            // Add the new comment to the list
-            this.procurement.comments.push(e.comment);
-          });
-      }
     },
   },
 };
@@ -1195,15 +686,22 @@ export default {
 
 .status-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border: 2px solid #e9ecef;
-  border-radius: 16px;
-  padding: 1rem;
-  min-width: 140px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.5rem;
+  min-width: 100px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.status-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border-color: #007bff;
 }
 
 .status-card::before {
@@ -1609,5 +1107,16 @@ export default {
 .comment-form .btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Collapsed card styling */
+.collapsed-card {
+  max-height: 60px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.collapsed-card .card-body {
+  padding: 0.5rem;
 }
 </style>

@@ -37,6 +37,11 @@ class ProcurementBac extends Model
         return $this->belongsTo('App\Models\ListStatus', 'status_id');
     }
 
+    public function comments()
+    {
+        return $this->morphMany('App\Models\RequestComment', 'commentable');
+    }
+
 
     public static function generateBACResolutionNumber($date = null)
     {

@@ -108,7 +108,7 @@ class ProcurementBacNoaClass
             'updated_by_id' => $user->id,
         ]);
 
-        activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Not Conformed');
+        activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Not Conformed and '. $user->profile->fullname . ' commented '. $request->comment);
 
         $noa->comments()->create([
             'content' => $request->comment,

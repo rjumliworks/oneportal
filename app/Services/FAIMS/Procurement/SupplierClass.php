@@ -10,13 +10,19 @@ class SupplierClass
 {
     public function lists($request){
         $data = SupplierResource::collection(
-            Supplier::query()
+            Supplier::with(['address', 'conformes', 'attachments'])
             ->when($request->keyword, function ($query, $keyword) {
                 $query->where('name', 'LIKE', "%{$keyword}%")
-                        ->orWhere('code', 'LIKE', "%{$keyword}%");
+                        ->orWhere('code', 'LIKE', "%{$keyword}%")
+                        ->orWhereHas('address', function ($q) use ($keyword) {
+                            $q->where('address', 'LIKE', "%{$keyword}%");
+                        });
+            })
+            ->when($request->status !== null, function ($query) use ($request) {
+                $query->where('is_active', $request->status);
             })
             ->orderBy('created_at','DESC')
-            ->paginate($request->count)
+            ->paginate($request->count ?: 15)
         );
         return $data;
     }
