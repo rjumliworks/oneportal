@@ -154,7 +154,7 @@
           v-if="!isCollapsed"
           class="card-body p-0"
           style="
-            height: calc(100vh - 220px);
+            height: 100vh;
             overflow: auto;
             border-radius: 0 0 15px 15px;
           "
@@ -249,7 +249,7 @@
           v-else
           class="card-body p-0"
           style="
-            height: calc(100vh - 220px);
+            height: 100vh;
             overflow: auto;
             border-radius: 0 0 15px 15px;
           "
@@ -356,55 +356,74 @@
       ]"
       style="margin-top: 6px; transition: all 0.3s ease"
     >
-      <div v-if="activeTab === 1">
-        <BCard>
-          <BCardHeader class="d-flex justify-content-between align-items-center">
-            <h4 class="card-title mb-0">Procurement Overview</h4>
-            <button
-              @click="toggleOverview"
-              class="btn btn-sm btn-outline-primary"
-            >
-              <i :class="showOverview ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
-            </button>
-          </BCardHeader>
-          <BCardBody v-if="showOverview">
-            <Overview :procurement="procurement" />
-          </BCardBody>
-        </BCard>
+      <div
+        class="card h-90 mb-3 shadow-lg border-0"
+        style="
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 15px;
+        "
+      >
+        <div
+          class="card-body p-0"
+          style="
+            height: 100vh;
+            overflow: auto;
+            border-radius: 0 0 15px 15px;
+          "
+        >
+          <div class="p-3">
+            <div v-if="activeTab === 1">
+              <BCard>
+                <BCardHeader class="d-flex justify-content-between align-items-center">
+                  <h4 class="card-title mb-0">Procurement Overview</h4>
+                  <button
+                    @click="toggleOverview"
+                    class="btn btn-sm btn-outline-primary"
+                  >
+                    <i :class="showOverview ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                  </button>
+                </BCardHeader>
+                <BCardBody v-if="showOverview">
+                  <Overview :procurement="procurement" />
+                </BCardBody>
+              </BCard>
+            </div>
+            <Quotation
+              :dropdowns="dropdowns"
+              :procurement="procurement"
+              v-if="activeTab === 2"
+            />
+            <AbstractOfBids
+              :dropdowns="dropdowns"
+              :procurement="procurement"
+              v-if="activeTab === 3"
+            />
+            <BACResolution
+              :dropdowns="dropdowns"
+              :procurement="procurement"
+              v-if="activeTab === 4"
+            />
+            <NoticeOfAward
+              :dropdowns="dropdowns"
+              :procurement="procurement"
+              v-if="activeTab === 5 && !showCreatePOFlag"
+              @changeTab="show"
+              @showCreatePO="handleShowCreatePO"
+            />
+            <CreatePO
+              :dropdowns="dropdowns"
+              :procurement="procurement"
+              :noa="selectedNoa"
+              v-if="showCreatePOFlag"
+            />
+            <PurchaseOrder
+              :dropdowns="dropdowns"
+              :procurement="procurement"
+              v-if="activeTab === 6"
+            />
+          </div>
+        </div>
       </div>
-      <Quotation
-        :dropdowns="dropdowns"
-        :procurement="procurement"
-        v-if="activeTab === 2"
-      />
-      <AbstractOfBids
-        :dropdowns="dropdowns"
-        :procurement="procurement"
-        v-if="activeTab === 3"
-      />
-      <BACResolution
-        :dropdowns="dropdowns"
-        :procurement="procurement"
-        v-if="activeTab === 4"
-      />
-      <NoticeOfAward
-        :dropdowns="dropdowns"
-        :procurement="procurement"
-        v-if="activeTab === 5 && !showCreatePOFlag"
-        @changeTab="show"
-        @showCreatePO="handleShowCreatePO"
-      />
-      <CreatePO
-        :dropdowns="dropdowns"
-        :procurement="procurement"
-        :noa="selectedNoa"
-        v-if="showCreatePOFlag"
-      />
-      <PurchaseOrder
-        :dropdowns="dropdowns"
-        :procurement="procurement"
-        v-if="activeTab === 6"
-      />
     </div>
     <div
       :class="['transition-all', isRightCollapsed ? 'col-md-1' : 'col-md-3']"
@@ -442,7 +461,7 @@
           v-if="!isRightCollapsed"
           class="card-body p-0"
           style="
-            height: calc(100vh - 220px);
+            height: 100vh;
             overflow: auto;
             border-radius: 0 0 15px 15px;
           "
@@ -464,22 +483,55 @@
          
             </div>
             <div v-if="activeRightTab === 1" class="comments-section">
+              <!-- Comment Input Form -->
+              <div class="comment-form mb-4">
+                <div class="d-flex align-items-start">
+                  <div class="comment-avatar me-3">
+                    <img
+                      :src="$page.props.user.data.avatar"
+                      :alt="$page.props.user.data.name || 'User'"
+                      class="rounded-circle"
+                      style="width: 40px; height: 40px; object-fit: cover"
+                    />
+                  </div>
+                  <div class="flex-grow-1">
+                    <textarea
+                      v-model="newComment"
+                      class="form-control mb-2"
+                      rows="3"
+                      placeholder="Add a comment..."
+                      :disabled="form.processing"
+                    ></textarea>
+                    <div class="d-flex justify-content-end">
+                      <button
+                        @click="submitComment"
+                        :disabled="!newComment.trim() || form.processing"
+                        class="btn btn-primary btn-sm"
+                      >
+                        <i class="ri-send-plane-line me-1"></i>
+                        {{ form.processing ? 'Posting...' : 'Post Comment' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div
-                v-if="procurement.comments && procurement.comments.length > 0"
+                v-if="sortedComments && sortedComments.length > 0"
                 class="comments-list"
               >
                 <div
-                  v-for="comment in procurement.comments"
+                  v-for="comment in sortedComments"
                   :key="comment.id"
                   class="comment-item p-3 mb-3"
                 >
+           
                   <div class="d-flex align-items-start">
                     <div class="comment-avatar me-3">
+
                       <img
-                        :src="
-                          comment.user?.profile?.avatar || '/images/avatars/avatar.jpg'
-                        "
-                        :alt="comment.user?.profile?.firstname"
+                        :src="comment.user?.profile?.avatar ? '/storage/' + comment.user.profile.avatar : '/images/avatars/avatar.jpg'"
+                        alt="image"
                         class="rounded-circle"
                         style="width: 40px; height: 40px; object-fit: cover"
                       />
@@ -489,17 +541,18 @@
                         class="comment-header d-flex justify-content-between align-items-start mb-2"
                       >
                         <div>
-                          <strong
-                            >{{ comment.user?.profile?.firstname }}
-                            {{ comment.user?.profile?.lastname }}</strong
-                          >
+                          <p>
+                            <strong
+                              >{{ comment.user?.profile?.fullname }}</strong
+                            >
+                          </p>
                           <small class="text-muted ms-2">{{
                             formatDate(comment.created_at)
                           }}</small>
                         </div>
                       </div>
                       <div class="comment-content mb-2">
-                        <p class="mb-0">{{ comment.comment }}</p>
+                        <p class="mb-0">{{ comment.content }}</p>
                       </div>
                       <div
                         v-if="comment.replies && comment.replies.length > 0"
@@ -533,7 +586,7 @@
                                 }}</small>
                               </div>
                               <div class="reply-content">
-                                <p class="mb-0 small">{{ reply.comment }}</p>
+                                <p class="mb-0 small">{{ reply.content }}</p>
                               </div>
                             </div>
                           </div>
@@ -543,10 +596,8 @@
                   </div>
                 </div>
               </div>
-              <div v-else class="text-center text-muted mt-5">
-                <i class="ri-chat-1-line fs-1"></i>
-                <p class="mt-2">No comments yet</p>
-                <small>Add a comment to start the discussion</small>
+              <div v-else class="text-center text-muted mt-3">
+                <small>No comments yet. Be the first to comment!</small>
               </div>
             </div>
             <div v-if="activeRightTab === 2" class="logs-section">
@@ -600,7 +651,7 @@
           v-else
           class="card-body p-0"
           style="
-            height: calc(100vh - 220px);
+            height: 100vh;
             overflow: auto;
             border-radius: 0 0 15px 15px;
           "
@@ -677,12 +728,22 @@ export default {
       showStatusFlow: true,
       showSubStatusFlow: true,
       showOverview: true,
+      newComment: '',
 
-      form: useForm({}),
+      form: useForm({
+        content: '',
+      }),
     };
   },
 
   computed: {
+    sortedComments() {
+      if (!this.procurement.comments) return [];
+      return [...this.procurement.comments].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    },
+    commentCount() {
+      return this.procurement.comments ? this.procurement.comments.length : 0;
+    },
     quotationsCount() {
       return this.procurement.quotations ? this.procurement.quotations.length : 0;
     },
@@ -787,6 +848,7 @@ export default {
   mounted() {
     this.isRightCollapsed = localStorage.getItem("isRightCollapsed") === "true" || true;
     this.activeRightTab = parseInt(localStorage.getItem("activeRightTab")) || 1;
+    this.listenForComments();
   },
   methods: {
     show(tab) {
@@ -848,6 +910,32 @@ export default {
       } else {
         // Gray for future statuses
         return 'badge bg-secondary';
+      }
+    },
+
+    submitComment() {
+      if (!this.newComment.trim()) return;
+
+      this.form.content = this.newComment;
+      this.form.post(`/faims/procurements/${this.procurement.id}/comments`, {
+        onSuccess: () => {
+          this.newComment = '';
+          this.form.reset();
+          // No need to reload since we listen for real-time updates
+        },
+        onError: () => {
+          // Handle error if needed
+        }
+      });
+    },
+
+    listenForComments() {
+      if (window.Echo) {
+        window.Echo.private(`procurement.${this.procurement.id}`)
+          .listen('.comment.added', (e) => {
+            // Add the new comment to the list
+            this.procurement.comments.push(e.comment);
+          });
       }
     },
   },
@@ -1315,5 +1403,211 @@ export default {
   .connector-line {
     width: 40px;
   }
+}
+
+/* Enhanced Comment Avatar Styling */
+.comment-avatar {
+  position: relative;
+}
+
+.comment-avatar img {
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.comment-avatar img:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.reply-avatar {
+  position: relative;
+}
+
+.reply-avatar img {
+  border: 2px solid #dee2e6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.reply-avatar img:hover {
+  border-color: #6c757d;
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.15);
+  transform: scale(1.02);
+}
+
+/* Avatar Online Indicator */
+.comment-avatar::after,
+.reply-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background: #28a745;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced Comment Content Styling */
+.comment-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.comment-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.comment-header .comment-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.comment-header strong {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.comment-header small {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: rgba(108, 117, 125, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.comment-content {
+  color: #495057;
+  line-height: 1.6;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+.comment-content p {
+  margin-bottom: 0;
+  word-wrap: break-word;
+}
+
+/* Reply Styling */
+.reply-item {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-left: 2rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  position: relative;
+}
+
+.reply-item::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 1rem;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #dee2e6;
+}
+
+.reply-item::after {
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: 1rem;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-right: 7px solid #f8f9fa;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.reply-header strong {
+  color: #495057;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.reply-header small {
+  color: #6c757d;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.reply-content {
+  color: #6c757d;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.reply-content p {
+  margin-bottom: 0;
+}
+
+/* Comment Form Styling */
+.comment-form {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.comment-form textarea {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.comment-form textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.comment-form .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.comment-form .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>

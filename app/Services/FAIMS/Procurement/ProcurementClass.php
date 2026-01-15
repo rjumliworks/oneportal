@@ -9,6 +9,7 @@ use App\Models\ProcurementCodeGroup;
 use App\Models\ProcurementItem;
 use App\Http\Resources\FAIMS\Procurement\ProcurementResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 class ProcurementClass
@@ -111,22 +112,49 @@ class ProcurementClass
    
     public function review($id, $request)
     {
-        // update Procurement
-        $data = $this->updatePR($id , $request);
+        $user = Auth::user();
+        Log::info('Procurement review started', [
+            'procurement_id' => $id,
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'action' => 'review_procurement'
+        ]);
 
-        // update Procurement Item Details       
-        $this->updatePRItems($id, $request);
+        try {
+            // update Procurement
+            $data = $this->updatePR($id , $request);
 
-        //  update status to reviewed
-        $data->status_id  = 37;
+            // update Procurement Item Details
+            $this->updatePRItems($id, $request);
 
-        $data->update();
+            //  update status to reviewed
+            $data->status_id  = 37;
 
-        return [
-            'data' => new ProcurementResource($data),
-            'message' => 'Procurement reviewed successfuly!', 
-            'info' => "You've successfully updated the Procurement.",
-        ];
+            $data->update();
+
+            Log::info('Procurement reviewed successfully', [
+                'procurement_id' => $id,
+                'procurement_code' => $data->code,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'new_status_id' => 37
+            ]);
+
+            return [
+                'data' => new ProcurementResource($data),
+                'message' => 'Procurement reviewed successfuly!',
+                'info' => "You've successfully updated the Procurement.",
+            ];
+        } catch (\Exception $e) {
+            Log::error('Procurement review failed', [
+                'procurement_id' => $id,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     public function approve($id, $request)

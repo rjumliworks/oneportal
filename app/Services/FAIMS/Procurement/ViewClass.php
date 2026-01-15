@@ -254,6 +254,7 @@ class ViewClass
                     'tab' => $request->tab,
                     'procurement' => $procurement,
                     'logs' => $logs,
+                    'auth' => auth()->user()->load('profile'),
                     'option' => $request->option,
                 ]);
             break;

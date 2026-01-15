@@ -10,7 +10,7 @@ use App\Services\FAIMS\Procurement\ViewClass;
 use App\Services\FAIMS\Procurement\ProcurementClass;
 use App\Services\FAIMS\Procurement\PrintClass;
 use App\Services\System\User\UserClass;
-
+use App\Events\CommentAdded;
 
 class ProcurementController extends Controller
 {
@@ -147,6 +147,38 @@ class ProcurementController extends Controller
         else{
             return $this->view->show($id, $request);
         }
+
+    }
+
+    public function addComment($id, Request $request) {
+        $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $result = $this->handleTransaction(function () use ($id, $request) {
+            $procurement = \App\Models\Procurement::findOrFail($id);
+
+            $comment = $procurement->comments()->create([
+                'content' => $request->content,
+                'user_id' => auth()->id(),
+            ]);
+
+            // Broadcast the comment to other users
+            broadcast(new CommentAdded($comment))->toOthers();
+
+            return [
+                'data' => $comment->load('user.profile'),
+                'message' => 'Comment added successfully',
+                'info' => 'Your comment has been added to the procurement.',
+                'status' => true,
+            ];
+        });
+
+         return back()->with([
+            'data' => $result['data'],
+            'status' => $result['status'],
+        ]);
+
 
     }
 
