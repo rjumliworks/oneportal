@@ -74,17 +74,13 @@
                 </button>
                 <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
                 
+                
                   <li
-                    @click="printNOA(list)"
-                    class="dropdown-item d-flex align-items-center"
-                    role="button"
-                  >
-                    <i class="ri-printer-fill align-bottom me-1"></i>Print
-                  </li>
-                  <li
+              
                     v-if="
-                      list.status.name == 'Pending' ||
-                      list.status.name == 'Served to Supplier'
+                      (list.status.name == 'Pending' ||
+                      list.status.name == 'Served to Supplier') && 
+                      ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))
                     "
                     @click="updateStatus(list)"
                     class="dropdown-item d-flex align-items-center"
@@ -93,7 +89,7 @@
                     <i class="ri-edit-2-fill align-bottom me-1"></i>Update Status
                   </li>
                   <li
-                    v-if="list.status.name == 'Served to Supplier'"
+                    v-if="(list.status.name == 'Served to Supplier') && ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))"
                     @click="notConformed(list)"
                     class="dropdown-item d-flex align-items-center"
                     role="button"
@@ -103,19 +99,28 @@
              
                   <li
                     v-if="
-                      list.status.name == 'Conformed' ||
+                      (list.status.name == 'Conformed' ||
                       list.status.name == 'PO Conformed' ||
                       list.status.name == 'PO Issued' ||
-                      list.status.name == '' ||
+                      list.status.name == 'PO Pending' ||
                       list.status.name == 'PO Conformed' ||
                       list.status.name == 'Delivered/For Inspection' ||
-                       list.status.name == 'Completed'
+                      list.status.name == 'Completed') &&
+                      $page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer')
+                    
                     "
                     @click="goPOPage(list)"
                     class="dropdown-item d-flex align-items-center"
                     role="button"
                   >
                     <i class="ri-eye-2-fill align-bottom me-1"></i> Purchase Order 
+                  </li>
+                    <li
+                    @click="printNOA(list)"
+                    class="dropdown-item d-flex align-items-center"
+                    role="button"
+                  >
+                    <i class="ri-printer-fill align-bottom me-1"></i>Print
                   </li>
                 </ul>
               </div>

@@ -287,6 +287,8 @@ class ViewClass
             case 'edit':
             case 'review':
             case 'approve':
+                $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by'
+                                    , 'bac_resolutions.comments.user.profile', 'bac_resolutions.comments.replies.user.profile', 'noas.comments.user.profile', 'noas.comments.replies.user.profile', 'pos.comments.user.profile', 'pos.comments.replies.user.profile', 'comments.user.profile', 'comments.replies.user.profile')->findOrFail($id);
                 return inertia('Modules/FAIMS/Procurement/CreatePage', [
                     'dropdowns' => [
                         'divisions' => $this->dropdown->dropdowns('Division'),
@@ -294,12 +296,12 @@ class ViewClass
                         'procurement_codes' => $this->dropdown->procurement_codes(),
                         'unit_types' => $this->dropdown->unit_types(),
                         'requesters' => $this->dropdown->requesters(),
-                        'approvers' => $this->dropdown->approvers(),     
-                        
+                        'approvers' => $this->dropdown->approvers(),
+
                     ],
                     'procurement' => $procurement,
                     'option' => $request->option,
-                ]); 
+                ]);
             break;
             
             case 'quotations':

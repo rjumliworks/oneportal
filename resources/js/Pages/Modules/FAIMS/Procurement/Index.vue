@@ -165,7 +165,7 @@
                         </b-button>
 
                         <b-button
-                          v-if="list.status.name == 'Reviewed' && $page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff')"
+                          v-if="list.status.name == 'Reviewed' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff'))"
                           @click="goApprovePage(list)"
                           size="sm"
                           variant="outline-success"
@@ -203,44 +203,7 @@
                         </b-button>
 
                         </div>
-                      <!-- <div class="dropdown" @click.stop>
-                        <button
-                          class="btn btn-ghost-primary btn-icon btn-sm"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <i class="ri-more-2-fill fs-16"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                          <li>
-                            <a @click="goViewPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-eye-line align-bottom me-2"></i>View
-                            </a>
-                          </li>
-                          <li v-if="list.status.name == 'Pending'">
-                            <a @click="goEditPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-edit-line align-bottom me-2"></i>Edit
-                            </a>
-                          </li>
-                          <li v-if="list.status.name == 'Pending' && roles.includes('Procurement Officer')">
-                            <a @click="goReviewPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-check-double-line align-bottom me-2"></i>Review
-                            </a>
-                          </li>
-                          <li v-if="list.status.name == 'Reviewed' && roles.includes('Procurement Officer')">
-                            <a @click="goApprovePage(list)" class="dropdown-item" role="button">
-                              <i class="ri-check-line align-bottom me-2"></i>Approve
-                            </a>
-                          </li>
-                          <li><hr class="dropdown-divider" /></li>
-                          <li>
-                            <a @click="openPrint(list)" class="dropdown-item" role="button">
-                              <i class="ri-printer-line align-bottom me-2"></i>Print
-                            </a>
-                          </li>
-                        </ul>
-                      </div> -->
+
                     </td>
                   </tr>
                 </tbody>

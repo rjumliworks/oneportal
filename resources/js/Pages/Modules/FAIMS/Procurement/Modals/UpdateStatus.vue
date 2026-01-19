@@ -22,7 +22,7 @@
 
           <!-- Purchase Order -->
           <span v-if="type == 'PO' || type == 'PO Not Conformed'">
-                 Purchase Order No.:
+                 Purchase Order No.: 
           </span>
 
           <span class="text-danger flex">{{ form.code }}</span></b
@@ -34,7 +34,7 @@
           <span
           v-if="
             form.status?.name === 'Pending'  &&
-            type == 'BACResolution'
+            (type == 'BACResolution'  ||  type == 'NOA' )
           "
         >
           Update status from
@@ -48,7 +48,7 @@
 
         <span
           v-if="
-            form.status?.name === 'PO Issued' ||  form.status?.name === 'Pending' &&
+            form.status?.name === 'PO Issued' || form.status?.name === 'Pending'  &&
             type != 'NOA Not Conformed' &&
             type != 'PO Not Conformed'
           "

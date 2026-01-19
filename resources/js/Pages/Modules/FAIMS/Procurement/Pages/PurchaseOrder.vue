@@ -144,8 +144,8 @@
                           </li>
 
                           <li
+                            v-if="list.status.name == 'Delivered/For Inspection' &&  ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))"
                             @click="updateStatus(list)"
-                            v-if="list.status.name == 'Delivered/For Inspection'"
                             class="dropdown-item d-flex align-items-center"
                             role="button"
                           >
@@ -165,6 +165,7 @@
 
                           <li>
                             <a
+                              v-if="list.status.name == 'Completed'"
                               @click="openPrintIAR(list)"
                               class="dropdown-item d-flex align-items-center"
                               role="button"
@@ -304,8 +305,7 @@ export default {
     },
 
     viewPO(data) {
-          this.$emit("showCreatePO", data);
- 
+      router.visit("/faims/purchase-orders/" + data.id + "?option=purchase_order&noa_id=" + data.noa_id);
     },
 
     openPrint(data) {

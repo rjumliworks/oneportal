@@ -95,16 +95,16 @@ class ProcurementClass
     
     public function update($id , $request)
     {
-        //dd($request->all());
         // update Procurement
         $data = $this->updatePR($id , $request);
 
-        // update Procurement Item Details       
+        // update Procurement Item Details
         $this->updatePRItems($id , $request);
+
 
         return [
             'data' => new ProcurementResource($data),
-            'message' => 'Procurement updated successfuly!', 
+            'message' => 'Procurement updated successfuly!',
             'info' => "You've successfully updated the Procurement.",
         ];
     }
@@ -194,40 +194,16 @@ class ProcurementClass
         return  $data;
     }
 
-    protected function updatePRItems($id, $request ){
+    protected function updatePRItems($procurement_id, $request ){
 
-        $data = ProcurementItem::findOrFail($id);
+        // Delete existing items for the procurement
+        ProcurementItem::where('procurement_id', $procurement_id)->delete();
 
-        $data->update(array_merge($request->only(
-            'item_description',
-            'item_unit_type_id',
-            'item_quantity',
-            'item_unit_cost',
-            'total_cost',
-        ), [
-            'item_unit_cost' => $request->item_unit_cost ?? 0,
-            'total_cost' => $request->total_cost ?? 0,
-        ]));
-
-        return  $data;
+        // Re-save the updated items
+        $this->saveProcurementItems($request, $procurement_id);
     }
 
     
-    // public function printPR($id,$request)
-    // {  
-    //     $data = ProcurementItem::with('purchase_request', 'unit_type')->where('purchase_request_id', $request->id)->get();
-    //     $pr = Procurement::with('fundCluster','section','requester', 'requester.user_organization.position.administrative' , 'approver.user_organization.position.administrative')->where('id', $request->id)->first();
-
-    //     //return $pr;
-    //     $array = [
-    //         'data' => $data,
-    //         'pr_no' =>$request->purchase_request_number,
-    //         'pr' => $pr,
-    //     ];
-
-    //     $pdf = \PDF::loadView('FAIMS.Procurement.printPR',$array)->setPaper('A4', 'portrait');
-    //     return $pdf->stream($request->purchase_request_number.'-BAC-Resolution.pdf');
-    // }
 
      public function procurement_title($code_id)
     {  

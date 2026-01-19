@@ -1,185 +1,264 @@
-@php
-    $totalAmount = 0;
-    foreach ($items as $item) {
-        $totalAmount += ($item->item_quantity * $item->item_unit_cost);
-    }
-
-    /** * IMPROVED FILLER LOGIC:
-     * We estimate height based on row count and character length.
-     */
-    $basePageHeight = 650; 
-    $estimatedContentHeight = 0;
-    foreach ($items as $item) {
-        // Estimate 25px per row, plus extra for long descriptions
-        $descriptionLines = ceil(strlen($item->item_description) / 60); 
-        $estimatedContentHeight += ($descriptionLines * 18) + 10;
-    }
-
-    $dynamicFillerHeight = $basePageHeight - $estimatedContentHeight;
-@endphp
-
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <title>Quotation Request</title>
     <style>
-        @page { 
-            margin: 0.2in; 
-        }
-        
-        /* This handles the automatic page numbering */
-        .page-number:before {
-            content: counter(page);
-        }
-        .total-pages:before {
-            content: counter(pages);
-        }
 
-        body {
+
+        html, body {
             font-family: Arial, sans-serif;
+            margin: 15px 15px 15px 15px;
+            padding: 0;
+            height: 100%;
+            font-size: 12px;
+        }
+
+        .header {
+            margin-bottom: 10px;
+        }
+        h1 {
+            margin: 10px 0;
+        }
+        .subheader span {
+            display: block;
+            margin: 5px 0;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .text-right{
+            text-align: right ;
+            line-height: 0.1;
+        }
+        .text-left{
+            text-align: left ;
+            line-height: 0.5;
+        }
+
+
+        .text-right-date {
+            text-align: left;
+            position:absolute;
+            right:0;
+            line-height: 0.5;
+        }
+        .border-container {
+            margin-top: 0px;
+            border: solid 1px black;
+            padding: 2px 8px 2px 8px;
+            display: inline-block; /* Keeps the border close to the content */
+            margin-right: 20px;
+        }
+
+        .border-container2 {
+            margin-top:-20px;
+            border: solid 1px black;
+
+        }
+
+        .border-container3 {
+            border: solid 1px black;
             font-size: 11px;
-            margin: 0;
+            margin-bottom: 20px;
+
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            table-layout: fixed; 
-            page-break-inside: auto;
+        .bold {
+            font-weight: bold;
+            font-size:11px;
         }
-        
-        th, td { 
-            border: 1px solid black; 
-            padding: 5px; 
-            vertical-align: top; 
-            word-wrap: break-word;
-        }
-        
-        /* Repeat header on every page */
-        thead { display: table-header-group; }
-        tr { page-break-inside: avoid; page-break-after: auto; }
-
-        .no-border { border: none !important; }
-        .bold { font-weight: bold; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-
-        /* THE FILLER: Only appears if height is positive */
-        .filler-row td {
-            height: {{ $dynamicFillerHeight }}px;
-            border-top: none;
-            border-bottom: 1px solid black;
+        .small-text {
+            font-size: 8px;
+            padding-right: 15px;
         }
 
-        .footer-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: -1px;
-            page-break-inside: avoid; /* Keeps signature block together */
+            text-align: left;;
+        }
+        td {
+            border: 1px solid ;
+            border-collapse: collapse;
+            padding: 0px;
+            vertical-align: top;
         }
 
-        .page-counter-container {
-            text-align: right;
-            font-size: 9px;
-            margin-top: 5px;
+        th {
+            border: 1px solid ;
+            border-collapse: collapse;
+            padding: 2px;
+            vertical-align: top;
         }
+
+        .page-break {
+            page-break-before: always; /* Forces a new page when printing */
+        }
+
+        . text-left{
+            background: gray;
+            color: white;
+        }
+
+        .footer {
+            bottom: 10px; /* Distance from bottom of the page */
+            width: 100%;
+            font-size: 12px;
+            color: black;
+            text-align: left;
+            padding:0px
+        }
+
+        .border-none{
+            border: none; 
+        }
+
     </style>
 </head>
 <body>
+    <div class="text-right">
+        <div class="border-container">
+            <p class="bold">FASS-PUR F08</p>
+            <p class="small-text">Rev.2/07-01-2023</p>
+        </div>
+    </div>
+    <div class="text-center" style="margin-top:-40px;">
+        <span style="font-size: 12px">Republic of the Philippines</span>
+        <h3 style="line-height: .1; font-size: 12px">DEPARTMENT OF SCIENCE AND TECHNOLOGY</h3>
+        <p style="line-height: .1; font-size: 12px">Regional Office No. IX</p>
 
+
+    </div>
+    <br> 
+    <h2 style="text-align:center; margin-top:-10px;">
+        <b > INSPECTION & ACCEPTANCE REPORT</b>
+    </h2> 
+    
     <table>
-        <thead>
-            <tr class="no-border">
-                <td colspan="6" class="no-border">
-                    <div style="float: right; border: 1px solid black; padding: 2px 8px; font-size: 10px;">
-                        <span class="bold">FASS-PUR F08</span><br>
-                        <span>Rev. 1/07-01-23</span>
-                    </div>
-                    <div style="clear: both;"></div>
-                    <div class="text-center">
-                        <h2 style="margin: 0 0 15px 0;">PURCHASE REQUEST</h2>
-                    </div>
-                </td>
-            </tr>
-            <tr class="no-border">
-                <td colspan="4" class="no-border">Entity Name: <u>Department of Science and Technology - IX</u></td>
-                <td colspan="2" class="no-border text-right">Fund Cluster: <u>{{$procurement->fund_cluster?->name ?? '________________'}}</u></td>
-            </tr>
-            <tr>
-                <td colspan="2" class="bold">Office/Section:</td>
-                <td colspan="2" class="bold">PR No: <u>{{ $procurement->code }}</u></td>
-                <td colspan="2" rowspan="2" class="bold">Date: <u>{{ date('m-d-Y', strtotime($procurement->date)) }}</u></td>
-            </tr>
-            <tr>
-                <td colspan="2">{{ $procurement->division->name }}</td>
-                <td colspan="2">Responsibility Center Code: <br>{{ $procurement->unit->responsibility_center_code }}</td>
-            </tr>
-            <tr style="background-color: #f2f2f2;" class="text-center bold">
-                <td width="8%">Stock No.</td>
-                <td width="10%">Unit</td>
-                <td width="42%">Item Description</td>
-                <td width="10%">Quantity</td>
-                <td width="15%">Unit Cost</td>
-                <td width="15%">Total Cost</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($items as $item)
-            <tr>
-                <td class="text-center">{{ $item->item_no }}</td>
-                <td class="text-center">{{ $item->item_unit_type->name_short }}</td>
-                <td style="white-space: pre-wrap; text-align: justify;">{!! $item->item_description !!}</td>
-                <td class="text-center">{{ $item->item_quantity }}</td>
-                <td class="text-right">{{ number_format($item->item_unit_cost, 2) }}</td>
-                <td class="text-right bold">{{ number_format($item->item_quantity * $item->item_unit_cost, 2) }}</td>
-            </tr>
-            @endforeach
-
-            {{-- ONLY SHOW FILLER IF THERE IS REMAINING SPACE --}}
-            @if($dynamicFillerHeight > 20)
-            <tr class="filler-row">
-                <td></td><td></td><td></td><td></td><td></td><td></td>
-            </tr>
-            @endif
-
-            <tr>
-                <td colspan="5" class="text-right bold">TOTAL</td>
-                <td class="text-right bold">{{ number_format($totalAmount, 2) }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <table class="footer-table">
         <tr>
-            <td colspan="6" style="padding: 15px 10px;">
-                <strong>Purpose:</strong> {{ $procurement->purpose }}
+            <td colspan="4" style="padding-left:5px">
+               <p>
+                 Supplier: <u>{{ $supplier->name  }}</u>
+               </p>
+               <p>
+                PO No: <u>{{ $purchase_order->code }}</u>
+               </p>
+               <p>
+                Date: <u>_________________________</u>
+               </p>
+               <P>
+                Invoice No: <u>_______________________</u>
+               </P>
+                <p>
+                Requesiting Office/Department: <u>{{ $procurement->division->name }}</u>
+               </p>
+            </td>
+
+            <td colspan="3" style="padding-left:5px">
+                <p>
+                 IAR Number: <u>{{ $iar?->code }}</u>
+               </p>
+               <p>
+                 Date: <u>__________________________</u>
+               </p>
+
+            
             </td>
         </tr>
-        <tr class="text-center no-border">
-            <td class="no-border" width="15%"></td>
-            <td colspan="2" class="bold no-border">Requested By:</td>
-            <td colspan="3" class="bold no-border">Approved By:</td>
+
+        <tr>
+            <th>Stock No.</th>
+            <th>Unit</th>
+            <th colspan="2">Description</th>
+            <th>Quantiy</th>
+            <th>Unit Cost</th>
+            <th>Amount</th>
         </tr>
-        <tr class="no-border">
-            <td class="no-border">Signature:</td>
-            <td colspan="2" class="no-border text-center">__________________________</td>
-            <td colspan="3" class="no-border text-center">__________________________</td>
-        </tr>
-        <tr class="no-border">
-            <td class="no-border">Printed Name:</td>
-            <td colspan="2" class="text-center bold no-border"><u>{{ strtoupper($procurement->requested_by->profile->fullname) }}</u></td>
-            <td colspan="3" class="text-center bold no-border"><u>{{ strtoupper($procurement->approved_by->profile->fullname) }}</u></td>
-        </tr>
-        <tr class="no-border">
-            <td class="no-border">Designation:</td>
-            <td colspan="2" class="text-center no-border">{{ $procurement->requested_by->user_organization->org_chart->designation->name ?? '' }}</td>
-            <td colspan="3" class="text-center no-border">{{ $procurement->approved_by->user_organization->org_chart->designation->name ?? '' }}</td>
-        </tr>
+        @php
+            $total_amount = 0;
+        @endphp
+
+        @foreach ($items as $item)
+            @php
+                $line_total = $item->item->bid_price * $item->item->item->item_quantity;
+                $total_amount += $line_total;
+            @endphp
+            <tr class="text-center">
+                <td>{{ $item->item->item->item_no }}</td>
+                <td>{{ $item->item->item->item_unit_type->name_short ?? '' }}</td>
+                  <td colspan="2" style="padding: 6px; text-align: justify;">
+                    <div style="margin-top:-15px;lline-height: 1.3; word-wrap: break-word;">
+                        {!! $item->item->item->item_description !!}
+                    </div>
+                </td>
+                <td>{{ $item->item->item->item_quantity }}</td>
+                <td>{{ number_format($item->item->bid_price, 2) }}</td>
+                <td>{{ number_format($line_total, 2) }}</td>
+            </tr>
+        @endforeach
+
+     
+      <tr >
+        <td colspan="4"  style="padding:left: 10px">
+            <p style="text-align: center"><b >INSPECTION</b></p>
+            <p style="margin-bottom:40px">Funds Available:____________________________</p>
+            <p class="box ">Inspected, verified and found OK as to quantity &
+                specifications.
+            </p>
+            <div class="text-center">
+                <div style="text-transform: uppercase; font-weight: bold; margin-top:30px">
+                    JOSEPHINE B. NOHAY
+                </div>
+                <div style="margin-bottom:25px ; ">
+                    Chairman
+                </div>
+
+                <div style="text-transform: uppercase; font-weight: bold;">
+                    JOSEPHINE B. NOHAY
+                </div>
+                <div style="margin-bottom:25px">
+                    Member
+                </div>
+
+
+                <div style="text-transform: uppercase; font-weight: bold;">
+                    JOSEPHINE B. NOHAY
+                </div>
+                <div style="margin-bottom:25px">
+                    Member
+                </div>
+            </div>
+        </td>
+        <td colspan="3" style="padding:left: 10px ; ">
+        <p style="text-align: center"><b>ACCEPTANCE</b></p>
+        <div>Date Received:____________________________</div>
+        <br><br>
+       <div style="margin-bottom:45px"> 
+            <span style="border:1px solid; padding:15px""> </span>  Full
+        </div>
+
+        <div > <span style="border:1px solid; padding:15px">  </span> Partial </div>
+        <div class="text-center" style="; margin-top:30px; margin-bottom:20px">
+            <div style="text-transform: uppercase; font-weight: bold;">
+                {{ $supply_officer->fullname }}
+            </div>
+            <div>
+                Supply Officer
+            </div>
+        </div>
+        </td>
+      </tr>
+
+   
     </table>
 
-    <div class="page-counter-container">
-        Page <span class="page-number"></span> of <span class="total-pages"></span>
-    </div>
-
+       <div style="align-text: right; margin-top:50px">
+            Page 1 of 1
+      </div>
+  
+          
+   
+ 
+  
 </body>
 </html>
