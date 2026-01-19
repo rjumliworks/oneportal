@@ -141,13 +141,25 @@ tha<template>
                     <h6 class="mb-3">Uploaded Files:</h6>
                     <div class="file-list">
                         <div v-for="(file, index) in uploadedFiles" :key="index" class="file-item d-flex align-items-center justify-content-between p-2 border rounded mb-2" style="background: white;">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-file-line me-2 text-primary"></i>
-                                <span class="small">{{ file.name }}</span>
+                            <div class="d-flex align-items-center flex-grow-1">
+                                <i :class="getFileIcon(file)" class="me-2 text-primary"></i>
+                                <span class="small flex-grow-1">{{ file.name }}</span>
+                                <div class="file-actions d-flex gap-1">
+                                    <b-button
+                                        @click="viewFile(file)"
+                                        variant="link"
+                                        size="sm"
+                                        class="text-info p-0"
+                                        v-b-tooltip.hover
+                                        title="View File"
+                                    >
+                                        <i class="ri-eye-line"></i>
+                                    </b-button>
+                                    <b-button @click="removeFile(index)" variant="link" size="sm" class="text-danger p-0">
+                                        <i class="ri-close-line"></i>
+                                    </b-button>
+                                </div>
                             </div>
-                            <b-button @click="removeFile(index)" variant="link" size="sm" class="text-danger p-0">
-                                <i class="ri-close-line"></i>
-                            </b-button>
                         </div>
                     </div>
                 </div>
@@ -305,8 +317,67 @@ export default {
             }
         },
 
+        addConforme() {
+            this.form.conformes.push({ name: null, position: null });
+        },
 
-       
+        removeConforme(index) {
+            if (this.form.conformes.length > 1) {
+                this.form.conformes.splice(index, 1);
+            }
+        },
+
+        handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                this.uploadedFiles.push(file);
+            });
+            // Clear the input
+            this.$refs.fileInput.value = '';
+        },
+
+        removeFile(index) {
+            this.uploadedFiles.splice(index, 1);
+        },
+
+        viewFile(file) {
+            if (file instanceof File) {
+                // For newly uploaded files, create a temporary URL
+                const url = URL.createObjectURL(file);
+                window.open(url, '_blank');
+            } else if (file.path) {
+                // For existing files, construct the full URL
+                const url = `${this.currentUrl}/storage/${file.path}`;
+                window.open(url, '_blank');
+            }
+        },
+
+        getFileIcon(file) {
+            if (!file) return 'ri-file-line';
+
+            const fileName = file.name || file.path || '';
+            if (!fileName) return 'ri-file-line';
+
+            const extension = fileName.split('.').pop().toLowerCase();
+
+            switch (extension) {
+                case 'pdf':
+                    return 'ri-file-pdf-line';
+                case 'doc':
+                case 'docx':
+                    return 'ri-file-word-line';
+                case 'xls':
+                case 'xlsx':
+                    return 'ri-file-excel-line';
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                    return 'ri-image-line';
+                default:
+                    return 'ri-file-line';
+            }
+        }
     }
 }
 </script>

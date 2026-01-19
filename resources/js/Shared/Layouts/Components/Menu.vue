@@ -21,7 +21,7 @@
                 <i class="ri-more-fill" aria-expanded="false"></i>
                 <span data-key="t-menu">Procurement</span>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Administrator')">
                 <Link href="/faims/procurement-dashboard" class="nav-link menu-link"
                 :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/Dashboard') }">
                 <i class="ri-apps-fill"></i>
@@ -35,7 +35,7 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Request</span>
                 </Link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Administrator')">
                 <Link href="/faims/procurement-codes" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
                     <i class="ri-code-box-line"></i>
@@ -45,21 +45,21 @@
 
    
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Administrator')">
                 <Link href="/faims/suppliers" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/Suppliers') }">
                     <i class="ri-truck-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Suppliers</span>
                 </Link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Administrator')">
                 <Link href="/faims/bac-resolutions" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/BACResolution') }">
                     <i class="ri-government-line"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">BAC Resolutions</span>
                 </Link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Administrator')">
                 <Link href="/faims/notice-of-awards" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/FAIMS/Procurement/NOA') }">
                     <i class="ri-file-text-line"></i>
@@ -67,7 +67,7 @@
                 </Link>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Administrator')">
                 <Link href="/faims/purchase-orders" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/HumanResource/Employees') }">
                     <i class="ri-file-paper-2-line"></i>

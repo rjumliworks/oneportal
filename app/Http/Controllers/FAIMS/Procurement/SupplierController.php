@@ -54,8 +54,10 @@ class SupplierController extends Controller
     
     public function update(Request $request) {
         $result = $this->handleTransaction(function () use ($request) {
-            return $this->supplier->save($request);
+            return $this->supplier->update($request);
         });
+
+        return $result;
 
         return back()->with([
             'data' => $result['data'],
@@ -63,7 +65,20 @@ class SupplierController extends Controller
             'info' => $result['info'],
             'status' => $result['status'],
         ]);
-        
+
+    }
+
+    public function status(Request $request, $id) {
+        $result = $this->handleTransaction(function () use ($request, $id) {
+            return $this->supplier->status($request, $id);
+        });
+
+        return response()->json([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
     
 

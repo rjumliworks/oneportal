@@ -20,8 +20,10 @@ class SupplierResource extends JsonResource
             'id' => $this->id,
             'name'  => $this->name,
             'code'  => $this->code,
+            'is_active' => $this->is_active,
+            'created_at' => $this->created_at,
             'conformes'  => $this->conformes,
-            'address'  => $this->address,
+            'address'  => $this->address ? $this->address->address : null,
             'attachments'  => $this->attachments,
         ];
     }

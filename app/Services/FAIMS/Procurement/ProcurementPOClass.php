@@ -66,7 +66,7 @@ class ProcurementPOClass
             'place_of_delivery_id' => $request->place_of_delivery_id,
             'date_of_delivery' => $request->date_of_delivery,
             'created_by_id' => $user->id,
-            'status_id' => 36, // set to "pending"
+            'status_id' => 36, // set to "PO Issued"
         ]);
 
 

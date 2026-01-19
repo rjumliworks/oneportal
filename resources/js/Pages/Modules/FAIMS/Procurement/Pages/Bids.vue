@@ -17,10 +17,10 @@
           <b-dropdown-item
             @click="openBACReso(procurement)"
             v-if="
-              procurement.status?.name == 'For BAC Resolution' ||
-              (this.procurement.status.name === 'Rebid' &&
-                this.procurement.sub_status?.name === 'For BAC Resolution' &&
-                $page.props.roles.includes('Procurement Officer')) ||
+              (this.procurement.status?.name == 'For BAC Resolution' ||
+              (this.procurement.status?.name === 'Rebid' &&
+                this.procurement.sub_status?.name === 'For BAC Resolution')) &&
+                $page.props.roles.includes('Procurement Officer') ||
               $page.props.roles.includes('Procurement Staff')
             "
           >

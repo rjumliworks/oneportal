@@ -64,11 +64,11 @@ tin<template>
 								@change="fetchDashboard"
 							/>
 						</BCol>
-						<BCol md="3">
+						<!-- <BCol md="3">
 							<b-button variant="primary" @click="fetchDashboard">
 								<i class="ri-refresh-line me-1"></i> Apply Filters
 							</b-button>
-						</BCol>
+						</BCol> -->
 					</BRow>
 				</BCardBody>
 			</BCard>
@@ -107,9 +107,29 @@ tin<template>
 							</div>
 						</div>
 						<div class="flex-grow-1 overflow-hidden ms-3">
-							<p class="text-uppercase fw-medium text-muted text-truncate mb-0">Pending Approvals</p>
+							<p class="text-uppercase fw-medium text-muted text-truncate mb-0">For Reviews</p>
 							<h4 class="fs-22 fw-semibold mb-0">
-								<span class="counter-value" data-target="{{ dashboard.pending_approvals }}">{{ dashboard.pending_approvals }}</span>
+								<span class="counter-value" data-target="{{ dashboard.for_reviews }}">{{ dashboard.for_reviews }}</span>
+							</h4>
+						</div>
+					</div>
+				</BCardBody>
+			</BCard>
+		</BCol>
+
+    	<BCol xl="3" md="6">
+			<BCard class="card-animate">
+				<BCardBody>
+					<div class="d-flex align-items-center">
+						<div class="avatar-sm flex-shrink-0">
+							<div class="avatar-title bg-warning-subtle text-warning rounded-2 fs-2">
+								<i class="ri-time-line"></i>
+							</div>
+						</div>
+						<div class="flex-grow-1 overflow-hidden ms-3">
+							<p class="text-uppercase fw-medium text-muted text-truncate mb-0">For Approval</p>
+							<h4 class="fs-22 fw-semibold mb-0">
+								<span class="counter-value" data-target="{{ dashboard.for_approvals }}">{{ dashboard.for_approvals }}</span>
 							</h4>
 						</div>
 					</div>
@@ -137,7 +157,12 @@ tin<template>
 			</BCard>
 		</BCol>
 
-		<BCol xl="3" md="6">
+		
+	</BRow>
+
+	<!-- Additional Metrics Cards -->
+	<BRow class="mb-4">
+    <BCol xl="3" md="6">
 			<BCard class="card-animate">
 				<BCardBody>
 					<div class="d-flex align-items-center">
@@ -156,10 +181,7 @@ tin<template>
 				</BCardBody>
 			</BCard>
 		</BCol>
-	</BRow>
 
-	<!-- Additional Metrics Cards -->
-	<BRow class="mb-4">
 		<BCol xl="3" md="6">
 			<BCard class="card-animate">
 				<BCardBody>
@@ -285,7 +307,8 @@ export default {
     return {
       dashboard: {
         total_procurements: 0,
-        pending_approvals: 0,
+        for_reviews: 0,
+        for_approvals: 0,
         completed_procurements: 0,
         total_quotations: 0,
         total_bac_resolutions: 0,

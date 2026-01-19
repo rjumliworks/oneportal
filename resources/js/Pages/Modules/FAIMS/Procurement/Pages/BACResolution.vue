@@ -85,6 +85,7 @@
                     <i class="ri-printer-fill align-bottom me-1"></i>Print
                   </li>
                   <li
+                    v-if="list.status?.name == 'Pending' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff') )"
                     @click="editBACReso(list)"
                     class="dropdown-item d-flex align-items-center"
                     role="button"
@@ -92,7 +93,7 @@
                     <i class="ri-edit-2-fill align-bottom me-1"></i>Edit
                   </li>
                   <li
-                    v-if="list.status.name == 'Pending'"
+                    v-if="list.status.name == 'Pending' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff') )"
                     @click="updateStatus(list)"
                     class="dropdown-item d-flex align-items-center"
                     role="button"

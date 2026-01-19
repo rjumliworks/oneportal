@@ -449,6 +449,9 @@ export default {
         { name: 'For NOA', isCurrent: currentStatus === 'For NOA' },
         { name: 'NOA Served to Supplier', isCurrent: currentStatus === 'NOA Served to Supplier' },
         { name: 'NOA Conformed', isCurrent: currentStatus === 'NOA Conformed' },
+        { name: 'PO Issued', isCurrent: currentStatus === 'PO Issued' },
+        { name: 'PO Conformed', isCurrent: currentStatus === 'PO Conformed' },
+        { name: 'Delivered/For Inspection', isCurrent: currentStatus === 'Delivered/For Inspection' },
         { name: 'Completed', isCurrent: currentStatus === 'Completed' },
       ];
 

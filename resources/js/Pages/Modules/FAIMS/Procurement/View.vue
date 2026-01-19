@@ -348,7 +348,7 @@ import AbstractOfBids from "./Pages/Bids.vue";
 import NoticeOfAward from "./Pages/NoticeOfAward.vue";
 import PurchaseOrder from "./Pages/PurchaseOrder.vue";
 import CreatePO from "./Pages/CreatePO.vue";
-import RightSidebar from "./Pages/RightSidebar.vue";
+import RightSidebar from "./Pages/Components/RightSidebar.vue";
 import { router } from "@inertiajs/vue3";
 
 import PageHeader from "@/Shared/Components/PageHeader.vue";

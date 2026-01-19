@@ -87,7 +87,7 @@
                     <th style="width: 10%">Date Created</th>
                     <th style="width: 10%">Status</th>
                     <th style="width: 10%">Sub-status</th>
-                    <th style="width: 6%" class="text-center">Actions</th>
+                    <th style="width: 10%" class="text-center">Actions</th>
                   </tr>
                 </thead>
 
@@ -137,8 +137,73 @@
                       </b-badge>
                       <span v-else class="text-muted">-</span>
                     </td>
-                    <td class="text-center">
-                      <div class="dropdown" @click.stop>
+                    <td >
+                        <div class="d-flex justify-content-center gap-1">
+                        <b-button
+                          @click="goViewPage(list)"
+                          size="sm"
+                          variant="outline-info"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="View"
+                          style="border-radius: 8px;"
+                        >
+                          <i class="ri-eye-line"></i>
+                        </b-button>
+
+                        <b-button
+                          v-if="list.status.name == 'Pending' && $page.props.roles.includes('Procurement Officer')"
+                          @click="goReviewPage(list)"
+                          size="sm"
+                          variant="outline-success"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="Review"
+                          style="border-radius: 8px;"
+                        >
+                          <i class="ri-check-double-line"></i>
+                        </b-button>
+
+                        <b-button
+                          v-if="list.status.name == 'Reviewed' && $page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff')"
+                          @click="goApprovePage(list)"
+                          size="sm"
+                          variant="outline-success"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="Approve"
+                          style="border-radius: 8px;"
+                        >
+                          <i class="ri-check-line"></i>
+                        </b-button>
+
+                         <b-button
+                          v-if="list.status.name == 'Pending'"
+                          @click="goEditPage(list)"
+                          size="sm"
+                          variant="outline-primary"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="Edit"
+                          style="border-radius: 8px;"
+                        >
+                          <i class="ri-edit-line "></i>
+                        </b-button>
+
+                         <b-button
+                          @click="openPrint(list)"
+                          size="sm"
+                          variant="outline-dark"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="Print"
+                          style="border-radius: 8px;"
+                        >
+                          <i class="ri-printer-line"></i>
+                        </b-button>
+
+                        </div>
+                      <!-- <div class="dropdown" @click.stop>
                         <button
                           class="btn btn-ghost-primary btn-icon btn-sm"
                           type="button"
@@ -150,7 +215,7 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                           <li>
                             <a @click="goViewPage(list)" class="dropdown-item" role="button">
-                              <i class="ri-eye-line align-bottom me-2"></i>View Details
+                              <i class="ri-eye-line align-bottom me-2"></i>View
                             </a>
                           </li>
                           <li v-if="list.status.name == 'Pending'">
@@ -175,7 +240,7 @@
                             </a>
                           </li>
                         </ul>
-                      </div>
+                      </div> -->
                     </td>
                   </tr>
                 </tbody>

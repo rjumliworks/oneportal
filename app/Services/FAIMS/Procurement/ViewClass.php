@@ -173,8 +173,12 @@ class ViewClass
             ->get();
 
         // Key metrics
-        $pending_approvals = (clone $query)->whereHas('status', function ($query) {
+        $for_reviews = (clone $query)->whereHas('status', function ($query) {
             $query->where('name', 'Pending');
+        })->count();
+
+        $for_approvals = (clone $query)->whereHas('status', function ($query) {
+            $query->where('name', 'Reviewed');
         })->count();
 
         $completed_procurements = (clone $query)->whereHas('status', function ($query) {
@@ -191,7 +195,8 @@ class ViewClass
             'status_distribution' => $status_distribution,
             'monthly_trends' => $monthly_trends,
             'recent_procurements' => $recent_procurements,
-            'pending_approvals' => $pending_approvals,
+            'for_reviews' => $for_reviews,
+            'for_approvals' => $for_approvals,
             'completed_procurements' => $completed_procurements,
             'total_quotations' => $total_quotations,
             'total_bac_resolutions' => $total_bac_resolutions,

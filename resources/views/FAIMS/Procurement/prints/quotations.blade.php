@@ -410,7 +410,10 @@
       <div class="footer">
          {{ $procurement->code}}
       </div>
-  </div> 
+
+  </div>
+
+<div class="text-right" style="font-size: 9px; margin-top: 5px;">Page 1 of 1</div>
 
 </body>
 </html>
