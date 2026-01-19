@@ -1,13 +1,14 @@
 <template>
   <div
     :class="['transition-all', isRightCollapsed ? 'col-md-1' : 'col-md-3']"
-    style="transition: all 0.3s ease"
+    style="transition: all 0.3s ease; height: 100%"
   >
     <div
       class="card h-90 mb-3 shadow-lg border-0"
       style="
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: 15px;
+        height: 100vh;
       "
     >
       <div

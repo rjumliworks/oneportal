@@ -89,7 +89,7 @@ tin<template>
 						<div class="flex-grow-1 overflow-hidden ms-3">
 							<p class="text-uppercase fw-medium text-muted text-truncate mb-0">Total Procurements</p>
 							<h4 class="fs-22 fw-semibold mb-0">
-								<span class="counter-value">{{ dashboard.total_procurements }}</span>
+								<span class="counter-value" :data-target="dashboard.total_procurements">{{ dashboard.total_procurements }}</span>
 							</h4>
 						</div>
 					</div>

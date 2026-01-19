@@ -16,307 +16,319 @@
     pageTitle="PR"
   />
   <PageHeader v-if="option == 'view'" title="View Procurement Request" pageTitle="PR" />
-  <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
-    <div
-      class="file-manager-content w-100 p-4 pb-0"
-      style="height: calc(100vh - 180px); overflow: auto"
-      ref="box"
-    >
-      <!-- <Lists :dropdowns="dropdowns"/>         -->
-      <form class="customform">
-        <BRow>
-          <BCol lg="6" class="mt-2">
-            <div>
-              <b-card class="bg-light">
-                <BRow>
-                  <BCol lg="6" class="mt-2">
-                    <InputLabel
-                      for="division"
-                      value="Division"
-                      :message="form.errors.division_id"
-                    />
-                    <Multiselect
-                      :options="dropdowns.divisions"
-                      v-model="form.division_id"
-                      :searchable="true"
-                      label="name"
-                      placeholder="Select Division"
-                    />
-                  </BCol>
+  <div class="row d-flex" >
+  <div  :class="[
+        'transition-all',
+        isRightCollapsed ? 'col-md-11' : 'col-md-9',
+        
+      ]"
+      style="transition: all 0.3s ease; height: 100%; overflow: hidden" >
+    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
+      <div
+        class="file-manager-content w-100 p-4 pb-0"
+        style="height: 100vh; overflow: auto"
+        ref="box"
+      >
+        <!-- <Lists :dropdowns="dropdowns"/>         -->
+        <form class="customform">
+          <BRow>
+            <BCol lg="6" class="mt-2">
+              <div>
+                <b-card class="bg-light">
+                  <BRow>
+                    <BCol lg="6" class="mt-2">
+                      <InputLabel
+                        for="division"
+                        value="Division"
+                        :message="form.errors.division_id"
+                      />
+                      <Multiselect
+                        :options="dropdowns.divisions"
+                        v-model="form.division_id"
+                        :searchable="true"
+                        label="name"
+                        placeholder="Select Division"
+                      />
+                    </BCol>
 
-                  <BCol lg="6" class="mt-2">
-                    <InputLabel value="PR Date" :message="form.errors.date" />
-                    <TextInput
-                      v-model="form.date"
-                      type="text"
-                      class="form-control"
-                      :light="true"
-                      readonly
-                    />
-                  </BCol>
-                  <BCol lg="6" class="mt-2">
-                    <InputLabel for="unit" value="Unit" :message="form.errors.unit_id" />
-                    <Multiselect
-                      :options="units"
-                      v-model="form.unit_id"
-                      :searchable="true"
-                      label="name"
-                      placeholder="Select Unit"
-                    />
-                  </BCol>
+                    <BCol lg="6" class="mt-2">
+                      <InputLabel value="PR Date" :message="form.errors.date" />
+                      <TextInput
+                        v-model="form.date"
+                        type="text"
+                        class="form-control"
+                        :light="true"
+                        readonly
+                      />
+                    </BCol>
+                    <BCol lg="6" class="mt-2">
+                      <InputLabel for="unit" value="Unit" :message="form.errors.unit_id" />
+                      <Multiselect
+                        :options="units"
+                        v-model="form.unit_id"
+                        :searchable="true"
+                        label="name"
+                        placeholder="Select Unit"
+                      />
+                    </BCol>
 
-                  <BCol lg="6" class="mt-2">
-                    <InputLabel
-                      for="fund_cluster"
-                      value="Fund Cluster"
-                      :message="form.errors.fund_cluster_id"
-                    />
-                    <Multiselect
-                      :options="dropdowns.fund_clusters"
-                      v-model="form.fund_cluster_id"
-                      :searchable="true"
-                      label="name"
-                      placeholder="Select Fund Cluster"
-                    />
-                  </BCol>
+                    <BCol lg="6" class="mt-2">
+                      <InputLabel
+                        for="fund_cluster"
+                        value="Fund Cluster"
+                        :message="form.errors.fund_cluster_id"
+                      />
+                      <Multiselect
+                        :options="dropdowns.fund_clusters"
+                        v-model="form.fund_cluster_id"
+                        :searchable="true"
+                        label="name"
+                        placeholder="Select Fund Cluster"
+                      />
+                    </BCol>
 
-                  <BCol lg="12" class="mt-2">
-                    <InputLabel
-                      value="PAP Code"
-                      :message="form.errors.procurement_code_ids"
-                    />
-                    <Multiselect
-                      :options="dropdowns.procurement_codes"
-                      v-model="form.procurement_code_ids"
-                      :searchable="true"
-                      label="code"
-                      placeholder="Select PAP CODE"
-                      mode="tags"
-                    />
-                  </BCol>
-                </BRow>
-              </b-card>
-            </div>
-          </BCol>
-          <BCol lg="6" class="mt-2">
-            <div>
-              <b-card class="bg-light">
-                <BRow>
-                  <BCol lg="12" class="mt-2">
-                    <InputLabel
-                      for="purpose"
-                      value="Request Purpose"
-                      :message="form.errors.purpose"
-                    />
-                    <b-form-textarea
-                      id="textarea"
-                      v-model="form.purpose"
-                      placeholder="Enter your request purpose"
-                      rows="4"
-                      max-rows="10"
-                    ></b-form-textarea>
-                  </BCol>
+                    <BCol lg="12" class="mt-2">
+                      <InputLabel
+                        value="PAP Code"
+                        :message="form.errors.procurement_code_ids"
+                      />
+                      <Multiselect
+                        :options="dropdowns.procurement_codes"
+                        v-model="form.procurement_code_ids"
+                        :searchable="true"
+                        label="code"
+                        placeholder="Select PAP CODE"
+                        mode="tags"
+                      />
+                    </BCol>
+                  </BRow>
+                </b-card>
+              </div>
+            </BCol>
+            <BCol lg="6" class="mt-2">
+              <div>
+                <b-card class="bg-light">
+                  <BRow>
+                    <BCol lg="12" class="mt-2">
+                      <InputLabel
+                        for="purpose"
+                        value="Request Purpose"
+                        :message="form.errors.purpose"
+                      />
+                      <b-form-textarea
+                        id="textarea"
+                        v-model="form.purpose"
+                        placeholder="Enter your request purpose"
+                        rows="4"
+                        max-rows="10"
+                      ></b-form-textarea>
+                    </BCol>
 
-                  <BCol
-                    lg="12"
-                    class="mt-2"
-                    v-if="option == 'review' || option == 'approve'"
-                  >
-                    <InputLabel
-                      for="title"
-                      value="Request Title"
-                      :message="form.errors.title"
-                    />
-                    <b-form-textarea
-                      id="textarea"
-                      v-model="form.title"
-                      placeholder="Enter your request purpose"
-                      rows="2"
-                      max-rows="10"
-                    ></b-form-textarea>
-                  </BCol>
-                </BRow>
-              </b-card>
-            </div>
-          </BCol>
-        </BRow>
-        <BRow>
-          <BCol lg="3" class="mt-2 mb-2">
-            <b-button
-              v-if="option == 'create' || option == 'edit'"
-              :disabled="
-                !form.division_id ||
-                !form.unit_id ||
-                !form.fund_cluster_id ||
-                !form.purpose
-              "
-              @click="openAddItem()"
-              variant="light"
-              block
-              class="bg-success w-75 text-white"
-              >Add Item</b-button
-            >
-          </BCol>
-
-          <div>
-            <table class="table  mb-0">
-              <thead class="table-light">
-                <tr class="fs-11">
-                  <th>Item No.</th>
-                  <th>Unit</th>
-                  <th>Item Description</th>
-                  <th>Quantity</th>
-                  <th>Unit Cost</th>
-                  <th>Total Cost</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in form.items" :key="index">
-                  <td>{{ index + 1 }}</td>
-                  <td>
-                    <span>
-                      {{
-                        item.item_quantity > 1
-                          ? item.item_unit_type?.[0]?.name_long ||
-                            item.item_unit_type?.name_long ||
-                            ""
-                          : item.item_unit_type?.[0]?.name_short ||
-                            item.item_unit_type?.name_short ||
-                            ""
-                      }}
-                    </span>
-                  </td>
-                  <td>
-                    <div v-html="item.item_description"></div>
-                  </td>
-                  <td>{{ item.item_quantity }}</td>
-                  <td>{{ formatCurrency(item.item_unit_cost) }}</td>
-                  <td>{{ formatCurrency(item.total_cost) }}</td>
-
-                  <td>
-                    <b-button
-                      @click="editItem(index)"
-                      variant="success"
-                      size="sm"
-                      class="me-2 mb-2"
+                    <BCol
+                      lg="12"
+                      class="mt-2"
+                      v-if="option == 'review' || option == 'approve'"
                     >
-                      <i class="ri-edit-2-line"></i>
-                    </b-button>
+                      <InputLabel
+                        for="title"
+                        value="Request Title"
+                        :message="form.errors.title"
+                      />
+                      <b-form-textarea
+                        id="textarea"
+                        v-model="form.title"
+                        placeholder="Enter your request purpose"
+                        rows="2"
+                        max-rows="10"
+                      ></b-form-textarea>
+                    </BCol>
+                  </BRow>
+                </b-card>
+              </div>
+            </BCol>
+          </BRow>
+          <BRow>
+            <BCol lg="3" class="mt-2 mb-2">
+              <b-button
+                v-if="option == 'create' || option == 'edit'"
+                :disabled="
+                  !form.division_id ||
+                  !form.unit_id ||
+                  !form.fund_cluster_id ||
+                  !form.purpose
+                "
+                @click="openAddItem()"
+                variant="light"
+                block
+                class="bg-success w-75 text-white"
+                >Add Item</b-button
+              >
+            </BCol>
 
-                    <b-button  class="me-2 mb-2"  @click="removeItem(index)" variant="danger" size="sm">
-                      <i class="ri-delete-bin-line"></i>
-                    </b-button>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="5" class="text-end"><strong>Total:</strong></td>
-                  <td>
-                    <strong>{{ formatCurrency(totalCostSum) }}</strong>
-                  </td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <BCol lg="12" class="mt-5">
             <div>
-              <b-card title="ASSIGNATOREES" class="bg-light">
-                <BRow>
-                  <BCol lg="6" class="mt-2">
-                    <InputLabel
-                      for="requested_by"
-                      value="Requested By"
-                      :message="form.errors.requested_by_id"
-                    />
-                    <Multiselect
-                      :options="dropdowns.requesters"
-                      v-model="form.requested_by_id"
-                      :searchable="true"
-                      label="name"
-                      placeholder="Select Requester"
-                    />
-                  </BCol>
-                  <BCol lg="6" class="mt-2">
-                    <InputLabel
-                      for="approved_by"
-                      value="Approved By"
-                      :message="form.errors.approved_by_id"
-                    />
-                    <Multiselect
-                      :options="dropdowns.approvers"
-                      v-model="form.approved_by_id"
-                      :searchable="true"
-                      label="name"
-                      placeholder="Select Approver"
-                    />
-                  </BCol>
-                </BRow>
-              </b-card>
+              <table class="table  mb-0">
+                <thead class="table-light">
+                  <tr class="fs-11">
+                    <th>Item No.</th>
+                    <th>Unit</th>
+                    <th>Item Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Cost</th>
+                    <th>Total Cost</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in form.items" :key="index">
+                    <td>{{ index + 1 }}</td>
+                    <td>
+                      <span>
+                        {{
+                          item.item_quantity > 1
+                            ? item.item_unit_type?.[0]?.name_long ||
+                              item.item_unit_type?.name_long ||
+                              ""
+                            : item.item_unit_type?.[0]?.name_short ||
+                              item.item_unit_type?.name_short ||
+                              ""
+                        }}
+                      </span>
+                    </td>
+                    <td>
+                      <div v-html="item.item_description "></div>
+                    </td>
+                    <td>{{ item.item_quantity }}</td>
+                    <td>{{ formatCurrency(item.item_unit_cost) }}</td>
+                    <td>{{ formatCurrency(item.total_cost) }}</td>
+
+                    <td>
+                      <b-button
+                        @click="editItem(index)"
+                        variant="success"
+                        size="sm"
+                        class="me-2 mb-2"
+                      >
+                        <i class="ri-edit-2-line"></i>
+                      </b-button>
+
+                      <b-button  class="me-2 mb-2"  @click="removeItem(index)" variant="danger" size="sm">
+                        <i class="ri-delete-bin-line"></i>
+                      </b-button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="5" class="text-end"><strong>Total:</strong></td>
+                    <td>
+                      <strong>{{ formatCurrency(totalCostSum) }}</strong>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </BCol>
 
-          <BCol lg="3" class="mt-2 mb-2" v-if="option == 'create'">
-            <b-button
-              :disabled="
-                !form.division_id ||
-                !form.unit_id ||
-                !form.fund_cluster_id ||
-                !form.purpose ||
-                !form.requested_by_id ||
-                !form.approved_by_id ||
-                !form.items.length > 0
-              "
-              @click="submit('ok')"
-              variant="light"
-              block
-              class="bg-success w-75 text-white"
-              >Save</b-button
-            >
-          </BCol>
+            <BCol lg="12" class="mt-5">
+              <div>
+                <b-card title="ASSIGNATOREES" class="bg-light">
+                  <BRow>
+                    <BCol lg="6" class="mt-2">
+                      <InputLabel
+                        for="requested_by"
+                        value="Requested By"
+                        :message="form.errors.requested_by_id"
+                      />
+                      <Multiselect
+                        :options="dropdowns.requesters"
+                        v-model="form.requested_by_id"
+                        :searchable="true"
+                        label="name"
+                        placeholder="Select Requester"
+                      />
+                    </BCol>
+                    <BCol lg="6" class="mt-2">
+                      <InputLabel
+                        for="approved_by"
+                        value="Approved By"
+                        :message="form.errors.approved_by_id"
+                      />
+                      <Multiselect
+                        :options="dropdowns.approvers"
+                        v-model="form.approved_by_id"
+                        :searchable="true"
+                        label="name"
+                        placeholder="Select Approver"
+                      />
+                    </BCol>
+                  </BRow>
+                </b-card>
+              </div>
+            </BCol>
 
-          <BCol lg="3" class="mt-2 mb-2" v-if="option == 'edit'">
-            <b-button
-              @click="update(form)"
-              variant="light"
-              block
-              class="bg-success w-75 text-white"
-              >Update</b-button
-            >
-          </BCol>
+            <BCol lg="3" class="mt-2 mb-2" v-if="option == 'create'">
+              <b-button
+                :disabled="
+                  !form.division_id ||
+                  !form.unit_id ||
+                  !form.fund_cluster_id ||
+                  !form.purpose ||
+                  !form.requested_by_id ||
+                  !form.approved_by_id ||
+                  !form.items.length > 0
+                "
+                @click="submit('ok')"
+                variant="light"
+                block
+                class="bg-success w-75 text-white"
+                >Save</b-button
+              >
+            </BCol>
 
-          <BCol lg="3" class="mt-2 mb-2" v-if="option == 'review'">
-            <b-button
-              @click="review(form)"
-              variant="light"
-              block
-              class="bg-success w-75 text-white"
-              >Confirm</b-button
-            >
-          </BCol>
+            <BCol lg="3" class="mt-2 mb-2" v-if="option == 'edit'">
+              <b-button
+                @click="update(form)"
+                variant="light"
+                block
+                class="bg-success w-75 text-white"
+                >Update</b-button
+              >
+            </BCol>
 
-          <BCol lg="3" class="mt-2 mb-2" v-if="option == 'approve'">
-            <b-button
-              @click="approve(form)"
-              variant="light"
-              block
-              class="bg-success w-75 text-white"
-              >Approve</b-button
-            >
-          </BCol>
-          <BCol lg="3" class="mt-2 mb-2">
-            <b-button
-              @click="goBackPage()"
-              style="background-color: grey"
-              block
-              class="w-75 text-white"
-              >Back</b-button
-            >
-          </BCol>
-        </BRow>
-      </form>
+            <BCol lg="3" class="mt-2 mb-2" v-if="option == 'review'">
+              <b-button
+                @click="review(form)"
+                variant="light"
+                block
+                class="bg-success w-75 text-white"
+                >Confirm</b-button
+              >
+            </BCol>
+
+            <BCol lg="3" class="mt-2 mb-2" v-if="option == 'approve'">
+              <b-button
+                @click="approve(form)"
+                variant="light"
+                block
+                class="bg-success w-75 text-white"
+                >Approve</b-button
+              >
+            </BCol>
+            <BCol lg="3" class="mt-2 mb-2">
+              <b-button
+                @click="goBackPage()"
+                style="background-color: grey"
+                block
+                class="w-75 text-white"
+                >Back</b-button
+              >
+            </BCol>
+          </BRow>
+        </form>
+      </div>
+
+    
     </div>
+  </div>
+  <RightSidebar v-if="option != 'create'" :procurement="procurement" :logs="logs" :isRightCollapsed="isRightCollapsed" @toggleRightSidebar="toggleRightSidebar" />
   </div>
 
   <Item :dropdowns="dropdowns" @refresh="getDataFromLocalStorage()" ref="item" />
@@ -330,9 +342,10 @@ import InputError from "@/Shared/Components/Forms/InputError.vue";
 import InputLabel from "@/Shared/Components/Forms/InputLabel.vue";
 import TextInput from "@/Shared/Components/Forms/TextInput.vue";
 import { router } from "@inertiajs/vue3";
+import RightSidebar from "./Pages/Components/RightSidebar.vue";
 
 export default {
-  components: { PageHeader, InputError, InputLabel, TextInput, Multiselect, Item },
+  components: { PageHeader, InputError, InputLabel, TextInput, Multiselect, Item, RightSidebar },
   props: ["procurement", "dropdowns", "option", "regional_director"],
   data() {
     return {
@@ -355,6 +368,8 @@ export default {
       action: null,
       showModal: false,
       units: [],
+      isRightCollapsed: true,
+      isCollapsed: false,
     };
   },
 
@@ -414,9 +429,22 @@ export default {
     // Load from localStorage on component mount
     this.getDataFromLocalStorage();
     this.action = this.option;
+    try {
+      this.isRightCollapsed = JSON.parse(localStorage.getItem("isRightCollapsed")) ?? true;
+    } catch (e) {
+      this.isRightCollapsed = true;
+      localStorage.setItem("isRightCollapsed", JSON.stringify(true));
+    }
   },
+  
 
   methods: {
+
+    toggleRightSidebar() {
+      this.isRightCollapsed = !this.isRightCollapsed;
+      localStorage.setItem("isRightCollapsed", this.isRightCollapsed);
+    },
+
     openAddItem() {
       this.$refs.item.show();
     },
@@ -483,7 +511,13 @@ export default {
 
     getDataFromLocalStorage() {
       // Get existing items from localStorage
-      const storedItems = JSON.parse(localStorage.getItem("itemsAdded")) || [];
+      let storedItems = [];
+      try {
+        storedItems = JSON.parse(localStorage.getItem("itemsAdded")) || [];
+      } catch (e) {
+        storedItems = [];
+        localStorage.setItem("itemsAdded", JSON.stringify([]));
+      }
 
       // If form.items is not set yet, initialize it
       if (!Array.isArray(this.form.items)) {

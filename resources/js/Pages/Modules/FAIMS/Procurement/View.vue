@@ -285,20 +285,7 @@
         >
           <div class="p-3">
             <div v-if="activeTab === 1">
-              <BCard>
-                <BCardHeader class="d-flex justify-content-between align-items-center">
-                  <h4 class="card-title mb-0">Procurement Overview</h4>
-                  <button
-                    @click="toggleOverview"
-                    class="btn btn-sm btn-outline-primary"
-                  >
-                    <i :class="showOverview ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
-                  </button>
-                </BCardHeader>
-                <BCardBody v-if="showOverview">
-                  <Overview :procurement="procurement" />
-                </BCardBody>
-              </BCard>
+               <Overview :procurement="procurement" />
             </div>
             <Quotation
               :dropdowns="dropdowns"
