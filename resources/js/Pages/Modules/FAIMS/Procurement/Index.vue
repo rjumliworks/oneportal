@@ -82,6 +82,7 @@
                     <th style="width: 12%">Code</th>
                     <th style="width: 18%">Purpose</th>
                     <th style="width: 12%">Division</th>
+                    <th style="width: 12%">Created By</th>
                     <th style="width: 12%">Requested By</th>
                     <th style="width: 10%">PAP Code</th>
                     <th style="width: 10%">Date Created</th>
@@ -115,6 +116,7 @@
                       </div>
                     </td>
                     <td>{{ list.division?.name }}</td>
+                    <td>{{ list.created_by }}</td>
                     <td>{{ list.requested_by }}</td>
                     <td>
                       <div class="d-flex flex-wrap gap-1">

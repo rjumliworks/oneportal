@@ -19,8 +19,8 @@
   <div class="row d-flex" >
   <div  :class="[
         'transition-all',
-        isRightCollapsed ? 'col-md-11' : 'col-md-9',
-        
+        option == 'create' ? 'col-md-12' : (isRightCollapsed ? 'col-md-11' : 'col-md-9'),
+
       ]"
       style="transition: all 0.3s ease; height: 100%; overflow: hidden" >
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
@@ -368,7 +368,7 @@ export default {
       action: null,
       showModal: false,
       units: [],
-      isRightCollapsed: true,
+      isRightCollapsed: false,
       isCollapsed: false,
     };
   },

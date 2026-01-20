@@ -36,6 +36,9 @@ class ViewClass
             ->when($request->status, function ($query, $status) {
                 $query->where('status_id', $status);
             })
+            ->when(auth()->user()->roles()->count() == 1 && auth()->user()->hasRole('Employee'), function ($query) {
+                $query->where('created_by_id', auth()->id());
+            })
             ->orderBy('created_at','DESC')
             ->paginate($request->count)
         );
