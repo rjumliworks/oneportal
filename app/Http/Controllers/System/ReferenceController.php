@@ -5,6 +5,7 @@ namespace App\Http\Controllers\System;
 use App\Traits\HandlesTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\ConformeRequest;
 use App\Services\DropdownClass;
 use App\Services\System\Reference\UnitClass;
 use App\Services\System\Reference\StatusClass;
@@ -26,7 +27,7 @@ class ReferenceController extends Controller
         SalaryClass $salary, 
         PositionClass $position, 
         DeductionClass $deduction, 
-        DropdownClass $dropdown
+        DropdownClass $dropdown,
         ){
         $this->unit = $unit;
         $this->leave = $leave;
@@ -35,6 +36,7 @@ class ReferenceController extends Controller
         $this->position = $position;
         $this->deduction = $deduction;
         $this->dropdown = $dropdown;
+
     }
 
     public function show($code){
@@ -70,10 +72,13 @@ class ReferenceController extends Controller
                     'lists' => $this->leave->lists()
                 ]);
             break;
+     
         }
     }
 
-    public function update(Request $request){
+
+
+    public function update(ConformeRequest $request){
         $result = $this->handleTransaction(function () use ($request) {
             switch($request->option){
                 case 'unit':
@@ -96,7 +101,7 @@ class ReferenceController extends Controller
                 break;
             }
         });
-        
+
         return back()->with([
             'data' => $result['data'],
             'message' => $result['message'],
@@ -104,4 +109,5 @@ class ReferenceController extends Controller
             'status' => $result['status'],
         ]);
     }
+
 }

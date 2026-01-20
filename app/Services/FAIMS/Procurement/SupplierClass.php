@@ -29,7 +29,7 @@ class SupplierClass
 
     public function save($request)
     {
-        //dd($request->all());
+
         $code = Supplier::generateCode();
         // Create the supplier with basic fields
         $supplier = Supplier::create([
@@ -41,10 +41,12 @@ class SupplierClass
 
         // dd($supplier);
 
-        // // Handle address
-        // if ($request->address) {
-        //     $supplier->address()->create(['address' => $request->address]);
-        // }
+        // Handle address
+        if ($request->address) {
+            $address = $supplier->address()->create(['address' => $request->address]);
+        }
+
+
 
         // Handle conformes
         if ($request->conformes && is_array($request->conformes)) {
@@ -53,26 +55,33 @@ class SupplierClass
                     $supplier->conformes()->create([
                         'name' => $conforme['name'],
                         'position' => $conforme['position'] ?? null,
+                        'contact_no' => $conforme['contact_no'] ?? null,
                     ]);
                 }
             }
         }
 
-      
+     
+        // Handle attachments
+        if ($request->hasFile('attachments')) {
+            $attachment_codes = $request->attachment_codes ?? [];
+            $attachment_types = $request->attachment_types ?? [];
 
-        // // Handle attachments
-        // if ($request->hasFile('attachments')) {
-        //     foreach ($request->file('attachments') as $file) {
-        //         $path = $file->store('supplier_attachments', 'public');
-        //         $supplier->attachments()->create([
-        //             'name' => $file->getClientOriginalName(),
-        //             'path' => $path,
-        //         ]);
-        //     }
-        // }
+            foreach ($request->file('attachments') as $index => $file) {
+                $path = $file->store('supplier_attachments', 'public');
+                if ($path) {
+                    $supplier->attachments()->create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'type_id' => $attachment_types[$index] ?? null,
+                        'code' => $attachment_codes[$index] ?? null,
+                    ]);
+                }
+            }
+        }
 
         return [
-            'data' => new SupplierResource($supplier->load(['address', 'conformes', 'attachments'])),
+            'data' => new SupplierResource($supplier),
             'message' => 'Supplier created successfully!',
             'info' => "You've successfully added new Supplier.",
         ];
@@ -80,6 +89,7 @@ class SupplierClass
 
     public function update($request)
     {
+
         // Find the existing Supplier by ID
         $supplier = Supplier::findOrFail($request->id);
 
@@ -90,42 +100,79 @@ class SupplierClass
             'is_active' => $request->is_active ?? $supplier->is_active,
         ]);
 
-        // // Handle address
-        // if ($request->address) {
-        //     $supplier->address()->updateOrCreate(
-        //         ['supplier_id' => $supplier->id],
-        //         ['address' => $request->address]
-        //     );
-        // }
+        // Handle address
+        if ($request->address) {
+            $supplier->address()->updateOrCreate(
+                ['supplier_id' => $supplier->id],
+                ['address' => $request->address]
+            );
+        }
 
-        // // Handle conformes - delete existing and create new ones
-        // if ($request->conformes && is_array($request->conformes)) {
-        //     $supplier->conformes()->delete(); // Delete existing conformes
-        //     foreach ($request->conformes as $conforme) {
-        //         if (!empty($conforme['name'])) {
-        //             $supplier->conformes()->create([
-        //                 'name' => $conforme['name'],
-        //                 'position' => $conforme['position'] ?? null,
-        //             ]);
-        //         }
-        //     }
-        // }
+        // Handle conformes - delete existing and create new ones
+        if ($request->conformes && is_array($request->conformes)) {
+            $supplier->conformes()->delete(); // Delete existing conformes
+            foreach ($request->conformes as $conforme) {
+                if (!empty($conforme['name'])) {
+                    $supplier->conformes()->create([
+                        'name' => $conforme['name'],
+                        'position' => $conforme['position'] ?? null,
+                        'contact_no' => $conforme['contact_no'] ?? null,
+                    ]);
+                }
+            }
+        }
 
-        // // Handle attachments - only add new files, don't delete existing
-        // if ($request->hasFile('attachments')) {
-        //     foreach ($request->file('attachments') as $file) {
-        //         $path = $file->store('supplier_attachments', 'public');
-        //         $supplier->attachments()->create([
-        //             'name' => $file->getClientOriginalName(),
-        //             'path' => $path,
-        //         ]);
-        //     }
-        // }
+        // Handle attachments
+        $existingAttachmentIds = $request->existing_attachments ?? [];
+        $attachmentCodes = $request->attachment_codes ?? [];
+        $attachmentTypes = $request->attachment_types ?? [];
+
+        // Delete attachments that are no longer present
+        $supplier->attachments()->whereNotIn('id', $existingAttachmentIds)->delete();
+
+        // Update existing attachments
+        foreach ($existingAttachmentIds as $index => $attachmentId) {
+            if (isset($attachmentCodes[$index]) || isset($attachmentTypes[$index])) {
+                $supplier->attachments()->where('id', $attachmentId)->update([
+                    'code' => $attachmentCodes[$index] ?? null,
+                    'type_id' => $attachmentTypes[$index] ?? null,
+                ]);
+            }
+        }
+
+        // Add new attachments
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $index => $file) {
+                $path = $file->store('supplier_attachments', 'public');
+                if ($path) {
+                    $supplier->attachments()->create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'type_id' => $attachmentTypes[$index] ?? null,
+                        'code' => $attachmentCodes[$index] ?? null,
+                    ]);
+                }
+            }
+        }
 
         return [
             'data' => new SupplierResource($supplier->load(['address', 'conformes', 'attachments'])),
             'message' => 'Supplier updated successfully!',
             'info' => "You've successfully updated the Supplier.",
+        ];
+    }
+
+    public function status($request, $id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        $supplier->update([
+            'is_active' => $request->is_active,
+        ]);
+
+        return [
+            'data' => new SupplierResource($supplier),
+            'message' => 'Supplier status updated successfully!',
+            'info' => "You've successfully " . ($request->is_active ? 'activated' : 'deactivated') . " the supplier.",
         ];
     }
 

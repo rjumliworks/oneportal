@@ -3,7 +3,7 @@
 
   <!-- Search and Filter Section -->
   <b-row class="g-3 mb-4">
-    <b-col lg="8">
+    <b-col lg="10">
       <div class="search-box">
         <div class="position-relative">
           <input
@@ -11,22 +11,24 @@
             v-model="filter.keyword"
             class="form-control form-control-lg"
             placeholder="Search suppliers by name, code, or address..."
-            style="border-radius: 10px; padding-left: 45px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"
+            style="
+              border-radius: 10px;
+              padding-left: 45px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            "
           />
-          <i class="ri-search-line search-icon fs-5" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #6c757d;"></i>
+          <i
+            class="ri-search-line search-icon fs-5"
+            style="
+              position: absolute;
+              left: 15px;
+              top: 50%;
+              transform: translateY(-50%);
+              color: #6c757d;
+            "
+          ></i>
         </div>
       </div>
-    </b-col>
-    <b-col lg="2">
-      <Multiselect
-        class="form-control-lg"
-        :options="[{name: 'Active', id: 1}, {name: 'Inactive', id: 0}]"
-        v-model="filter.status"
-        label="name"
-        :searchable="false"
-        placeholder="Status"
-        style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"
-      />
     </b-col>
     <b-col lg="2">
       <div class="d-flex gap-2">
@@ -36,7 +38,7 @@
           class="btn-icon"
           v-b-tooltip.hover
           title="Refresh"
-          style="border-radius: 10px;"
+          style="border-radius: 10px"
         >
           <i class="bx bx-refresh fs-5"></i>
         </b-button>
@@ -45,7 +47,7 @@
           variant="primary"
           @click="openSupplier()"
           class="flex-fill"
-          style="border-radius: 10px; box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);"
+          style="border-radius: 10px; box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3)"
         >
           <i class="ri-add-circle-fill align-bottom me-2"></i> New Supplier
         </b-button>
@@ -55,12 +57,12 @@
 
   <!-- Suppliers Table -->
   <div class="suppliers-table-container">
-    <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+    <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden">
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table table-hover mb-0">
             <thead class="table-light">
-              <tr style="border-bottom: 2px solid #e9ecef;">
+              <tr style="border-bottom: 2px solid #e9ecef">
                 <th class="border-0 fw-bold text-muted ps-4">#</th>
                 <th class="border-0 fw-bold text-muted">Code</th>
                 <th class="border-0 fw-bold text-muted">Company Name</th>
@@ -72,28 +74,45 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(supplier, index) in lists" :key="supplier.id" class="supplier-row" :class="{ 'table-secondary': supplier.is_active == 0 }">
+              <tr
+                v-for="(supplier, index) in lists"
+                :key="supplier.id"
+                class="supplier-row"
+                :class="{ 'table-secondary': supplier.is_active == 0 }"
+              >
                 <td class="ps-4 fw-bold">{{ index + 1 }}</td>
                 <td>
-                  <span class="badge bg-primary fs-6 px-3 py-2" style="border-radius: 8px;">{{ supplier.code }}</span>
+                  <span class="badge bg-soft-primary text-primary px-2 py-1 fs-12 fw-bold rounded-pill">
+                    {{ supplier.code }}
+                  </span>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
-
                     <div>
                       <h6 class="mb-0 fw-bold">{{ supplier.name }}</h6>
-                      <small class="text-muted">Created {{ formatDate(supplier.created_at) }}</small>
+                      <small class="text-muted"
+                        >Created {{ formatDate(supplier.created_at) }}</small
+                      >
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span class="text-truncate d-inline-block" style="max-width: 200px;" v-b-tooltip.hover :title="supplier.address || 'No address'">
-                    {{ supplier.address || 'No address provided' }}
+                  <span
+                    class="text-truncate d-inline-block"
+                    style="max-width: 200px"
+                    v-b-tooltip.hover
+                    :title="supplier.address || 'No address'"
+                  >
+                    {{ supplier.address || "No address provided" }}
                   </span>
                 </td>
                 <td>
                   <div v-if="supplier.conformes && supplier.conformes.length > 0">
-                    <span v-for="(conforme, idx) in supplier.conformes.slice(0, 2)" :key="conforme.id" class="badge bg-success me-1 mb-1">
+                    <span
+                      v-for="(conforme, idx) in supplier.conformes.slice(0, 2)"
+                      :key="conforme.id"
+                      class="badge bg-success me-1 mb-1"
+                    >
                       {{ conforme.name }}
                     </span>
                     <span v-if="supplier.conformes.length > 2" class="badge bg-secondary">
@@ -104,27 +123,33 @@
                 </td>
                 <td>
                   <span class="badge bg-warning text-dark px-2 py-1">
-                    <i class="ri-attachment-line me-1"></i>{{ supplier.attachments ? supplier.attachments.length : 0 }}
+                    <i class="ri-attachment-line me-1"></i
+                    >{{ supplier.attachments ? supplier.attachments.length : 0 }}
                   </span>
                 </td>
                 <td>
-                  <span :class="supplier.is_active == 1 ? 'badge bg-success' : 'badge bg-secondary'" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
-                    {{ supplier.is_active == 1 ? 'Active' : 'Inactive' }}
+                  <span
+                    :class="
+                      supplier.is_active == 1 ? 'badge bg-success' : 'badge bg-secondary'
+                    "
+                    style="font-size: 0.8rem; padding: 0.4rem 0.8rem"
+                  >
+                    {{ supplier.is_active == 1 ? "Active" : "Inactive" }}
                   </span>
                 </td>
                 <td class="text-center">
                   <div class="d-flex justify-content-center gap-2">
-                    <b-button
+                    <!-- <b-button
                       @click="viewSupplier(supplier)"
                       size="sm"
                       variant="outline-info"
                       class="btn-icon"
                       v-b-tooltip.hover
                       title="View Details"
-                      style="border-radius: 8px;"
+                      style="border-radius: 8px"
                     >
                       <i class="ri-eye-line"></i>
-                    </b-button>
+                    </b-button> -->
                     <b-button
                       @click="editSupplier(supplier)"
                       size="sm"
@@ -132,20 +157,28 @@
                       class="btn-icon"
                       v-b-tooltip.hover
                       title="Edit Supplier"
-                      style="border-radius: 8px;"
+                      style="border-radius: 8px"
                     >
                       <i class="ri-edit-line"></i>
                     </b-button>
                     <b-button
                       @click="toggleStatus(supplier)"
                       size="sm"
-                      :variant="supplier.is_active == 1 ? 'outline-danger' : 'outline-success'"
+                      :variant="
+                        supplier.is_active == 1 ? 'outline-danger' : 'outline-success'
+                      "
                       class="btn-icon"
                       v-b-tooltip.hover
                       :title="supplier.is_active == 1 ? 'Deactivate' : 'Activate'"
-                      style="border-radius: 8px;"
+                      style="border-radius: 8px"
                     >
-                      <i :class="supplier.is_active == 1 ? 'ri-pause-circle-line' : 'ri-play-circle-line'"></i>
+                      <i
+                        :class="
+                          supplier.is_active == 1
+                            ? 'ri-pause-circle-line'
+                            : 'ri-play-circle-line'
+                        "
+                      ></i>
                     </b-button>
                   </div>
                 </td>
@@ -160,7 +193,11 @@
             <i class="ri-building-line fs-1 text-muted mb-3"></i>
             <h5 class="text-muted">No Suppliers Found</h5>
             <p class="text-muted mb-4">Get started by adding your first supplier</p>
-            <b-button variant="primary" @click="openSupplier()" style="border-radius: 10px;">
+            <b-button
+              variant="primary"
+              @click="openSupplier()"
+              style="border-radius: 10px"
+            >
               <i class="ri-add-circle-fill me-2"></i>Add Supplier
             </b-button>
           </div>
@@ -188,10 +225,11 @@
           <div class="supplier-overview">
             <b-row class="g-4">
               <b-col lg="8">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px">
                   <div class="card-body p-4">
                     <h5 class="card-title mb-4">
-                      <i class="ri-building-line me-2 text-primary"></i>{{ selectedSupplier.name }}
+                      <i class="ri-building-line me-2 text-primary"></i
+                      >{{ selectedSupplier.name }}
                     </h5>
                     <div class="row g-3">
                       <div class="col-md-6">
@@ -204,8 +242,16 @@
                         <div class="info-item">
                           <label class="text-muted small fw-bold">STATUS</label>
                           <p class="mb-0">
-                            <span :class="selectedSupplier.is_active == 1 ? 'badge bg-success' : 'badge bg-secondary'">
-                              {{ selectedSupplier.is_active == 1 ? 'Active' : 'Inactive' }}
+                            <span
+                              :class="
+                                selectedSupplier.is_active == 1
+                                  ? 'badge bg-success'
+                                  : 'badge bg-secondary'
+                              "
+                            >
+                              {{
+                                selectedSupplier.is_active == 1 ? "Active" : "Inactive"
+                              }}
                             </span>
                           </p>
                         </div>
@@ -213,13 +259,17 @@
                       <div class="col-12">
                         <div class="info-item">
                           <label class="text-muted small fw-bold">ADDRESS</label>
-                          <p class="mb-0">{{ selectedSupplier.address || 'No address provided' }}</p>
+                          <p class="mb-0">
+                            {{ selectedSupplier.address || "No address provided" }}
+                          </p>
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="info-item">
                           <label class="text-muted small fw-bold">CREATED</label>
-                          <p class="mb-0">{{ formatDate(selectedSupplier.created_at) }}</p>
+                          <p class="mb-0">
+                            {{ formatDate(selectedSupplier.created_at) }}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -227,7 +277,7 @@
                 </div>
               </b-col>
               <b-col lg="4">
-                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px">
                   <div class="card-body p-4 text-center">
                     <div class="supplier-avatar-large mb-3">
                       <i class="ri-building-line fs-1 text-primary"></i>
@@ -235,11 +285,23 @@
                     <h6 class="text-muted mb-2">Quick Stats</h6>
                     <div class="stats-grid">
                       <div class="stat-item">
-                        <div class="stat-number">{{ selectedSupplier.conformes ? selectedSupplier.conformes.length : 0 }}</div>
+                        <div class="stat-number">
+                          {{
+                            selectedSupplier.conformes
+                              ? selectedSupplier.conformes.length
+                              : 0
+                          }}
+                        </div>
                         <div class="stat-label">Representatives</div>
                       </div>
                       <div class="stat-item">
-                        <div class="stat-number">{{ selectedSupplier.attachments ? selectedSupplier.attachments.length : 0 }}</div>
+                        <div class="stat-number">
+                          {{
+                            selectedSupplier.attachments
+                              ? selectedSupplier.attachments.length
+                              : 0
+                          }}
+                        </div>
                         <div class="stat-label">Documents</div>
                       </div>
                     </div>
@@ -257,15 +319,27 @@
               <h5 class="mb-0">
                 <i class="ri-user-line me-2 text-success"></i>Authorized Representatives
               </h5>
-              <b-button variant="outline-primary" size="sm" @click="editSupplier(selectedSupplier)" style="border-radius: 8px;">
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                @click="editSupplier(selectedSupplier)"
+                style="border-radius: 8px"
+              >
                 <i class="ri-edit-line me-1"></i>Edit Representatives
               </b-button>
             </div>
 
-            <div v-if="selectedSupplier.conformes && selectedSupplier.conformes.length > 0" class="representatives-list">
+            <div
+              v-if="selectedSupplier.conformes && selectedSupplier.conformes.length > 0"
+              class="representatives-list"
+            >
               <div class="row g-3">
-                <div class="col-md-6" v-for="conforme in selectedSupplier.conformes" :key="conforme.id">
-                  <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div
+                  class="col-md-6"
+                  v-for="conforme in selectedSupplier.conformes"
+                  :key="conforme.id"
+                >
+                  <div class="card border-0 shadow-sm" style="border-radius: 12px">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
                         <div class="rep-avatar me-3">
@@ -273,7 +347,9 @@
                         </div>
                         <div class="flex-fill">
                           <h6 class="mb-1 fw-bold">{{ conforme.name }}</h6>
-                          <p class="mb-0 small text-muted">{{ conforme.position || 'No position specified' }}</p>
+                          <p class="mb-0 small text-muted">
+                            {{ conforme.position || "No position specified" }}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -296,15 +372,29 @@
               <h5 class="mb-0">
                 <i class="ri-attachment-line me-2 text-warning"></i>Documents & Files
               </h5>
-              <b-button variant="outline-primary" size="sm" @click="editSupplier(selectedSupplier)" style="border-radius: 8px;">
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                @click="editSupplier(selectedSupplier)"
+                style="border-radius: 8px"
+              >
                 <i class="ri-upload-line me-1"></i>Upload Documents
               </b-button>
             </div>
 
-            <div v-if="selectedSupplier.attachments && selectedSupplier.attachments.length > 0" class="attachments-list">
+            <div
+              v-if="
+                selectedSupplier.attachments && selectedSupplier.attachments.length > 0
+              "
+              class="attachments-list"
+            >
               <div class="row g-3">
-                <div class="col-md-6" v-for="attachment in selectedSupplier.attachments" :key="attachment.id">
-                  <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div
+                  class="col-md-6"
+                  v-for="attachment in selectedSupplier.attachments"
+                  :key="attachment.id"
+                >
+                  <div class="card border-0 shadow-sm" style="border-radius: 12px">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
                         <div class="file-icon me-3">
@@ -313,13 +403,27 @@
                         <div class="flex-fill">
                           <h6 class="mb-1 fw-bold">{{ attachment.name }}</h6>
                           <p class="mb-0 small text-muted">{{ attachment.path }}</p>
-                          <small class="text-muted">{{ formatDate(attachment.created_at) }}</small>
+                          <small class="text-muted">{{
+                            formatDate(attachment.created_at)
+                          }}</small>
                         </div>
                         <div class="file-actions">
-                          <b-button variant="link" size="sm" class="text-primary p-0 me-2" v-b-tooltip.hover title="Download">
+                          <b-button
+                            variant="link"
+                            size="sm"
+                            class="text-primary p-0 me-2"
+                            v-b-tooltip.hover
+                            title="Download"
+                          >
                             <i class="ri-download-line"></i>
                           </b-button>
-                          <b-button variant="link" size="sm" class="text-danger p-0" v-b-tooltip.hover title="Delete">
+                          <b-button
+                            variant="link"
+                            size="sm"
+                            class="text-danger p-0"
+                            v-b-tooltip.hover
+                            title="Delete"
+                          >
                             <i class="ri-delete-bin-line"></i>
                           </b-button>
                         </div>
@@ -332,7 +436,9 @@
             <div v-else class="text-center py-4">
               <i class="ri-attachment-line fs-1 text-muted mb-3"></i>
               <h6 class="text-muted">No Documents Uploaded</h6>
-              <p class="text-muted small">Upload business permits, licenses, and other documents</p>
+              <p class="text-muted small">
+                Upload business permits, licenses, and other documents
+              </p>
             </div>
           </div>
         </b-tab>
@@ -341,10 +447,14 @@
 
     <template v-slot:footer>
       <div class="d-flex justify-content-end gap-2">
-        <b-button @click="closeDetailsModal" variant="light" style="border-radius: 8px;">
+        <b-button @click="closeDetailsModal" variant="light" style="border-radius: 8px">
           <i class="ri-close-line me-1"></i>Close
         </b-button>
-        <b-button @click="editSupplier(selectedSupplier)" variant="primary" style="border-radius: 8px;">
+        <b-button
+          @click="editSupplier(selectedSupplier)"
+          variant="primary"
+          style="border-radius: 8px"
+        >
           <i class="ri-edit-line me-1"></i>Edit Supplier
         </b-button>
       </div>
@@ -353,18 +463,16 @@
 
   <!-- Pagination -->
   <div class="d-flex justify-content-center mt-4" v-if="meta && lists.length > 0">
-    <Pagination
-      @fetch="fetch"
-      :lists="lists.length"
-      :links="links"
-      :pagination="meta"
-    />
+    <Pagination @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
   </div>
 
-  <SupplierModal
-    @add="fetch()"
-    @update="fetch()"
-    ref="create"
+  <SupplierModal :dropdowns="dropdowns" @add="fetch()" @update="fetch()" ref="create" />
+
+  <DeactivateModal
+    :supplier="selectedSupplierForStatus"
+    @cancel="cancelStatusChange"
+    @status-changed="onStatusChanged"
+    @close="closeDeactivateModal"
   />
 </template>
 <script>
@@ -372,11 +480,12 @@ import _ from "lodash";
 import PageHeader from "@/Shared/Components/PageHeader.vue";
 import Pagination from "@/Shared/Components/Pagination.vue";
 import SupplierModal from "@/Pages/Modules/FAIMS/Procurement/Modals/Supplier.vue";
+import DeactivateModal from "@/Pages/Modules/FAIMS/Procurement/Suppliers/Modals/Deactivate.vue";
 import Multiselect from "@vueform/multiselect";
 
 export default {
   props: ["dropdowns"],
-  components: { SupplierModal, Pagination, PageHeader, Multiselect },
+  components: { SupplierModal, DeactivateModal, Pagination, PageHeader, Multiselect },
   data() {
     return {
       currentUrl: window.location.origin,
@@ -391,6 +500,7 @@ export default {
       index: null,
       showDetailsModal: false,
       selectedSupplier: null,
+      selectedSupplierForStatus: null,
     };
   },
   watch: {
@@ -401,7 +511,6 @@ export default {
       this.fetch();
     },
   },
-
 
   created() {
     this.fetch();
@@ -445,24 +554,24 @@ export default {
     },
 
     toggleStatus(supplier) {
-      const newStatus = supplier.is_active == 1 ? 0 : 1;
-      axios.patch(`/faims/suppliers/${supplier.id}/status`, {
-        is_active: newStatus
-      }).then(() => {
-        supplier.is_active = newStatus;
-        this.$bvToast.toast(`Supplier ${newStatus ? 'activated' : 'deactivated'} successfully`, {
-          title: 'Success',
-          variant: 'success',
-          solid: true
-        });
-      }).catch(err => {
-        console.error(err);
-        this.$bvToast.toast('Failed to update supplier status', {
-          title: 'Error',
-          variant: 'danger',
-          solid: true
-        });
-      });
+      this.selectedSupplierForStatus = supplier;
+    },
+
+    cancelStatusChange() {
+      this.selectedSupplierForStatus = null;
+    },
+
+    onStatusChanged(updatedSupplier) {
+      // Update the supplier in the list
+      const index = this.lists.findIndex(s => s.id === updatedSupplier.id);
+      if (index !== -1) {
+        this.lists[index] = updatedSupplier;
+      }
+      this.selectedSupplierForStatus = null;
+    },
+
+    closeDeactivateModal() {
+      this.selectedSupplierForStatus = null;
     },
 
     formatDate(dateString) {
@@ -473,8 +582,6 @@ export default {
         day: "numeric",
       });
     },
-
-
   },
 };
 </script>
@@ -529,10 +636,6 @@ export default {
 
 .empty-state {
   padding: 3rem;
-}
-
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
 }
 
 /* Modal Styles */

@@ -16,6 +16,8 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
     Route::middleware(['role:Administrator'])->group(function () {
         Route::resource('/users', App\Http\Controllers\System\UserController::class);
         Route::resource('/references', App\Http\Controllers\System\ReferenceController::class);
+        Route::get('/references/lists', [App\Http\Controllers\System\ReferenceController::class, 'lists']);
+        Route::post('/references', [App\Http\Controllers\System\ReferenceController::class, 'store']);
         Route::resource('/signatories', App\Http\Controllers\System\SignatoryController::class);
     });
     Route::middleware(['role:Human Resource Officer'])->group(function () {
@@ -46,6 +48,7 @@ Route::middleware(['2fa','auth','verified','is_active'])->group(function () {
         Route::resource('/notice-of-awards', App\Http\Controllers\FAIMS\Procurement\NOAController::class);
         Route::resource('/purchase-orders', App\Http\Controllers\FAIMS\Procurement\POController::class);
         Route::resource('/suppliers', App\Http\Controllers\FAIMS\Procurement\SupplierController::class);
+        Route::patch('/suppliers/{supplier}/status', [App\Http\Controllers\FAIMS\Procurement\SupplierController::class, 'status']);
 
     });
 });

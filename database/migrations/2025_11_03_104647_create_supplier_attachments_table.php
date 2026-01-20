@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('supplier_attachments', function (Blueprint $table) {
             $table->engine = 'InnoDB'; 
             $table->bigIncrements('id');
+            $table->string('code')->unique();
             $table->string('name');
             $table->string('path');
             $table->date('expired_at')->nullable();

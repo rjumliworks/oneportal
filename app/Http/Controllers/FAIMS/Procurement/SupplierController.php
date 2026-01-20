@@ -6,20 +6,23 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\FAIMS\Procurement\SupplierClass;
 use App\Services\FAIMS\Procurement\ViewClass;
+use App\Services\DropdownClass;
 use App\Traits\HandlesTransaction;
 
 class SupplierController extends Controller
 {
      use HandlesTransaction;
 
-    public $supplier, $view;
+    public $supplier, $view, $dropdown;
 
     public function __construct(
         SupplierClass $supplier, 
         ViewClass $view, 
+        DropdownClass $dropdown
     ){
         $this->supplier = $supplier;
         $this->view = $view;
+        $this->dropdown = $dropdown;
     }
 
     public function index(Request $request){
@@ -32,6 +35,7 @@ class SupplierController extends Controller
                 return inertia('Modules/FAIMS/Procurement/Suppliers/Index', [
                     'dropdowns' => [
                         'roles'  =>  \Auth::user()->roles,
+                        'attachment_types' => $this->dropdown->attachment_types(),
                     ],
                 ]); 
         }   
@@ -52,12 +56,11 @@ class SupplierController extends Controller
     }
 
     
-    public function update(Request $request) {
+    public function update(Request $request, $id) {
+        $request->merge(['id' => $id]);
         $result = $this->handleTransaction(function () use ($request) {
             return $this->supplier->update($request);
         });
-
-        return $result;
 
         return back()->with([
             'data' => $result['data'],

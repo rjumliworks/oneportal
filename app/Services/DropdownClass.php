@@ -135,6 +135,16 @@ class DropdownClass
         return $data;
     }
 
+    public function attachment_types(){
+        $data = ListData::where('type','Attachment')->where('is_active',1)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name
+            ];
+        });
+        return $data;
+    }
+
     public function docactions(){
         $data = ListData::where('type','Document Action')->where('is_active',1)->get()->map(function ($item) {
             return [
@@ -485,6 +495,8 @@ class DropdownClass
         });
         return $data;
     }
+
+
 
     public function bac_members(){
         $data = User::with('roles' , 'profile')
