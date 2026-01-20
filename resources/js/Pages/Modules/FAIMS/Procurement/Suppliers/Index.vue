@@ -506,7 +506,6 @@ export default {
 
 .supplier-row:hover {
   background-color: rgba(0, 123, 255, 0.05);
-  transform: scale(1.01);
 }
 
 .supplier-avatar {

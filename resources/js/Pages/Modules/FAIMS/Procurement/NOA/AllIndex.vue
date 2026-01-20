@@ -227,7 +227,10 @@ export default {
       });
     },
     viewProcurement(list) {
-      router.get("/faims/procurements/" + list.procurement_id, { option: "view", tab: 1 });
+      router.visit(`/faims/procurements/${list.procurement.id}`, {
+        method: 'get',
+        data: { option: 'view', tab: 1 },
+      });
     },
     printNOA(list) {
       window.open(`/faims/notice-of-awards/${list.id}?option=print&type=noa`);

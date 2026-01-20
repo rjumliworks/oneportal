@@ -13,7 +13,7 @@
       <div class="m-5 text-center">
         <b>
           <!-- BACResolution -->
-          <span v-if="type == 'BACResolution'"> BAC Resolution No.:</span>
+          <span v-if="type == 'BACResolution'"> BAC Resolution No.: </span>
 
           <!-- Notice of Award -->
           <span v-if="type == 'NOA' || type == 'NOA Not Conformed'">
@@ -34,7 +34,7 @@
           <span
           v-if="
             form.status?.name === 'Pending'  &&
-            (type == 'BACResolution'  ||  type == 'NOA' )
+            (type == 'BACResolution'   )
           "
         >
           Update status from
@@ -48,7 +48,7 @@
 
         <span
           v-if="
-            form.status?.name === 'PO Issued' || form.status?.name === 'Pending'  &&
+          form.status?.name === 'PO Issued' || (form.status?.name === 'Pending'  && (type == 'NOA' || type == 'PO')) &&
             type != 'NOA Not Conformed' &&
             type != 'PO Not Conformed'
           "

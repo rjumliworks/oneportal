@@ -3,6 +3,10 @@
 <head>
     <title>Quotation Request</title>
     <style>
+        .page-counter:before {
+            content: counter(page) " of " counter(pages);
+        }
+        
         body {
             font-family: Arial, sans-serif;
             margin: -30px;
@@ -90,17 +94,26 @@
             color: white;
         }
 
-        .footer {
-            position: absolute;
-            bottom: 10px; /* Distance from bottom of the page */
-            left: 0;
-            width: 100%;
-            font-size: 12px;
-            color: black;
-            font-size: 13px;
-            text-align: left;
-            font-size: 11px
-            }
+    .footer {
+        position: fixed;
+        bottom: -20px;
+        left: 0px;
+        right: 0px;
+        height: 50px;
+        width: 100%;
+    }
+    .footer-table {
+        width: 100%;
+        border: none !important; /* Ensures no borders show */
+    }
+    .footer-table td {
+        border: none !important;
+        font-size: 10px;
+        vertical-align: bottom;
+    }
+    .pagenum:before {
+        content: counter(page) " of " counter(pages);
+    }
 
     </style>
 </head>
@@ -406,14 +419,39 @@
          </div>
       </div>
 
-       <!-- Footer -->
-      <div class="footer">
-         {{ $procurement->code}}
-      </div>
+  
 
   </div>
+  <script type="text/php">
+    if ( isset($pdf) ) {
+        $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+        $size = 9;
+        $width = $pdf->get_width();
+        $height = $pdf->get_height();
 
-<div class="text-right" style="font-size: 9px; margin-top: 5px;">Page 1 of 1</div>
+        // Consistent height for both
+        $y_axis = $height - 40; 
+
+        // 1. LEFT SIDE: Procurement Code
+        $text_code = "{{ $procurement->code }}";
+        $x_left = 30; 
+        $pdf->page_text($x_left, $y_axis, $text_code, $font, $size, array(0,0,0));
+
+        // 2. RIGHT SIDE: Page Counter
+        $text_page = "Page {PAGE_NUM} of {PAGE_COUNT}";
+        $text_width = $fontMetrics->get_text_width($text_page, $font, $size);
+        
+        // --- ADJUST THIS NUMBER ---
+        // Decrease '20' to move it closer to the right edge.
+        // Increase '20' to move it further toward the center.
+        $right_margin = 10; 
+        $x_right = $width - $text_width - $right_margin; 
+        
+        $pdf->page_text($x_right, $y_axis, $text_page, $font, $size, array(0,0,0));
+    }
+</script>
 
 </body>
 </html>
+
+

@@ -40,6 +40,9 @@ class PrintClass
             case 'notice_of_awards':
                 return $this->printNoticeOfAward($id);
             break;
+            case 'noa':
+                return $this->printNoticeOfAward($id);
+            break;
             case 'purchase_order':
                 return $this->printPO($id);
             break;
@@ -52,7 +55,7 @@ class PrintClass
         }
     }
 
-      public function printPR($id){
+    public function printPR($id){
         $procurement = Procurement::with('division','unit','fund_cluster','items.item_unit_type' , 'items' , 'requested_by.org_chart' , 'approved_by.org_chart' )->findOrFail($id); // 
         $items = $procurement->items;
         $regional_director = $this->dropdown->regional_director();
@@ -65,32 +68,37 @@ class PrintClass
             'regional_director' => $regional_director,
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.procurement-request',$array)->setPaper('A4', 'portrait');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.procurement-request',$array)->setPaper('A4', 'portrait')
+                ->setOption([
+                        'isPhpEnabled' => true,
+                        'isRemoteEnabled' => true 
+                    ]);
         return $pdf->stream($procurement->code.'.pdf');
 
     }
 
-    public function printQuotations($id){
-        $quotation = ProcurementQuotation::with('supplier.address', 'supply_officer.profile', 'items' , 'procurement')->findOrFail($id); // 
 
-        $procurement =  $quotation->procurement;
-        $supplier =  $quotation->supplier;
-        $supply_officer =  $quotation->supply_officer;
-        $items = $quotation->items;
-        $regional_director = $this->dropdown->regional_director();
+    public function printQuotations($id){
+        $quotation = ProcurementQuotation::with('supplier.address', 'supply_officer.profile', 'items' , 'procurement')->findOrFail($id); 
 
         $array = [
             'quotation' => $quotation,
-            'procurement' => $procurement,
-            'supplier' => $supplier,
-            'supply_officer' => $supply_officer,
-            'items' => $items,
-            'regional_director' => $regional_director,
+            'procurement' => $quotation->procurement,
+            'supplier' => $quotation->supplier,
+            'supply_officer' => $quotation->supply_officer,
+            'items' => $quotation->items,
+            'regional_director' => $this->dropdown->regional_director(),
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.quotations',$array)->setPaper('A4', 'portrait');
-        return $pdf->stream($quotation->code.'.pdf');
+        // Add setOption here to enable PHP-based page counting
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.quotations', $array)
+            ->setPaper('A4', 'portrait')
+            ->setOption([
+                'isPhpEnabled' => true,
+                'isRemoteEnabled' => true 
+            ]);
 
+        return $pdf->stream($quotation->code.'.pdf');
     }
 
      public function printAOB($id){
@@ -114,7 +122,11 @@ class PrintClass
             'regional_director' => $regional_director,
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.abstract-of-bids',$array)->setPaper('A4', 'landscape');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.abstract-of-bids',$array)->setPaper('A4', 'landscape')
+                        ->setOption([
+                            'isPhpEnabled' => true,
+                            'isRemoteEnabled' => true 
+                        ]);
         return $pdf->stream($procurement->code.'.pdf');
 
     }
@@ -134,7 +146,11 @@ class PrintClass
             'regional_director' => $regional_director,
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.bac-resolution',$array)->setPaper('A4', 'portrait');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.bac-resolution',$array)->setPaper('A4', 'portrait')
+                    ->setOption([
+                        'isPhpEnabled' => true,
+                        'isRemoteEnabled' => true 
+                    ]);
         return $pdf->stream($bac_resolution->code.'.pdf');
 
     }
@@ -168,7 +184,11 @@ class PrintClass
             'amount_to_words' => $amount_to_words,
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.notice-of-award',$array)->setPaper('A4', 'portrait');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.notice-of-award',$array)->setPaper('A4', 'portrait')
+                ->setOption([
+                    'isPhpEnabled' => true,
+                    'isRemoteEnabled' => true 
+                ]);
          return $pdf->stream($notice_of_award->code.'.pdf');
 
     }
@@ -193,13 +213,18 @@ class PrintClass
             'purchase_order' => $purchase_order,
             'supplier' => $supplier, 
              'procurement' => $procurement, 
-             'codes' => $codes,
+            'codes' => $codes,
             'items' => $items,
             'amount_to_words' => $amount_to_words,
             'regional_director' => $regional_director, 
+            'chief_accountant' => $chief_accountant, 
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.purchase-order',$array)->setPaper('A4', 'portrait');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.purchase-order',$array)->setPaper('A4', 'portrait')
+                ->setOption([
+                        'isPhpEnabled' => true,
+                        'isRemoteEnabled' => true 
+                    ]);
          return $pdf->stream($purchase_order->code.'.pdf');
 
     }

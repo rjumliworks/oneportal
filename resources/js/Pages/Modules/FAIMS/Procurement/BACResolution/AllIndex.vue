@@ -237,7 +237,10 @@ export default {
       }
     },
     viewProcurement(list) {
-      router.get("/faims/procurements/" + list.procurement_id, { option: "view", tab: 1 });
+      router.visit(`/faims/procurements/${list.procurement.id}`, {
+        method: 'get',
+        data: { option: 'view', tab: 1 },
+      });
     },
     printBACResolution(list) {
       window.open(`/faims/bac-resolutions/${list.id}?option=print&type=bac_resolution`);

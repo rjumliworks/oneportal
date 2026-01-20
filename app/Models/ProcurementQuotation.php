@@ -44,19 +44,20 @@ class ProcurementQuotation extends Model
     }
 
 
-    public static function generateRFQNumber()
+    public static function generateRFQNumber($date = null)
     {
-        $now = now(); // Laravel's Carbon instance
-        $year = $now->format('y'); // Last two digits of year
-        $month = $now->format('m');
+         if ($date) {
+            $year = date("y", strtotime($date));  // 'y' gives the last two digits of the year
+            $month = date("m", strtotime($date));
+        } else {
+            $year = date("y", strtotime("now"));  // 'y' gives the last two digits of the year
+            $month = date("m", strtotime("now"));
+        }
 
-        // Count existing RFQs for this year and month
-        $count = self::whereYear('created_at', $now->year)
-                    ->whereMonth('created_at', $month)
-                    ->count() + 1;
+        $count = self::whereYear('created_at', date("Y", strtotime($date ?? "now")))
+                     ->whereMonth('created_at', $month)
+                     ->count() + 1;
 
-        $sequence = str_pad($count, 4, '0', STR_PAD_LEFT);
-
-        return "RFQ-{$year}-{$month}-{$sequence}";
+        return 'RFQ-' . $year . '-' . $month . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 }

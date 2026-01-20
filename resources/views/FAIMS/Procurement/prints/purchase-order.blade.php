@@ -263,7 +263,7 @@
                     </p>
                     <p style="margin-left: 110px;margin-top:-10px">Authorized Official</p>
 
-                    <p style="margin-left: 100px;margin-bottom: -10px"><b><u>Regional Director</u></b></p>
+                    <p style="margin-left: 100px;margin-bottom: -10px"><b><u>{{ $regional_director['designation']['name'] ?? 'Regional Director' }}</u></b></p>
                     <p style="margin-left: 120px">
                         Designation
                     </p>
@@ -277,10 +277,10 @@
             <p style="margin-bottom:40px">Funds Available:____________________________</p>
 
             <p style="text-align:center">
-               <b> <u>INGRID T. ABELLA-COLCOL</u></b>
+               <b> <u>{{ $chief_accountant['name'] }}</u></b>
             </p>
             <p style="font-size:10px;margin-top:-10px; text-align:center">
-                Signature Over Printed Name of Chief of Accountant/Head of Accounting Division/Unit
+                {{ $chief_accountant['designation']['name'] ?? 'Signature Over Printed Name of Chief of Accountant/Head of Accounting Division/Unit' }}
             </p>
         </td>
         <td colspan="3" style="padding:left: 10px">
@@ -291,7 +291,24 @@
       </tr>
     </table>
 
-    <div class="text-right" style="font-size: 9px; margin-top: 5px;">Page 1 of 1</div>
 
+    <script type="text/php">
+        if ( isset($pdf) ) {
+            $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+            $size = 8;
+            $width = $pdf->get_width();
+            $height = $pdf->get_height();
+            $y_axis = $height - 25; 
+
+            // LEFT: PO Code
+            $text_code = "{{ $purchase_order->code }}";
+            $pdf->page_text(35, $y_axis, $text_code, $font, $size, array(0,0,0));
+
+            // RIGHT: Page Counter
+            $text_page = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $text_width = $fontMetrics->get_text_width($text_page, $font, $size);
+            $pdf->page_text($width - $text_width + 50, $y_axis, $text_page, $font, $size, array(0,0,0));
+        }
+    </script>
 </body>
 </html>

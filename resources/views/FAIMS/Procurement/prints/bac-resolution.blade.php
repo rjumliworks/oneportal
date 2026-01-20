@@ -204,5 +204,23 @@
        </table>
 
     </div>
+    <script type="text/php">
+        if ( isset($pdf) ) {
+            $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+            $size = 8;
+            $width = $pdf->get_width();
+            $height = $pdf->get_height();
+            $y_axis = $height - 25; 
+
+            // LEFT: bac_resolution Code
+            $text_code = "{{ $bac_resolution->code }}";
+            $pdf->page_text(35, $y_axis, $text_code, $font, $size, array(0,0,0));
+
+            // RIGHT: Page Counter
+            $text_page = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $text_width = $fontMetrics->get_text_width($text_page, $font, $size);
+            $pdf->page_text($width - $text_width + 50, $y_axis, $text_page, $font, $size, array(0,0,0));
+        }
+    </script>
 </body>
 </html>
