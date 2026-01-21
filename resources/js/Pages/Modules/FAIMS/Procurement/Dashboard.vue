@@ -264,14 +264,14 @@ tin<template>
 		<BCol xl="4">
 			<BCard>
 				<BCardHeader>
-					<h4 class="card-title mb-0">Status Distribution</h4>
+					<h4 class="card-title mb-0">Procurement by Division</h4>
 				</BCardHeader>
 				<BCardBody>
 					<apexchart
 						type="pie"
 						height="350"
-						:options="statusChartOptions"
-						:series="statusChartSeries"
+						:options="divisionChartOptions"
+						:series="divisionChartSeries"
 					></apexchart>
 				</BCardBody>
 			</BCard>
@@ -316,7 +316,7 @@ export default {
         total_purchase_orders: 0,
         recent_procurements: [],
         monthly_trends: [],
-        status_distribution: [],
+        division_distribution: [],
       },
       lists: [],
       meta: null,
@@ -390,7 +390,7 @@ export default {
         name: 'Procurements',
         data: [],
       }],
-      statusChartOptions: {
+      divisionChartOptions: {
         chart: {
           type: 'pie',
           height: 350,
@@ -408,7 +408,7 @@ export default {
           },
         },
       },
-      statusChartSeries: [],
+      divisionChartSeries: [],
       yearOptions: [],
       monthOptions: [
         { value: 1, label: 'January' },
@@ -478,10 +478,10 @@ export default {
         this.monthlyChartSeries[0].data = this.dashboard.monthly_trends.map(item => item.count);
       }
 
-      // Update status chart
-      if (this.dashboard && this.dashboard.status_distribution && Array.isArray(this.dashboard.status_distribution)) {
-        this.statusChartOptions.labels = this.dashboard.status_distribution.map(item => item.status);
-        this.statusChartSeries = this.dashboard.status_distribution.map(item => item.count);
+      // Update division chart
+      if (this.dashboard && this.dashboard.division_distribution && Array.isArray(this.dashboard.division_distribution)) {
+        this.divisionChartOptions.labels = this.dashboard.division_distribution.map(item => item.division);
+        this.divisionChartSeries = this.dashboard.division_distribution.map(item => item.count);
       }
     },
 

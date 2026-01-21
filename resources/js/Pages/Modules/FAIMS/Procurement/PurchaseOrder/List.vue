@@ -1,4 +1,4 @@
-<template>
+ <template>
   <Head title="Requests" />
   <PageHeader title="Purchase Orders" pageTitle="List" />
   <BRow>
@@ -95,7 +95,7 @@
                   <th style="width: 10%" class="text-center">Date of delivery</th>
                   <th style="width: 14%" class="text-center">NOA Code</th>
                   <th style="width: 10%" class="text-center">Status</th>
-                  <th style="width: 5%"></th>
+                  <th style="width: 10%" class="text-center">Actions</th>
                 </tr>
               </thead>
 
@@ -125,59 +125,56 @@
                   <td class="text-center">
                     <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
                   </td>
-                  <td class="text-end">
-                    <div class="d-flex gap-3 justify-content-center">
-                      <div class="dropdown" @click.stop>
-                        <button
-                          class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <i class="ri-more-fill align-bottom"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
-                          <li
-                              @click="goViewPage(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-eye-fill align-bottom me-1"></i>View
-                          </li>  
+                  <td>
+                    <div class="d-flex justify-content-center gap-1">
+                      <b-button
+                        @click="goViewPage(list)"
+                        size="sm"
+                        variant="outline-info"
+                        class="btn-icon"
+                        v-b-tooltip.hover
+                        title="View"
+                        style="border-radius: 8px;"
+                      >
+                        <i class="ri-eye-line"></i>
+                      </b-button>
 
-                            <li
-                              @click="updateStatus(list)"
-                              v-if="list.status.name == 'Delivered/For Inspection'"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-eye-fill align-bottom me-1"></i>Update Status
-                          </li>  
+                      <b-button
+                        v-if="list.status.name == 'Delivered/For Inspection'"
+                        @click="updateStatus(list)"
+                        size="sm"
+                        variant="outline-success"
+                        class="btn-icon"
+                        v-b-tooltip.hover
+                        title="Update Status"
+                        style="border-radius: 8px;"
+                      >
+                        <i class="ri-edit-line"></i>
+                      </b-button>
 
-                          <li><hr class="dropdown-divider" /></li>
-                          <li>
-                            <a
-                              @click="openPrint(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-printer-fill me-2"></i> Print
-                            </a>
-                          
-                          </li>
+                      <b-button
+                        @click="openPrint(list)"
+                        size="sm"
+                        variant="outline-dark"
+                        class="btn-icon"
+                        v-b-tooltip.hover
+                        title="Print PO"
+                        style="border-radius: 8px;"
+                      >
+                        <i class="ri-printer-line"></i>
+                      </b-button>
 
-                            <li>
-                            <a
-                              @click="openPrint(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-printer-fill me-2"></i> Print IAR
-                            </a>
-                          
-                          </li>
-                        </ul>
-                      </div>
+                      <b-button
+                        @click="openPrintIAR(list)"
+                        size="sm"
+                        variant="outline-secondary"
+                        class="btn-icon"
+                        v-b-tooltip.hover
+                        title="Print IAR"
+                        style="border-radius: 8px;"
+                      >
+                        <i class="ri-file-list-line"></i>
+                      </b-button>
                     </div>
                   </td>
                 </tr>
@@ -307,6 +304,10 @@ export default {
  
     openPrint(data) {
       window.open(`/faims/purchase-orders/${data.id}?option=print&type=purchase_order`);
+    },
+
+    openPrintIAR(data) {
+      window.open(`/faims/purchase-orders/${data.id}?option=print&type=iar`);
     },
 
     refresh() {

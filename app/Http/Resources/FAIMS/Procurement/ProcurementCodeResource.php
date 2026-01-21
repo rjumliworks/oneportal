@@ -22,6 +22,7 @@ class ProcurementCodeResource extends JsonResource
             'mode_of_procurement' => $this->mode_of_procurement,
             'app_type' => $this->app_type,
             'end_users' => $this->end_users,
+            'year' => $this->year,
         ];
     }
 }

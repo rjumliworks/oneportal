@@ -256,7 +256,11 @@ class PrintClass
             'amount_to_words' => $amount_to_words,
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.notice-to-proceed',$array)->setPaper('A4', 'portrait');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.notice-to-proceed',$array)->setPaper('A4', 'portrait')
+                 ->setOption([
+                    'isPhpEnabled' => true,
+                    'isRemoteEnabled' => true 
+                ]);
          return $pdf->stream($ntp->code.'.pdf');
 
     }
@@ -289,7 +293,11 @@ class PrintClass
             'supply_officer' => $supply_officer,
         ];
 
-        $pdf = \PDF::loadView('FAIMS.Procurement.prints.iar',$array)->setPaper('A4', 'portrait');
+        $pdf = \PDF::loadView('FAIMS.Procurement.prints.iar',$array)->setPaper('A4', 'portrait')
+                    ->setOption([
+                        'isPhpEnabled' => true,
+                        'isRemoteEnabled' => true 
+                    ]);
          return $pdf->stream($purchase_order?->iar?->code.'.pdf');
 
     }

@@ -207,14 +207,14 @@
             </p>
             <div class="text-center">
                 <div style="text-transform: uppercase; font-weight: bold; margin-top:30px">
-                    JOSEPHINE B. NOHAY
+                    {{ $iar_chairman['name'] ?? '_________________________' }}
                 </div>
                 <div style="margin-bottom:25px ; ">
                     Chairman
                 </div>
 
                 <div style="text-transform: uppercase; font-weight: bold;">
-                    JOSEPHINE B. NOHAY
+                    {{ $iar_member['name'] ?? '_________________________' }}
                 </div>
                 <div style="margin-bottom:25px">
                     Member
@@ -222,7 +222,7 @@
 
 
                 <div style="text-transform: uppercase; font-weight: bold;">
-                    JOSEPHINE B. NOHAY
+                    {{ $iar_member['name'] ?? '_________________________' }}
                 </div>
                 <div style="margin-bottom:25px">
                     Member
@@ -240,7 +240,7 @@
         <div > <span style="border:1px solid; padding:15px">  </span> Partial </div>
         <div class="text-center" style="; margin-top:30px; margin-bottom:20px">
             <div style="text-transform: uppercase; font-weight: bold;">
-                {{ $supply_officer->fullname }}
+                {{ $supply_officer->fullname ?? '_________________________' }}
             </div>
             <div>
                 Supply Officer
@@ -252,10 +252,24 @@
    
     </table>
 
-       <div style="align-text: right; margin-top:50px">
-            Page 1 of 1
-      </div>
-  
+      <script type="text/php">
+        if ( isset($pdf) ) {
+            $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+            $size = 8;
+            $width = $pdf->get_width();
+            $height = $pdf->get_height();
+            $y_axis = $height - 25; 
+
+            // LEFT: bac_resolution Code
+            $text_code = "{{ $purchase_order?->iar?->code }}";
+            $pdf->page_text(35, $y_axis, $text_code, $font, $size, array(0,0,0));
+
+            // RIGHT: Page Counter
+            $text_page = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $text_width = $fontMetrics->get_text_width($text_page, $font, $size);
+            $pdf->page_text($width - $text_width + 50, $y_axis, $text_page, $font, $size, array(0,0,0));
+        }
+    </script>
           
    
  

@@ -18,6 +18,6 @@ class ProcurementCodeUnit extends Model
 
     public function end_user()
     {
-        return $this->belongsTo('App\Models\ListDropdown', 'end_user_id' );
+        return $this->belongsTo('App\Models\ListUnit', 'end_user_id' );
     }
 }

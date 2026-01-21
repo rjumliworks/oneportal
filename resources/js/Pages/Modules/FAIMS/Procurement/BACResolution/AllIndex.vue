@@ -76,7 +76,7 @@
                     <th style="width: 12%">Type</th>
                     <th style="width: 12%">Date Created</th>
                     <th style="width: 10%">Status</th>
-                    <th style="width: 6%" class="text-center">Actions</th>
+                    <th style="width: 10%" class="text-center">Actions</th>
                   </tr>
                 </thead>
 
@@ -115,28 +115,31 @@
                     <td>
                       <b-badge :class="list.status.bg" class="fs-11">{{ list.status?.name }}</b-badge>
                     </td>
-                    <td class="text-center">
-                      <div class="dropdown" @click.stop>
-                        <button
-                          class="btn btn-ghost-success btn-icon btn-sm"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
+                    <td>
+                      <div class="d-flex justify-content-center gap-1">
+                        <b-button
+                          @click="viewProcurement(list)"
+                          size="sm"
+                          variant="outline-info"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="View Procurement"
+                          style="border-radius: 8px;"
                         >
-                          <i class="ri-more-2-fill fs-16"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                          <li>
-                            <a @click="viewProcurement(list)" class="dropdown-item" role="button">
-                              <i class="ri-eye-line align-bottom me-2"></i>View Procurement
-                            </a>
-                          </li>
-                          <li>
-                            <a @click="printBACResolution(list)" class="dropdown-item" role="button">
-                              <i class="ri-printer-line align-bottom me-2"></i>Print
-                            </a>
-                          </li>
-                        </ul>
+                          <i class="ri-eye-line"></i>
+                        </b-button>
+
+                        <b-button
+                          @click="printBACResolution(list)"
+                          size="sm"
+                          variant="outline-dark"
+                          class="btn-icon"
+                          v-b-tooltip.hover
+                          title="Print"
+                          style="border-radius: 8px;"
+                        >
+                          <i class="ri-printer-line"></i>
+                        </b-button>
                       </div>
                     </td>
                   </tr>

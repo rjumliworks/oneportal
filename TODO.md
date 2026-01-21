@@ -1,0 +1,5 @@
+- [x] Update ViewClass.php to replace status_distribution with division_distribution
+- [x] Update Dashboard.vue to use division_distribution instead of status_distribution
+- [x] Change chart title to "Procurement by Division"
+- [x] Update chart data bindings for division
+- [x] Test the dashboard

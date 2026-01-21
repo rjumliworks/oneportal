@@ -27,7 +27,7 @@ class ProcurementCode extends Model
 
     public function end_users()
     {
-        return $this->hasMany('App\Models\ProcurementCodeUnit', 'procurement_code_id' );
+        return $this->hasMany('App\Models\ProcurementCodeUnit', 'procurement_code_id' , 'id')->with('end_user');
     }
 
 

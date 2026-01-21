@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\DropdownClass;
 use App\Services\FAIMS\Procurement\ViewClass;
 use App\Services\FAIMS\Procurement\ProcurementCodeClass;
+use  App\Http\Requests\Procurement\ProcurementCodeRequest;
 
 class ProcurementCodeController extends Controller
 {
@@ -45,7 +46,7 @@ class ProcurementCodeController extends Controller
         }   
     }
 
-    public function store(Request $request) {
+    public function store(ProcurementCodeRequest $request) {
         $result = $this->handleTransaction(function () use ($request) {
             return $this->pap_codes->save($request);
         });
@@ -60,7 +61,7 @@ class ProcurementCodeController extends Controller
     }
 
     
-    public function update(Request $request , $id) {
+    public function update(ProcurementCodeRequest $request , $id) {
         $result = $this->handleTransaction(function () use ($request ,$id) {
             return $this->pap_codes->update($request, $id);
         });
