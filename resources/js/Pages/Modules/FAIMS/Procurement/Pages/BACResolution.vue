@@ -92,7 +92,32 @@
                 title="Update Status"
               >
                 <i class="ri-edit-circle-fill"></i>
+   
               </button>
+            </div>
+          </td>
+        </tr>
+        <tr v-if="lists.length === 0">
+          <td colspan="6" class="text-center py-5">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <i class="ri-file-line"></i>
+              </div>
+              <h6 class="empty-state-title">No BAC Resolutions</h6>
+              <p class="empty-state-message">No BAC resolutions have been created for this procurement yet.</p>
+              <b-button
+                v-if="
+                  procurement.status.name == 'For BAC Resolution' ||
+                  (procurement.status.name === 'Rebid' &&
+                    procurement.sub_status?.name == null) ||
+                  procurement.status.name == 'Re-award'
+                "
+                type="button"
+                variant="outline-primary"
+                @click="openBACReso()"
+              >
+                <i class="ri-add-circle-fill align-bottom me-1"></i> Create First Resolution
+              </b-button>
             </div>
           </td>
         </tr>

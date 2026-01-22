@@ -199,12 +199,31 @@ export default {
   },
 
   methods: {
-    show() {
+    show(existingPO = null) {
       this.showModal = true;
-      this.form.supplier = this.noa?.procurement_quotation?.supplier;
-      this.form.delivery_term = this.noa?.procurement_quotation?.delivery_term;
-      this.form.place_of_delivery_id = this.noa?.procurement_quotation?.place_of_delivery_id;
-      this.form.noa_id = this.noa?.id;
+
+      if (existingPO) {
+        // Editing existing PO - populate form with existing data
+        this.form.id = existingPO.id;
+        this.form.procurement_id = existingPO.procurement_id;
+        this.form.noa_id = existingPO.noa_id;
+        this.form.po_date = existingPO.po_date;
+        this.form.code = existingPO.code;
+        this.form.supplier = existingPO.supplier || this.noa?.procurement_quotation?.supplier;
+        this.form.place_of_delivery_id = existingPO.place_of_delivery_id;
+        this.form.date_of_delivery = existingPO.date_of_delivery;
+        this.form.delivery_term = existingPO.delivery_term;
+        this.form.payment_term = existingPO.payment_term;
+        this.form.items = existingPO.items || this.noa.items;
+        this.form.option = "update";
+      } else {
+        // Creating new PO - use default values
+        this.form.supplier = this.noa?.procurement_quotation?.supplier;
+        this.form.delivery_term = this.noa?.procurement_quotation?.delivery_term;
+        this.form.place_of_delivery_id = this.noa?.procurement_quotation?.place_of_delivery_id;
+        this.form.noa_id = this.noa?.id;
+        this.form.option = "";
+      }
     },
     hide() {
       this.form.reset();

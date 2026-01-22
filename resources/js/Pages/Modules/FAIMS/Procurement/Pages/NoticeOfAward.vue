@@ -86,7 +86,7 @@
                 <i class="ri-close-circle-fill"></i>
               </button>
               <button
-                v-if="   
+                v-if="
                   ( list.status.name == 'Conformed' ||
                   list.status.name == 'PO Conformed' ||
                   list.status.name == 'PO Issued' ||
@@ -111,6 +111,25 @@
               >
                 <i class="ri-printer-fill"></i>
               </button>
+            </div>
+          </td>
+        </tr>
+        <tr v-if="lists.length === 0">
+          <td colspan="6" class="text-center py-5">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <i class="ri-trophy-line"></i>
+              </div>
+              <h6 class="empty-state-title">No Notice of Awards</h6>
+              <p class="empty-state-message">No notices of award have been created for this procurement yet.</p>
+              <b-button
+                v-if="procurement.status_id == 44"
+                type="button"
+                variant="outline-primary"
+                @click="openNOA()"
+              >
+                <i class="ri-add-circle-fill align-bottom me-1"></i> Create First Notice
+              </b-button>
             </div>
           </td>
         </tr>

@@ -1106,4 +1106,78 @@ export default {
 .collapsed-card .card-body {
   padding: 0.5rem;
 }
+
+/* Enhanced Empty State Styling */
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #6c757d, #495057);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: white;
+  font-size: 2rem;
+  box-shadow: 0 4px 20px rgba(108, 117, 125, 0.3);
+  transition: all 0.3s ease;
+}
+
+.empty-state-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.empty-state-title {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.empty-state-message {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+  max-width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Specific colors for different tabs */
+.empty-state .empty-state-icon {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .empty-state-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .empty-state-title {
+    font-size: 1rem;
+  }
+
+  .empty-state-message {
+    font-size: 0.85rem;
+  }
+}
 </style>

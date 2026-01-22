@@ -21,21 +21,34 @@
           
         >
           <i class="ri-file-line"></i>
+          Generate BAC Resolution
         </button>
 
         <button
+            v-if="procurement.quotations.length > 0"
             @click="printBids(procurement)"
             class="btn btn-outline-primary btn-sm me-2"
             v-b-tooltip.hover
             title="Print"
           >
             <i class="ri-printer-line"></i>
+            Print AOB
           </button>
       </b-col>
     </b-row>
   </div>
 
-  <b-tabs class="horizontal-scroll-tabs bg-white" card>
+  <div v-if="procurement.quotations.filter(bid => bid.status_id == 36).length === 0" class="text-center py-5">
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <i class="ri-auction-line"></i>
+      </div>
+      <h6 class="empty-state-title">No Abstract of Bids</h6>
+      <p class="empty-state-message">No bids have been submitted for this procurement yet.</p>
+    </div>
+  </div>
+
+  <b-tabs v-else class="horizontal-scroll-tabs bg-white" card>
     <template v-for="(bid, bidIndex) in procurement.quotations" :key="bid.id">
       <b-tab v-if="bid.status_id == 36">
         <template #title v-if="bid.status_id == 36">

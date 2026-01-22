@@ -33,11 +33,12 @@
 
       <b-button
         v-if="purchase_order"
-        variant="outline-warning"
+        variant="outline-success"
         class="btn-modern shadow-sm"
         size="sm"
         v-b-tooltip.hover
         title="Edit Purchase Order"
+        @click="editPO()"
       >
         <i class="ri-pencil-fill align-bottom me-1"></i>
         Edit PO
@@ -229,15 +230,7 @@
           <p class="text-muted mb-4 fs-6">
             You haven't created a Purchase Order yet. Click the button below to get started.
           </p>
-          <b-button
-            @click="createPO()"
-            variant="primary"
-            size="lg"
-            class="px-4 py-2 shadow-sm"
-          >
-            <i class="ri-add-fill me-2"></i>
-            Create Purchase Order
-          </b-button>
+
         </div>
       </div>
     </b-card>
@@ -318,6 +311,12 @@ export default {
 
     createPO() {
       this.$refs.create.show();
+    },
+
+    editPO() {
+      if (this.purchase_order) {
+        this.$refs.create.show(this.purchase_order);
+      }
     },
     updateStatus(data) {
       this.$refs.updateStatus.show(data, "PO");

@@ -324,7 +324,7 @@
             :class="[
               'nav-link mb-2 rounded-pill border-0 transition-all p-2',
               activeRightTab === 1
-                ? 'bg-primary shadow-sm'
+                ? 'bg-primary text-white shadow-sm'
                 : 'bg-white text-dark hover-bg-light',
             ]"
             @click="showRightTab(1)"
@@ -1550,6 +1550,8 @@ export default {
   font-weight: 600;
 }
 
+
+
 /* Responsive adjustments for amazing status flow */
 @media (max-width: 768px) {
   .status-flow-wrapper-modern {
@@ -1584,6 +1586,26 @@ export default {
 
   .timeline-step {
     min-width: 70px;
+  }
+
+  .empty-state-comments,
+  .empty-state-logs,
+  .empty-state-status {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .empty-state-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .empty-state-title {
+    font-size: 1rem;
+  }
+
+  .empty-state-message {
+    font-size: 0.85rem;
   }
 }
 </style>

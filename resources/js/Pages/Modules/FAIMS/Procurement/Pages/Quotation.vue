@@ -88,6 +88,18 @@
             </b-button>
           </td>
         </tr>
+        <tr v-if="lists.length === 0">
+          <td colspan="7" class="text-center py-5">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <i class="ri-file-list-3-line"></i>
+              </div>
+              <h6 class="empty-state-title">No Quotation Requests</h6>
+              <p class="empty-state-message">No quotation requests have been created for this procurement yet.</p>
+             
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
     <Pagination
