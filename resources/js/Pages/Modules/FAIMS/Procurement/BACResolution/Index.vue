@@ -114,7 +114,7 @@
            
     </b-card>
 
-<BACResolution  :procurement="procurement" @add="fetch()" @update="fetch()"  ref="BACReso" />
+<BACResolution  :procurement="procurement" :logs="logs" @add="fetch()" @update="fetch()"  ref="BACReso" />
 <UpdateStatus  :procurement="procurement"   @add="fetch()"  @update="fetch()"  ref="updateStatus"/>
 
 </template>
@@ -127,7 +127,7 @@ import BACResolution from "../Modals/BACResolution.vue";
 import UpdateStatus from "../Modals/UpdateStatus.vue";
 import { router } from '@inertiajs/vue3';
 export default {
-props: ['procurement'],
+props: ['procurement', 'logs'],
 components: { PageHeader, Pagination, BACResolution , UpdateStatus },
 data(){
     return {

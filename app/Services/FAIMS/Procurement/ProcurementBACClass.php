@@ -120,7 +120,7 @@ class ProcurementBACClass
     }
     
     public function update($id, $request)
-    { 
+    {
         $user = Auth::user();
         $data = ProcurementBac::findOrFail($id);
 
@@ -129,9 +129,12 @@ class ProcurementBACClass
             'updated_by_id' => $user->id,
         ]);
 
+        // Log the activity 
+        activity()->performedOn($data)->causedBy($user)->log('BAC Resolution updated');
+
         return [
             'data' =>new ProcurementBacResource($data),
-            'message' => 'BAC Resolution created successfully!', 
+            'message' => 'BAC Resolution created successfully!',
             'info' => "You've successfully added new BAC Resolution.",
         ];
     }

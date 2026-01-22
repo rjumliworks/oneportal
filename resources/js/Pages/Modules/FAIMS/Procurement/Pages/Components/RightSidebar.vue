@@ -50,7 +50,7 @@
         "
       >
         <div class="p-3">
-          <div class="nav nav-tabs nav-justified mb-3" style="border-bottom: 1px solid #dee2e6;">
+          <div class="nav nav-tabs nav-justified mb-3">
             <button
               :class="['nav-link', activeRightTab === 1 ? 'active' : '']"
               @click="showRightTab(1)"
@@ -195,8 +195,9 @@
                       <strong>{{ log.description }}</strong>
                     </div>
                     <div class="log-details small text-muted">
+                    
                       <span v-if="log.causer">
-                        <i class="ri-user-line me-1"></i>{{ log.causer.name }}
+                        <i class="ri-user-line me-1"></i>{{ log.causer.profile?.fullname || log.causer.name }}
                       </span>
                       <span class="ms-2">
                         <i class="ri-time-line me-1"></i
@@ -323,7 +324,7 @@
             :class="[
               'nav-link mb-2 rounded-pill border-0 transition-all p-2',
               activeRightTab === 1
-                ? 'bg-primary text-white shadow-sm'
+                ? 'bg-primary shadow-sm'
                 : 'bg-white text-dark hover-bg-light',
             ]"
             @click="showRightTab(1)"

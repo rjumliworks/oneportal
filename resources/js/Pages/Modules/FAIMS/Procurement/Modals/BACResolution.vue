@@ -1,35 +1,160 @@
 <template>
   <b-modal v-model="showModal" header-class="p-3" :title="editable ? 'Update BAC Resolution' : 'Create BAC Resolution'" size="xl" centered no-close-on-backdrop>
-    <form class="customform">
-      <BRow>
-        <BCol class="mt-2" v-if="form.code">
-          <InputLabel value="BAC Resolution Number" />
-          <TextInput v-model="form.code" class="form-control" :light="true" readonly/>
-        </BCol>
-        <BCol  class="mt-2">
-          <InputLabel value="Type" />
-          <Multiselect
-            :options="['Award', 'Re-award', 'Rebid']"
-            v-model="form.type"
-            :searchable="true"
-            label="name"
-            disabled
-            placeholder="Select BAC Resolution Type"
-          />
-        </BCol>
+    <b-row>
+      <b-col :class="['transition-all', isRightCollapsed ? 'col-md-11' : 'col-md-8']" style="transition: all 0.3s ease;  ">
+        <form class="customform">
+          <BRow>
+            <BCol class="mt-2" v-if="form.code">
+              <InputLabel value="BAC Resolution Number" />
+              <TextInput v-model="form.code" class="form-control" :light="true" readonly/>
+            </BCol>
+            <BCol  class="mt-2">
+              <InputLabel value="Type" />
+              <Multiselect
+                :options="['Award', 'Re-award', 'Rebid']"
+                v-model="form.type"
+                :searchable="true"
+                label="name"
+                disabled
+                placeholder="Select BAC Resolution Type"
+              />
+            </BCol>
 
-        <BCol  class="mt-2" >
-          <InputLabel value="Procurement Number" />
-          <TextInput v-model="procurement.code" class="form-control" :light="true" disabled />
-        </BCol>
- 
-        <BCol lg="12" class="mt-2" >
-          <InputLabel value="Content" />
-           <CustomEditor  v-model="form.body" />
+            <BCol  class="mt-2" >
+              <InputLabel value="Procurement Number" />
+              <TextInput v-model="procurement.code" class="form-control" :light="true" disabled />
+            </BCol>
 
-        </BCol>
-      </BRow> 
-    </form>
+            <BCol lg="12" class="mt-2" >
+              <InputLabel value="Content" />
+               <CustomEditor  v-model="form.body" />
+
+            </BCol>
+          </BRow>
+        </form>
+      </b-col>
+      <b-col :class="['transition-all', isRightCollapsed ? 'col-md-1' : 'col-md-4']" style="transition: all 0.3s ease; ">
+        <div
+          class="card shadow-lg border-0"
+          style="
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            height: 100vh;
+          "
+        >
+          <div
+            class="card-header bg-gradient-primary border-0 d-flex align-items-center justify-content-between"
+            style="border-radius: 15px 15px 0 0 !important; padding: 1rem"
+          >
+            <div v-if="!isRightCollapsed">
+              <h6 class="card-title mb-0 text-dark">
+                <span class="position-relative me-2">
+                  <i class="ri-file-list-line"></i>
+                  <span v-if="logsCount > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">{{ logsCount }}</span>
+                </span>
+                Activity Logs
+              </h6>
+            </div>
+            <button
+              @click="toggleRightSidebar"
+              class="btn btn-sm btn-light rounded-circle p-2 ms-2"
+              style="width: 40px; height: 40px"
+            >
+              <i
+                :class="isRightCollapsed ? 'ri-arrow-left-line' : 'ri-arrow-right-line'"
+                class="text-primary fs-6"
+              ></i>
+            </button>
+          </div>
+          <div
+            v-if="!isRightCollapsed"
+            class="card-body p-0"
+            style="
+              height: 100vh;
+              overflow: auto;
+              border-radius: 0 0 15px 15px;
+            "
+          >
+            <div class="p-3">
+              <div class="nav nav-tabs nav-justified mb-3" style="border-bottom: 2px solid #007bff; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; padding: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <button
+                  :class="['nav-link', activeRightTab === 1 ? 'active' : '']"
+                  @click="showRightTab(1)"
+                >
+                  <i class="ri-file-list-line me-1"></i>Logs
+                  <span v-if="logsCount > 0 && editable" class="badge bg-info ms-1" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">{{ logsCount }}</span>
+                </button>
+              </div>
+              <div v-if="activeRightTab === 1" class="logs-section">
+                <div v-if="modalLogs && modalLogs.length > 0" class="logs-list">
+                  <div v-for="log in modalLogs" :key="log.id" class="log-item p-3 mb-3" style="background: #f8f9fa; border-left: 4px solid #007bff; transition: all 0.3s ease;">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div class="flex-grow-1">
+                        <div class="log-description mb-2">
+                          <strong>{{ log.description }}</strong>
+                        </div>
+                        <div class="log-details small text-muted">
+                          <span v-if="log.causer">
+                            <i class="ri-user-line me-1"></i>{{ log.causer.profile?.fullname || log.causer.name }}
+                          </span>
+                          <span class="ms-2">
+                            <i class="ri-time-line me-1"></i>{{ formatDate(log.created_at) }}
+                          </span>
+                        </div>
+                        <div v-if="log.changes && Object.keys(log.changes).length > 0" class="log-changes mt-2" style="background: #ffffff; padding: 0.5rem; border-radius: 4px; border: 1px solid #dee2e6;">
+                          <div class="small fw-bold text-muted mb-1">Changes:</div>
+                          <div v-for="(value, key) in log.changes" :key="key" class="change-item" style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span class="change-key" style="font-weight: 600; color: #495057;">{{ key }}:</span>
+                            <span class="change-value" style="color: #007bff; font-family: monospace; font-size: 0.85rem;">{{ value }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="log-icon">
+                        <i class="ri-file-list-line fs-4"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="text-center text-muted mt-3">
+                  <i class="ri-file-list-line fs-1"></i>
+                  <p class="mt-2">No logs available</p>
+                  <small>Activity logs will appear here</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            v-else
+            class="card-body p-0"
+            style="
+              height: 100vh;
+              overflow: auto;
+              border-radius: 0 0 15px 15px;
+            "
+          >
+            <div class="p-2 d-flex flex-column align-items-center">
+              <div class="position-relative">
+                <button
+                  :class="[
+                    'nav-link mb-2 rounded-pill border-0 transition-all p-2',
+                    activeRightTab === 1
+                      ? 'bg-primary text-white shadow-sm'
+                      : 'bg-white text-dark hover-bg-light',
+                  ]"
+                  @click="showRightTab(1)"
+                  style="transition: all 0.3s ease; width: 50px; height: 50px"
+                  v-b-tooltip.hover
+                  title="Logs"
+                >
+                  <i class="ri-file-list-line fs-5"></i>
+                </button>
+                <span v-if="logsCount > 0" class="badge bg-danger position-absolute" style="font-size: 0.9rem; padding: 0.2rem 0.4rem; font-weight: bold; top: -5px; right: -5px;">{{ logsCount }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </b-col>
+    </b-row>
 
     <template v-slot:footer>
       <b-button @click="hide()" variant="light" block>Cancel</b-button>
@@ -58,16 +183,17 @@ export default {
     CustomEditor   
     // ckeditor: CKEditor.component
   },
-  props: ['procurement'],
+  props: ['procurement', 'logs'],
   data() {
     return {
-    isEditorReady :false,
+      isEditorReady :false,
       form: useForm({
         id: null,
         code: null,
         procurement_id: this.procurement.id,
         body:  '',
         type: null,
+        option: null,
       }),
 
 
@@ -79,6 +205,9 @@ export default {
       award_body: '',
       rebid_body: '',
       reaward_body: '',
+      activeRightTab: 1,
+      isRightCollapsed: true,
+      modalLogs: [],
     };
   },
 
@@ -106,9 +235,15 @@ export default {
 
   },
 
+  computed: {
+    logsCount() {
+      return this.modalLogs ? this.modalLogs.length : 0;
+    },
+  },
+
   mounted() {
     // this.getDateSubmisionNotLaterThan();
-
+    this.isRightCollapsed = localStorage.getItem("isRightCollapsed") === "true" || true;
   },
 
   methods: {
@@ -116,8 +251,9 @@ export default {
       this.showModal = true;
       this.form.type = type;
       this.editable = false;
+      this.modalLogs = this.logs;
       this.Content();
-    
+
     },
 
     edit(data) {
@@ -128,6 +264,7 @@ export default {
       this.form.type = data.type;
       this.showModal = true;
       this.editable = true;
+      this.fetchLogsForBACResolution(data.id);
     },
 
     hide() {
@@ -690,6 +827,7 @@ export default {
 
     submit() {
        if(this.editable){
+              this.form.option = 'update';
               this.form.put(`/faims/bac-resolutions/`+this.form.id,{
                   preserveScroll: true,
                   onSuccess: (response) => {
@@ -708,8 +846,42 @@ export default {
                 },
             });
             }
-   
-     
+
+
+    },
+
+    toggleRightSidebar() {
+      this.isRightCollapsed = !this.isRightCollapsed;
+      localStorage.setItem("isRightCollapsed", this.isRightCollapsed);
+    },
+
+    showRightTab(tab) {
+      this.activeRightTab = tab;
+      localStorage.setItem("activeRightTab", tab);
+    },
+
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
+
+    fetchLogsForBACResolution(bacResolutionId) {
+      axios.get(`/faims/procurements/${this.procurement.id}`, {
+        params: {
+          option: 'bac_resolution_logs',
+          bac_resolution_id: bacResolutionId
+        }
+      })
+      .then(response => {
+        this.modalLogs = response.data.logs;
+      })
+      .catch(err => console.log(err));
     },
   }
 };

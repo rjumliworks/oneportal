@@ -246,7 +246,7 @@ class ViewClass
                     })->orWhere(function ($query) use ($id) {
                         $query->where('subject_type', ProcurementNoaPo::class)
                             ->whereIn('subject_id', ProcurementNoaPo::where('procurement_id', $id)->pluck('id'));
-                    })->with('causer')->orderBy('created_at', 'desc')->get();
+                    })->with('causer.profile')->orderBy('created_at', 'desc')->get();
                     switch($request->option){
             
             case 'view':
@@ -333,10 +333,29 @@ class ViewClass
             break;
 
             case 'bac_resolutions':
+                $logs = Activity::where(function ($query) use ($id) {
+                    $query->where('subject_type', ProcurementBac::class)
+                          ->whereIn('subject_id', ProcurementBac::where('procurement_id', $id)->pluck('id'));
+                })->with('causer')->orderBy('created_at', 'desc')->get();
+
                 return inertia('Modules/FAIMS/Procurement/BACResolution/Index', [
                     'procurement' => $procurement,
+                    'logs' => $logs,
                     'option' => $request->option,
-                ]); 
+                ]);
+            break;
+
+            case 'bac_resolution_logs':
+                $logs = Activity::where(function ($query) use ($id, $request) {
+                    $query->where('subject_type', ProcurementBac::class);
+                    if ($request->bac_resolution_id) {
+                        $query->where('subject_id', $request->bac_resolution_id);
+                    } else {
+                        $query->whereIn('subject_id', ProcurementBac::where('procurement_id', $id)->pluck('id'));
+                    }
+                })->with('causer.profile')->orderBy('created_at', 'desc')->get();
+
+                return response()->json(['logs' => $logs]);
             break;
  
             case 'notice_of_awards':

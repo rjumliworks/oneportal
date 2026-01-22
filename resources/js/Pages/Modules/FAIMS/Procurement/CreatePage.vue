@@ -9,7 +9,7 @@
               <div class="hero-content">
                 <div class="d-flex align-items-center mb-2">
                   <div class="hero-icon-wrapper me-3">
-                    <i class="ri-add-circle-line hero-icon"></i>
+                    <i class="ri-file-2-line hero-icon"></i>
                   </div>
                   <div>
                     <h1 class="hero-title mb-1">
