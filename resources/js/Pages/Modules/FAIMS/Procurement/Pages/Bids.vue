@@ -6,28 +6,31 @@
 
       <!-- Right-Aligned Action Button -->
       <b-col class="text-end">
-        <b-dropdown size="sm" variant="success">
-          <template #button-content>
-            <b>Actions</b>
-          </template>
-          <b-dropdown-item @click="printBids(procurement)">
-            <i class="ri-printer-line align-bottom me-1"></i>
-            Print
-          </b-dropdown-item>
-          <b-dropdown-item
-            @click="openBACReso(procurement)"
-            v-if="
+        <button
+         v-if="
               (this.procurement.status?.name == 'For BAC Resolution' ||
               (this.procurement.status?.name === 'Rebid' &&
                 this.procurement.sub_status?.name === 'For BAC Resolution')) &&
                 $page.props.roles.includes('Procurement Officer') ||
               $page.props.roles.includes('Procurement Staff')
-            "
+           "
+           @click="openBACReso(procurement)"
+          class="btn btn-outline-primary btn-sm me-2"
+          v-b-tooltip.hover
+          title="Generate BAC Resolution"
+          
+        >
+          <i class="ri-file-line"></i>
+        </button>
+
+        <button
+            @click="printBids(procurement)"
+            class="btn btn-outline-primary btn-sm me-2"
+            v-b-tooltip.hover
+            title="Print"
           >
-            <i class="ri-file-line align-bottom me-1"></i>
-            Generate BAC Resolution
-          </b-dropdown-item>
-        </b-dropdown>
+            <i class="ri-printer-line"></i>
+          </button>
       </b-col>
     </b-row>
   </div>

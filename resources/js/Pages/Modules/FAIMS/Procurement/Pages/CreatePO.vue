@@ -7,56 +7,76 @@
       <div class="input-group mb-1">
         <b-button
           type="button"
-          variant="info"
+          variant="outline-info"
           @click="goBackPage()"
-          class="me-1"
+          class="me-2"
           size="sm"
+          v-b-tooltip.hover
+          title="Back"
         >
-          <i class="ri-arrow-left-line align-bottom me-1"></i> Back
+          <i class="ri-arrow-left-line align-bottom me-1"></i> 
         </b-button>
 
-        <b-dropdown text="Actions" type="button" variant="primary" size="sm">
-          <b-dropdown-item @click="createPO()" v-if="!purchase_order">
-            <i class="ri-add-fill align-bottom me-1"></i>
-            Create
-          </b-dropdown-item>
-          <b-dropdown-item v-if="purchase_order">
-            <i class="ri-pencil-fill align-bottom me-1"></i>
-            Edit
-          </b-dropdown-item>
+      
+         <b-button @click="createPO()" v-if="!purchase_order" size="sm" 
+          v-b-tooltip.hover
+          title="Create"
+          class="me-2"
+         >
+            <i class="ri-add-fill align-bottom "></i>
+            
+          </b-button>
+          <b-button v-if="purchase_order" variant="outline-success" size="sm"
+            v-b-tooltip.hover
+            title="Edit"
+            class="me-2"
+          >
+            <i class="ri-pencil-fill align-bottom"></i>
+            
+          </b-button>
           
-          <b-dropdown-item
-
+          <b-button variant="outline-success" size="sm" 
+            v-b-tooltip.hover
+            title="Update Status"
+            class="me-2"
             v-if="
               (purchase_order && purchase_order.status.name != 'Delivered/For Inspection' && purchase_order.status.name != 'Completed') 
-              
             "
             @click="updateStatus(purchase_order)"
           >
             <i class="ri-edit-fill align-bottom me-1"></i>
-            Update Status
-          </b-dropdown-item>
+          
+            </b-button>
 
-          <b-dropdown-item
+          <b-button variant="outline-danger" size="sm" class="me-2"
             v-if="purchase_order && purchase_order.status.name == 'Served to Supplier'"
             @click="notConformed(purchase_order)"
+              v-b-tooltip.hover
+            title="Not Conformed"
           >
-            <i class="ri-edit-fill align-bottom me-1"></i>
-            Not Conformed
-          </b-dropdown-item>
+            <i class="ri-edit-fill align-bottom"></i>
+          
+          </b-button>
 
-          <b-dropdown-item
+          <b-button variant="outline-success"  size="sm"  class="me-2"
             v-if="purchase_order && purchase_order.status.name == 'Conformed'"
             @click="printNTP(purchase_order)"
+            v-b-tooltip.hover
+            title="Notice to Proceed"
+            
           >
-            <i class="ri-file-fill align-bottom me-1"></i>
-            Notice to Proceed
-          </b-dropdown-item>
-          <b-dropdown-item v-if="purchase_order" @click="printPO(purchase_order)">
-            <i class="ri-printer-fill align-bottom me-1"></i>
-            Print
-          </b-dropdown-item>
-        </b-dropdown>
+            <i class="ri-file-fill align-bottom "></i>
+            
+           </b-button>
+          <b-button variant="outline-dark" v-if="purchase_order" @click="printPO(purchase_order)" size="sm"
+            v-b-tooltip.hover
+            title="Print"
+            class="me-2"
+          >
+            <i class="ri-printer-fill align-bottom"></i>
+            
+          </b-button>
+      
       </div>
     </b-col>
   </b-row>

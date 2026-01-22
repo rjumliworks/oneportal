@@ -69,15 +69,16 @@
           </td>
 
           <td class="text-center">
-            <b-button @click="print(list)" size="sm" class="me-2">
-              <i class="ri-printer-fill align-bottom me-1"></i>
+            <b-button @click="print(list)" variant="outline-dark" size="sm" class="me-2 mb-2">
+              <i class="ri-printer-fill align-bottom "></i>
               <!-- Icon for Print -->
             </b-button>
 
             <b-button
               @click="removeRFQ(list)"
-              variant="danger"
+              variant="outline-danger"
               size="sm"
+              class="me-2 mb-2"
               v-if="
                 $page.props.roles.includes('Procurement Officer') ||
                 $page.props.roles.includes('Procurement Staff')

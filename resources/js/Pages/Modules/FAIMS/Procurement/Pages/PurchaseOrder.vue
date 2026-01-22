@@ -124,57 +124,44 @@
                     <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
                   </td>
                   <td class="text-end">
-                    <div class="d-flex gap-3 justify-content-center">
-                      <div class="dropdown" @click.stop>
-                        <button
-                          class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <i class="ri-more-fill align-bottom"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
-                          <li
-                            @click="viewPO(list)"
-                            class="dropdown-item d-flex align-items-center"
-                            role="button"
-                          >
-                            <i class="ri-eye-fill align-bottom me-1"></i>View
-                          </li>
+                    <div class="d-flex gap-1 justify-content-center flex-wrap">
+                      <button
+                        @click="viewPO(list)"
+                        class="btn btn-outline-primary btn-sm"
+                        v-b-tooltip.hover
+                        title="View"
+                      >
+                        <i class="ri-eye-fill"></i>
+                      </button>
 
-                          <li
-                            v-if="list.status.name == 'Delivered/For Inspection' &&  ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))"
-                            @click="updateStatus(list)"
-                            class="dropdown-item d-flex align-items-center"
-                            role="button"
-                          >
-                            <i class="ri-eye-fill align-bottom me-1"></i>Update Status
-                          </li>
+                      <button
+                        v-if="list.status.name == 'Delivered/For Inspection' &&  ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))"
+                        @click="updateStatus(list)"
+                        class="btn btn-outline-primary btn-sm"
+                        v-b-tooltip.hover
+                        title="Update Status"
+                      >
+                        <i class="ri-edit-2-fill"></i>
+                      </button>
 
-                          <li><hr class="dropdown-divider" /></li>
-                          <li>
-                            <a
-                              @click="openPrint(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-printer-fill me-2"></i> Print
-                            </a>
-                          </li>
+                      <button
+                        @click="openPrint(list)"
+                        class="btn btn-outline-primary btn-sm"
+                        v-b-tooltip.hover
+                        title="Print"
+                      >
+                        <i class="ri-printer-fill"></i>
+                      </button>
 
-                          <li>
-                            <a
-                              v-if="list.status.name == 'Completed'"
-                              @click="openPrintIAR(list)"
-                              class="dropdown-item d-flex align-items-center"
-                              role="button"
-                            >
-                              <i class="ri-printer-fill me-2"></i> Print IAR
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
+                      <button
+                        v-if="list.status.name == 'Completed'"
+                        @click="openPrintIAR(list)"
+                        class="btn btn-outline-primary btn-sm"
+                        v-b-tooltip.hover
+                        title="Print IAR"
+                      >
+                        <i class="ri-printer-fill"></i>
+                      </button>
                     </div>
                   </td>
                 </tr>

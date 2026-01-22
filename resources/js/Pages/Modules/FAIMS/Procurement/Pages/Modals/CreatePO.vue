@@ -106,10 +106,10 @@
     </form>
 
     <template v-slot:footer>
-      <b-button @click="hide()" variant="light" block>Cancel</b-button>
+      <b-button @click="hide()" variant="outline-light" block>Cancel</b-button>
       <b-button
         @click="submit()"
-        variant="primary"
+        variant="outline-primary"
         :disabled="form.processing || !form.place_of_delivery_id || !form.noa_id.length"
         block
         >Save</b-button

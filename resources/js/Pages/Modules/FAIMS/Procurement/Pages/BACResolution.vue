@@ -66,42 +66,33 @@
             <b-badge :class="list.status.bg">{{ list.status?.name }}</b-badge>
           </td>
           <td class="text-center">
-            <div class="d-flex gap-3 justify-content-center">
-              <div class="dropdown" @click.stop>
-                <button
-                  class="btn btn-light btn-icon btn-sm dropdown material-shadow-none"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i class="ri-more-fill align-bottom"></i>
-                </button>
-                <ul class="dropdown-menu dropdownmenu-primary dropdown-menu-end">
-                  <li
-                    @click="printBACReso(list)"
-                    class="dropdown-item d-flex align-items-center"
-                    role="button"
-                  >
-                    <i class="ri-printer-fill align-bottom me-1"></i>Print
-                  </li>
-                  <li
-                    v-if="list.status?.name == 'Pending' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff') )"
-                    @click="editBACReso(list)"
-                    class="dropdown-item d-flex align-items-center"
-                    role="button"
-                  >
-                    <i class="ri-edit-2-fill align-bottom me-1"></i>Edit
-                  </li>
-                  <li
-                    v-if="list.status.name == 'Pending' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff') )"
-                    @click="updateStatus(list)"
-                    class="dropdown-item d-flex align-items-center"
-                    role="button"
-                  >
-                    <i class="ri-edit-2-fill align-bottom me-1"></i>Update Status
-                  </li>
-                </ul>
-              </div>
+            <div class="d-flex gap-1 justify-content-center flex-wrap">
+              <button
+                @click="printBACReso(list)"
+                class="btn btn-outline-primary btn-sm"
+                v-b-tooltip.hover
+                title="Print"
+              >
+                <i class="ri-printer-fill"></i>
+              </button>
+              <button
+                v-if="list.status?.name == 'Pending' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff') )"
+                @click="editBACReso(list)"
+                class="btn btn-outline-primary btn-sm"
+                v-b-tooltip.hover
+                title="Edit"
+              >
+                <i class="ri-edit-2-fill"></i>
+              </button>
+              <button
+                v-if="list.status.name == 'Pending' && ($page.props.roles.includes('Procurement Officer') || $page.props.roles.includes('Procurement Staff') )"
+                @click="updateStatus(list)"
+                class="btn btn-outline-primary btn-sm"
+                v-b-tooltip.hover
+                title="Update Status"
+              >
+                <i class="ri-edit-2-fill"></i>
+              </button>
             </div>
           </td>
         </tr>
