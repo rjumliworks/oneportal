@@ -74,20 +74,20 @@
                 v-b-tooltip.hover
                 title="Update Status"
               >
-                <i class="ri-edit-2-fill"></i>
+                <i class="ri-edit-circle-fill"></i>
               </button>
               <button
                 v-if="(list.status.name == 'Served to Supplier') && ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))"
                 @click="notConformed(list)"
-                class="btn btn-outline-primary btn-sm"
+                class="btn btn-outline-danger btn-sm"
                 v-b-tooltip.hover
                 title="Not Conformed"
               >
-                <i class="ri-edit-2-fill"></i>
+                <i class="ri-close-circle-fill"></i>
               </button>
               <button
-                v-if="
-                  (list.status.name == 'Conformed' ||
+                v-if="   
+                  ( list.status.name == 'Conformed' ||
                   list.status.name == 'PO Conformed' ||
                   list.status.name == 'PO Issued' ||
                   list.status.name == 'PO Pending' ||
@@ -97,7 +97,7 @@
                   $page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer')
                 "
                 @click="goPOPage(list)"
-                class="btn btn-outline-primary btn-sm"
+                class="btn btn-outline-success btn-sm"
                 v-b-tooltip.hover
                 title="Purchase Order"
               >
@@ -105,7 +105,7 @@
               </button>
               <button
                 @click="printNOA(list)"
-                class="btn btn-outline-primary btn-sm"
+                class="btn btn-outline-dark btn-sm"
                 v-b-tooltip.hover
                 title="Print"
               >
