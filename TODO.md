@@ -1,0 +1,6 @@
+- [ ] Wrap action buttons in a card with better spacing and grouping
+- [ ] Enhance details section with cards for supplier and PO info, add icons and typography
+- [ ] Improve items table with striped rows, borders, hover effects, alignment
+- [ ] Style empty state with icon and centered layout
+- [ ] Add overall improvements: shadows, rounded corners, responsive design
+- [ ] Update scoped styles for modern appearance

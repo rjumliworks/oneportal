@@ -21,7 +21,8 @@
               <i v-if="activeRightTab === 1" class="ri-chat-1-line"></i>
               <i v-else-if="activeRightTab === 2" class="ri-file-list-line"></i>
               <i v-else-if="activeRightTab === 3" class="ri-flow-chart"></i>
-              <span v-if="activeRightTab === 1 && commentCount > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">{{ commentCount }}</span>
+            <span v-if="activeRightTab === 1 && commentCount > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">{{ commentCount }}</span>
+            <span v-if="activeRightTab === 2 && logsCount > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">{{ logsCount }}</span>
             </span>
             <span class="text-white">
               {{ activeRightTab === 1 ? 'Procurement Comments' : activeRightTab === 2 ? 'Activity Logs' : 'Status' }}
@@ -49,7 +50,7 @@
         "
       >
         <div class="p-3">
-          <div class="nav nav-tabs nav-justified mb-3">
+          <div class="nav nav-tabs nav-justified mb-3" style="border-bottom: 1px solid #dee2e6;">
             <button
               :class="['nav-link', activeRightTab === 1 ? 'active' : '']"
               @click="showRightTab(1)"
@@ -344,11 +345,14 @@
                 : 'bg-white text-dark hover-bg-light',
             ]"
             @click="showRightTab(2)"
-            style="transition: all 0.3s ease; width: 50px; height: 50px"
+            style="transition: all 0.3s ease; width: 50px; height: 50px; position: relative;"
             v-b-tooltip.hover
             title="Logs"
           >
             <i class="ri-file-list-line fs-5"></i>
+            <span v-if="logsCount > 0" class="badge bg-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.9rem; padding: 0.2rem 0.4rem; font-weight: bold;">
+              {{ logsCount }}
+            </span>
           </button>
           <button
             :class="[
@@ -387,6 +391,9 @@ export default {
     };
   },
   computed: {
+    logsCount() {
+      return this.logs ? this.logs.length : 0;
+    },
     sortedComments() {
       let allComments = [];
 
