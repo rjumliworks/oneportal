@@ -125,14 +125,14 @@
                   </td>
                   <td class="text-end">
                     <div class="d-flex gap-1 justify-content-center flex-wrap">
-                      <button
+                      <!-- <button
                         @click="viewPO(list)"
                         class="btn btn-outline-primary btn-sm"
                         v-b-tooltip.hover
                         title="View"
                       >
                         <i class="ri-eye-fill"></i>
-                      </button>
+                      </button> -->
 
                       <button
                         v-if="list.status.name == 'Delivered/For Inspection' &&  ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))"
@@ -148,9 +148,9 @@
                         @click="openPrint(list)"
                         class="btn btn-outline-primary btn-sm"
                         v-b-tooltip.hover
-                        title="Print"
+                        title="Print PO"
                       >
-                        <i class="ri-printer-fill"></i>
+                        <i class="ri-printer-line"></i>
                       </button>
 
                       <button

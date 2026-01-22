@@ -82,7 +82,6 @@
                   @click="showRightTab(1)"
                 >
                   <i class="ri-file-list-line me-1"></i>Logs
-                  <span v-if="logsCount > 0 && editable" class="badge bg-info ms-1" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">{{ logsCount }}</span>
                 </button>
               </div>
               <div v-if="activeRightTab === 1" class="logs-section">
