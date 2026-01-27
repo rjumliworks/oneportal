@@ -29,7 +29,7 @@
       <BRow>
         <BCol lg="12" class="mt-3">
           <InputLabel value="Description" :message="form.errors.item_description" />
-          <ckeditor v-model="form.item_description" :editor="editor"></ckeditor>
+          <ckeditor v-model="form.item_description" :editor="editor" :config="editorConfig"></ckeditor>
         </BCol>
 
         <BCol lg="4" class="mt-2">
@@ -62,7 +62,7 @@
 
     <template v-slot:footer>
       <b-button @click="hide()" variant="light" block>Cancel</b-button>
-      <b-button @click="addItem(form)" variant="primary" :disabled="form.processing" block
+      <b-button @click="addItem(form)" variant="primary" :disabled="!isItemFormValid || form.processing" block
         >{{ isEditing ? 'Update' : 'add' }}</b-button
       >
     </template>
@@ -123,6 +123,19 @@ export default {
   computed: {
     unitTypeLabel() {
       return this.form.item_quantity > 1 ? "name_long" : "name_short";
+    },
+
+    isItemFormValid() {
+      return this.form.item_description &&
+             this.form.item_quantity &&
+             this.form.item_unit_type_id &&
+             this.form.item_unit_cost;
+    },
+
+    editorConfig() {
+      return {
+        height: this.modal_size === 'fullscreen' ? '400px' : '200px',
+      };
     },
   },
 

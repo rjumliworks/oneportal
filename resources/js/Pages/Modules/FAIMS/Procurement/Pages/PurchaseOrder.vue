@@ -141,7 +141,7 @@
                         v-b-tooltip.hover
                         title="Update Status"
                       >
-                        <i class="ri-edit-2-fill"></i>
+                        <i class="ri-edit-circle-fill"></i>
                       </button>
 
                       <button

@@ -332,7 +332,7 @@
                         class="action-btn primary-btn"
                       >
                         <i class="ri-save-line me-2"></i>
-                        Save Procurement Request
+                        Save Request
                       </b-button>
 
                       <b-button
