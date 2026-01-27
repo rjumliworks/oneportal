@@ -5,11 +5,12 @@ namespace App\Services\FAIMS\Procurement;
 use App\Models\ProcurementBac;
 use App\Models\Procurement;
 use App\Models\ProcurementBacNoa;
-
 use App\Http\Resources\FAIMS\Procurement\ProcurementBacNoaResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\ListStatus;
 use Spatie\Activitylog\Models\Activity;
+
 
 class ProcurementBacNoaClass
 {
@@ -52,19 +53,19 @@ class ProcurementBacNoaClass
    
         if($currentStatusName == "Pending"){
             $noa->update([
-                    'status_id' => 47, // set status to "served to supplier"
+                    'status_id' => ListStatus::getID('Served to Supplier','Procurement'), // set status to "Served to Supplier"
             ]);
             activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Served to Supplier');
         }
         elseif($currentStatusName == "Served to Supplier"){
             $noa->update([
-                'status_id' => 54, // set status to "conformed"
+                'status_id' => ListStatus::getID('Conformed','Procurement'), // set status to "Conformed"
             ]);
             activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Conformed');
         }
         elseif($currentStatusName == "Conformed"){
             $noa->update([
-                'status_id' => 52, // set status to "delivered/for inspection"
+                'status_id' => ListStatus::getID('Delivered/For Inspection','Procurement'), // set status to "Delivered/For Inspection"
             ]);
             activity()->performedOn($noa)->causedBy($user)->log('NOA status updated to Delivered/For Inspection');
         }
@@ -104,7 +105,7 @@ class ProcurementBacNoaClass
         $noa = ProcurementBacNoa::with('procurement_bac.procurement')->findOrFail($id);
 
         $noa->update([
-            'status_id' => 55, // set status to "not conformed"
+            'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set status to "Not Conformed"
             'updated_by_id' => $user->id,
         ]);
 
@@ -119,15 +120,15 @@ class ProcurementBacNoaClass
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
         $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
     
-        // if updated status is "re-award" or "rebid"
-        if($updated_pr_status  == 59 || $updated_pr_status  == 60){
-            if($updated_pr_status  == 59){
+        // if updated status is "Re-award" or "Rebid"
+        if($updated_pr_status  == ListStatus::getID('Re-award','Procurement') || $updated_pr_status  == ListStatus::getID('Rebid','Procurement')){
+            if($updated_pr_status  == ListStatus::getID('Re-award','Procurement')){
                 $procurement->update([
                     'sub_status_id' => null,
                     'reawarded_count' =>  $procurement->reawarded_count + 1,
                 ]);
             }
-            else if($updated_pr_status  == 60){
+            else if($updated_pr_status  == ListStatus::getID('Rebid','Procurement')){
                 $procurement->update([
                     'sub_status_id' => null,
                     'rebidded_count' =>  $procurement->rebidded_count + 1,
@@ -135,7 +136,7 @@ class ProcurementBacNoaClass
             }
             // --- update the old BAC Resolution status to "NOA Not Conformed" -----
             $noa->procurement_bac->update([
-                'status_id' => 68,
+                'status_id' => ListStatus::getID('Not Conformed','Procurement'),
             ]);
         }
 

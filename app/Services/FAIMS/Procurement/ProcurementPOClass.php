@@ -8,12 +8,11 @@ use App\Models\ProcurementBacNoa;
 use App\Models\ProcurementNoaPo;
 use App\Models\ProcurementPoNtp;
 use App\Models\ProcurementPoIar;
-
 use App\Http\Resources\FAIMS\Procurement\ProcurementNoaPoResource;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\ListStatus;
 
 class ProcurementPOClass
 {
@@ -66,7 +65,7 @@ class ProcurementPOClass
             'place_of_delivery_id' => $request->place_of_delivery_id,
             'date_of_delivery' => $request->date_of_delivery,
             'created_by_id' => $user->id,
-            'status_id' => 36, // set to "PO Issued"
+            'status_id' => ListStatus::getID('Pending','Procurement'), // set to "Pending"
         ]);
 
 
@@ -74,7 +73,7 @@ class ProcurementPOClass
         
         if($noa){
              // update PR status to "PO Pending" 
-             $noa->status_id = 62;
+             $noa->status_id = ListStatus::getID('PO Pending','Procurement');
              $noa->update();
         }
 
@@ -114,20 +113,20 @@ class ProcurementPOClass
         if($request->status['name'] == "Pending"){
 
              $po->update([
-                'status_id' => 47, // set status to "served to supplier"
+                'status_id' => ListStatus::getID('Served to Supplier','Procurement'), // set status to "Served to Supplier"
             ]);
             $po->noa->update([
-                'status_id' => 49, // set noa status to "PO Served to Supplier"
+                'status_id' => ListStatus::getID('PO Issued','Procurement'), // set noa status to "PO Issued"
             ]);
         }
         else if($request->status['name'] == "Served to Supplier"){
        
             $po->update([
-                'status_id' => 54, // set status to "Conformed"  
+                'status_id' => ListStatus::getID('Conformed','Procurement'), // set status to "Conformed"  
             ]);
 
             $po->noa->update([
-                'status_id' => 51, // set noa status to "PO Conformed"
+                'status_id' => ListStatus::getID('PO Conformed','Procurement'), // set noa status to "PO Conformed"
             ]);
 
             // create Notice to Proceed(NTP) 
@@ -135,21 +134,21 @@ class ProcurementPOClass
         }
         else if($request->status['name'] == "Conformed"){
              $po->update([
-                'status_id' => 52, // set status to "Delivered/For Inspection"
+                'status_id' => ListStatus::getID('Delivered/For Inspection','Procurement'), // set status to "Delivered/For Inspection"
             ]);
             $po->noa->update([
-                'status_id' => 52, // set noa status to "PO Delivered/For Inspection"
+                'status_id' => ListStatus::getID('Delivered/For Inspection','Procurement'), // set noa status to "PO Delivered/For Inspection"
             ]);
             //Create IAR
             $this->createIAR($po);
         }
         else if($request->status['name'] == "Delivered/For Inspection"){
              $po->update([
-                'status_id' => 53, // set status to "Completed"
+                'status_id' => ListStatus::getID('Completed','Procurement'), // set status to "Completed"
                
             ]);
             $po->noa->update([
-                'status_id' => 53, // set status to "Completed"
+                'status_id' => ListStatus::getID('Completed','Procurement'), // set status to "Completed"
             ]);
         }
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
@@ -206,26 +205,27 @@ class ProcurementPOClass
                 'code' => $code,
                 'po_id' => $po->id,
                 'created_by_id' => $user->id,
-                'status_id' => 36, //set status to "pending"
+                'status_id' => ListStatus::getID('Pending','Procurement'), //set status to "Pending"
             ]);
     }
 
 
     public function notConformed($id, $request)
     { 
+        //dd('hey');
         $user = Auth::user();
         $po = ProcurementNoaPo::with('noa.procurement_bac.procurement' , 'status')->findOrFail($id);
 
         $po->update([
-            'status_id' => 55, // set status to "not conformed"
+            'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set status to "Not Conformed"
         ]);
 
         $po->noa->update([
-            'status_id' => 61, // set noa status to "PO Not Conformed"
+            'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set noa status to "PO Not Conformed"
         ]);
 
         $po->noa->procurement_bac->update([
-            'status_id' => 61, // set bac resolution status to "PO Not Conformed"
+            'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set bac resolution status to "PO Not Conformed"
         ]);
     
         $po->comments()->create([
@@ -236,16 +236,16 @@ class ProcurementPOClass
         $procurement = $po->noa->procurement_bac->procurement;
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
 
-        // if updated status is "re-award" or "rebid"
-        if($current_pr_status  == 59 || $current_pr_status  == 60){
+        // if updated status is "Re-award" or "Rebid"
+        if($current_pr_status  == ListStatus::getID('Re-award','Procurement') || $current_pr_status  == ListStatus::getID('Rebid','Procurement')){
             $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
-            if($updated_pr_substatus  == 59){
+            if($updated_pr_substatus  == ListStatus::getID('Re-award','Procurement')){
                 $procurement->update([
                     'reawarded_count' =>  $procurement->reawarded_count + 1,
                     'sub_status_id' => null,
                 ]);
             }
-            else if($updated_pr_substatus  == 60){
+            else if($updated_pr_substatus  == ListStatus::getID('Rebid','Procurement')){
                 $procurement->update([
                     'rebidded_count' =>  $procurement->rebidded_count + 1,
                    'sub_status_id' => null,
@@ -253,19 +253,19 @@ class ProcurementPOClass
             }
             // --- update the old BAC Resolution status to "PO Not Conformed" --
             $po->noa->update([
-                'status_id' => 61,
+                'status_id' => ListStatus::getID('Not Conformed','Procurement'),
             ]);
 
         }
         else{
             $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
-            if($updated_pr_status  == 59){
+            if($updated_pr_status  == ListStatus::getID('Re-award','Procurement')){
                 $procurement->update([
                     'reawarded_count' =>  $procurement->reawarded_count + 1,
                     'status_id' =>  $updated_pr_status,
                 ]);
             }
-            else if($updated_pr_status  == 60){
+            else if($updated_pr_status  == ListStatus::getID('Rebid','Procurement')){
                 $procurement->update([
                     'rebidded_count' =>  $procurement->rebidded_count + 1,
                     'status_id' =>  $updated_pr_status,
@@ -273,7 +273,7 @@ class ProcurementPOClass
             }
             //--- update the old BAC Resolution status to "PO Not Conformed" --
             $po->noa->update([
-                'status_id' => 61,
+                'status_id' => ListStatus::getID('Not Conformed','Procurement'),
             ]);
         }
         return [

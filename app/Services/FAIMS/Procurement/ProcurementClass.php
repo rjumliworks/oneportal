@@ -11,6 +11,7 @@ use App\Http\Resources\FAIMS\Procurement\ProcurementResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\ListStatus;
 
 class ProcurementClass
 {
@@ -18,7 +19,7 @@ class ProcurementClass
         $data = Request::create([
             'code' => $this->generateCode(),
             'type_id' => 175,
-            'status_id' => 36,
+            'status_id' => ListStatus::getID('Pending','Procurement'),
             'user_id' => \Auth::user()->id
         ]);
                                          
@@ -40,7 +41,7 @@ class ProcurementClass
         $purchase_request_number = Procurement::generateProcurementNumber();
         $procurement = Procurement::create(array_merge($request->all(), [ 
             'code' => $purchase_request_number,
-            'status_id' => 36, //set to "Created"
+            'status_id' => ListStatus::getID('Pending','Procurement'), //set to "Pending"
             'created_by_id' => $user->id, 
          ] )); 
 
@@ -128,7 +129,7 @@ class ProcurementClass
             $this->updatePRItems($id, $request);
 
             //  update status to reviewed
-            $data->status_id  = 37;
+            $data->status_id  = ListStatus::getID('Reviewed','Procurement');
 
             $data->update();
 
@@ -137,7 +138,7 @@ class ProcurementClass
                 'procurement_code' => $data->code,
                 'user_id' => $user->id,
                 'user_name' => $user->name,
-                'new_status_id' => 37
+                'new_status_id' => ListStatus::getID('Reviewed','Procurement')
             ]);
 
             return [
@@ -165,8 +166,8 @@ class ProcurementClass
         // update Procurement Item Details       
         $this->updatePRItems($id, $request);
 
-        //  update status to reviewed
-        $data->status_id  = 38;
+        //  update status to approved
+        $data->status_id  = ListStatus::getID('Approved','Procurement');
 
         $data->update();
 

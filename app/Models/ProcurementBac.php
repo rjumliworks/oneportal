@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ListStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class ProcurementBac extends Model
@@ -70,63 +71,63 @@ class ProcurementBac extends Model
         $noas = $this->notice_of_awards;
        
 
-        //check ih items with status "Avaliable for Re-award"
+        //check ih items with status "Available for Re-award"
         $hasAvailableReAwardItems = $this->procurement->quotations->flatMap->items
-            ->contains(fn($item) => $item->status_id == 40);    
+            ->contains(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement'));    
 
         $availableQuotationItems = $this->procurement->quotations
             ->flatMap->items
-            ->filter(fn($item) => $item->status_id == 40 || $item->status_id == 43 );
+            ->filter(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement') || $item->status_id == ListStatus::getID('Awarded','Procurement') );
 
  
         // Some NOAs served → Partially Awarded
         if ($noas->contains(fn($noa) => $noa->status->name == 'Served to Supplier')) {
 
             if ($noas->contains(fn($noa) => $noa->status->name === 'Conformed')) {
-                return 58; // Partially NOA Conformed
+                return ListStatus::getID('Partially NOA Conformed','Procurement'); // Partially NOA Conformed
             }
             // Check if all NOAs are served
             if ($noas->every(fn($noa) => $noa->status->name === 'Served to Supplier')) {
-                return 48; // NOA Served to Supplier
+                return ListStatus::getID('NOA Served to Supplier','Procurement'); // NOA Served to Supplier
             }
   
-            // Any NOAs not confirmed / Not Conformed → Re-Award or Re-Bid
+            // Any NOAs not confirmed / Not Conformed → Re-award or Re-Bid
             if ($noas->contains(fn($n) => $n->status->name === 'Not Conformed') ) {
                 // STEP 1: Find the first Not Conformed NOA
                 foreach ($noas as $noa) {
                     if ($noa->status->name === 'Not Conformed') {
                       
-                         // Check if ANY item in ANY NOA is Available for Re-Award (40)
+                         // Check if ANY item in ANY NOA is Available for Re-award (40)
                         $hasReAwardItems = $noa->procurement_quotation->items
-                                            ->contains(fn($item) => $item->status_id == 40);
+                                            ->contains(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement'));
         
                         if ($hasReAwardItems) {
-                            return 59; // Re-Award                  
+                            return ListStatus::getID('Re-award','Procurement'); // Re-award                  
                         }
                         if(count($availableQuotationItems) > 0){
                             // STEP 2: Update item statuses only after checking all NOAs
                             foreach ($availableQuotationItems as $item) {
-                                if ($item->status_id == 40) {
-                                    // Available for Re-Award → Awarded
-                                    $item->update(['status_id' => 43]);
+                                if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                                    // Available for Re-award → Awarded
+                                    $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                                 }
 
-                                else if ($item->status_id == 43) {
+                                else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                                     // Awarded → Not Conformed
-                                    $item->update(['status_id' => 68]);
+                                    $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                                 }
                             }
                         }
-                        return 60; // rebid
+                        return ListStatus::getID('Rebid','Procurement'); // rebid
 
                     }
                 
                 }
 
-                return 60; // Rebid
+                return ListStatus::getID('Rebid','Procurement'); // Rebid
             }
          
-            return 57; // Partially Awarded
+            return ListStatus::getID('Partially Awarded','Procurement'); // Partially Awarded
         }
 
          // All NOAs confirmed → NOA Confirmed
@@ -136,29 +137,29 @@ class ProcurementBac extends Model
                 // STEP 1: Find the first Not Conformed NOA
                 foreach ($availableQuotationItems as $item) {
 
-                    if ($item->status_id == 40) {
-                        // Available for Re-Award → Awarded
-                        $item->update(['status_id' => 43]);
+                    if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                        // Available for Re-award → Awarded
+                        $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                     }
 
-                    else if ($item->status_id == 43) {
+                    else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                         // Awarded → Not Conformed
-                        $item->update(['status_id' => 68]);
+                        $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                     }
                 }
 
             }
             
             if ($hasAvailableReAwardItems) {
-                return 59; // Re-Award 
+                return ListStatus::getID('Re-award','Procurement'); 
             }
 
-            return 60; // Rebid
+            return ListStatus::getID('Rebid','Procurement');
         }
 
         // All NOAs confirmed → NOA Confirmed
         if ($noas->every(fn($noa) => $noa->status->name == 'Conformed')) {
-            return 56; // NOA Conformed
+            return ListStatus::getID('NOA Conformed','Procurement'); 
         }
 
         // Some NOAs confirmed → Partially NOA Conformed
@@ -167,11 +168,11 @@ class ProcurementBac extends Model
             if ($noas->contains(fn($noa) => $noa->status->name === 'PO Pending')) {
                 // All NOAs confirmed → NOA Confirmed
                 if ($noas->every(fn($noa) => $noa->status->name == 'PO Pending')) {
-                    return 62; // PO Pending
+                    return ListStatus::getID('PO Pending','Procurement'); 
                 }
-                return 63; // Partially PO Pending
+                return ListStatus::getID('Partially PO Pending','Procurement'); 
             }
-            return 58; // Partially NOA Conformed
+            return ListStatus::getID('Partially NOA Conformed','Procurement'); // Partially NOA Conformed
         }
 
 
@@ -179,66 +180,66 @@ class ProcurementBac extends Model
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Pending')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Pending')) {
-                return 62; // PO Pending
+                return ListStatus::getID('PO Pending','Procurement'); // PO Pending
             }
             else if ($noas->contains(fn($noa) => $noa->status->name === 'PO Issued')) {
                 // Sme NOAs has PO Served to Supplier → PO Partially Served
                 if ($noas->every(fn($noa) => $noa->status->name == 'PO Issued')) {
-                    return 49; // PO Issued
+                    return ListStatus::getID('PO Issued','Procurement'); // PO Issued
                 }
-                return 64; // PO Partially Issued
+                return ListStatus::getID('PO Partially Issued','Procurement'); 
             }
-            return 63; // Partially PO Pending
+            return ListStatus::getID('Partially PO Pending','Procurement'); 
         }
 
         // Some NOAs PO Served To Supplier → PO Conformed
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Issued')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Issued')) {
-                return 49; // PO Issued
+                return ListStatus::getID('PO Issued','Procurement'); 
             }
             else  if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
-                return 65; // PO Partially Conformed
+                return ListStatus::getID('PO Partially Conformed','Procurement'); 
             }
-            return 64; // Partially PO Issued
+            return ListStatus::getID('Partially PO Issued','Procurement'); 
         }
 
         // Some NOAs PO Served To Supplier → PO Conformed
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Conformed')) {
-                return 51; // PO Conformed
+                return ListStatus::getID('PO Conformed','Procurement'); 
             }
             // Some NOAs Delivered/For Inspection 
             if ($noas->contains(fn($noa) => $noa->status->name === 'Delivered/For Inspection')) {
                 // All NOAs confirmed → NOA Confirmed
                 if ($noas->every(fn($noa) => $noa->status->name == 'Delivered/For Inspection')) {
-                    return 52; // Delivered/For Inspection
+                    return ListStatus::getID('Delivered/For Inspection','Procurement'); 
                 }
-                return 66; // Partially Delivered/For Inspection
+                return ListStatus::getID('Partially Delivered/For Inspection','Procurement'); 
             }
-            return 65; // PO Partially Conformed
+            return ListStatus::getID('PO Partially Conformed','Procurement'); 
         }
 
         // Some NOAs Delivered/For Inspection  and Completed
         if ($noas->contains(fn($noa) => $noa->status->name === 'Delivered/For Inspection')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'Delivered/For Inspection')) {
-                return 52; // Delivered/For Inspection
+                return ListStatus::getID('Delivered/For Inspection','Procurement'); // Delivered/For Inspection
             }
             if ($noas->contains(fn($noa) => $noa->status->name == 'Completed')) {
-                return 67; // Partially Completed/Awaiting for Inspection
+                return ListStatus::getID('Partially Completed','Procurement'); // Partially Completed/Awaiting for Inspection
             }
-            return 66; // Partially Delivered/For Inspection
+            return ListStatus::getID('Partially Delivered/For Inspection','Procurement'); // Partially Delivered/For Inspection
         }
 
            // Some NOAs Delivered/For Inspection 
         if ($noas->contains(fn($noa) => $noa->status->name === 'Completed')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'Completed')) {
-                return 53; // Completed
+                return ListStatus::getID('Completed','Procurement'); // Completed
             }
-            return 67; // Partially Completed/Awaiting for Inspection
+            return ListStatus::getID('Partially Completed','Procurement'); // Partially Completed
         }
 
       
@@ -248,24 +249,24 @@ class ProcurementBac extends Model
             if(count($availableQuotationItems) > 0){
                 // STEP 1: Find the first Not Conformed NOA
                 foreach ($availableQuotationItems as $item) {
-                    if ($item->status_id == 40) {
-                        // Available for Re-Award → Awarded
-                        $item->update(['status_id' => 43]);
+                    if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                        // Available for Re-award → Awarded
+                        $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                     }
-                    else if ($item->status_id == 43) {
+                    else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                         // Awarded → Not Conformed
-                        $item->update(['status_id' => 61]);
+                        $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                     }
                 }
             }
           
 
             if ($hasAvailableReAwardItems) {
-                return 59; // Re-Award 
+                return ListStatus::getID('Re-award','Procurement');  
             }
                         
             //dd('rebid');
-            return 60; // Rebid
+            return ListStatus::getID('Rebid','Procurement'); // Rebid
         }
 
 
@@ -275,22 +276,22 @@ class ProcurementBac extends Model
             if(count($availableQuotationItems) > 0){
                 // STEP 1: Find the first Not Conformed NOA
                 foreach ($availableQuotationItems as $item) {
-                    if ($item->status_id == 40) {
-                        // Available for Re-Award → Awarded
-                        $item->update(['status_id' => 43]);
+                    if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                        // Available for Re-award → Awarded
+                        $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                     }
-                    else if ($item->status_id == 43) {
+                    else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                         // Awarded → Not Conformed
-                        $item->update(['status_id' => 61]);
+                        $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                     }
                 }
             }
 
             if ($hasAvailableReAwardItems) {
-                return 59; // Re-Award 
+                return ListStatus::getID('Re-award','Procurement'); // Re-award 
             }
 
-            return 60; // Rebid
+            return ListStatus::getID('Rebid','Procurement'); // Rebid
         }
 
         return $current_status;
@@ -302,24 +303,24 @@ class ProcurementBac extends Model
         $noas = $this->notice_of_awards;
 
 
-        //check ih items with status "Avaliable for Re-award"
+        //check ih items with status "Available for Re-award"
         $hasAvailableReAwardItems = $this->procurement->quotations->flatMap->items
-            ->contains(fn($item) => $item->status_id == 40);    
+            ->contains(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement'));    
         
         $availableQuotationItems = $this->procurement->quotations
             ->flatMap->items
-            ->filter(fn($item) => $item->status_id == 40 || $item->status_id == 43 );
+            ->filter(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement') || $item->status_id == ListStatus::getID('Awarded','Procurement') );
 
 
         // Some NOAs served → Partially Awarded
         if ($noas->contains(fn($noa) => $noa->status->name == 'Served to Supplier')) {
 
             if ($noas->contains(fn($noa) => $noa->status->name === 'Conformed')) {
-                return 58; // Partially NOA Conformed
+                return ListStatus::getID('Partially NOA Conformed','Procurement'); // Partially NOA Conformed
             }
             // Check if all NOAs are served
             if ($noas->every(fn($noa) => $noa->status->name === 'Served to Supplier')) {
-                return 48; // NOA Served to Supplier
+                return ListStatus::getID('NOA Served to Supplier','Procurement'); // NOA Served to Supplier
             }
   
             //  Any NOAs not confirmed / Not Conformed → Re-Award or Re-Bid
@@ -328,28 +329,28 @@ class ProcurementBac extends Model
                     if ($noa->status->name === 'Not Conformed') {
                         // STEP 1: Find the first Not Conformed NOA
                         foreach ($availableQuotationItems as $item) {
-                            if ($item->status_id == 40) {
-                                // Available for Re-Award → Awarded
-                                $item->update(['status_id' => 43]);
+                            if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                                // Available for Re-award → Awarded
+                                $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                             }
-                            if ($item->status_id == 43) {
+                            if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                                 // Awarded → Not Conformed
-                                $item->update(['status_id' => 68]);
+                                $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                             }
                         }
                     
                         if ($hasReAwardItems) {
-                            return 59; // Re-Award 
+                            return ListStatus::getID('Re-award','Procurement'); 
                                 
                         }
                         
-                        return 60; // rebid
+                        return ListStatus::getID('Rebid','Procurement');  
 
                     }
-                return 60; // Rebid
+                return ListStatus::getID('Rebid','Procurement'); // Rebid
             }
 
-            return 57; // Partially Awarded
+            return ListStatus::getID('Partially Awarded','Procurement'); // Partially Awarded
         }
 
          // All NOAs confirmed → NOA Confirmed
@@ -357,26 +358,26 @@ class ProcurementBac extends Model
 
              // STEP 1: Find the first Not Conformed NOA
             foreach ($availableQuotationItems as $item) {
-                if ($item->status_id == 40) {
-                    // Available for Re-Award → Awarded
-                    $item->update(['status_id' => 43]);
+                if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                    // Available for Re-award → Awarded
+                    $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                 }
-                if ($item->status_id == 43) {
+                if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
                     // Awarded → Not Conformed
-                    $item->update(['status_id' => 68]);
+                    $item->update(['status_id' =>ListStatus::getID('Not Conformed','Procurement')]);
                 }
             }
 
             if ($hasAvailableReAwardItems) {
-                return 59; // Re-Award 
+                return ListStatus::getID('Re-award','Procurement'); 
             }
                         
-            return 60; // Rebid
+            return ListStatus::getID('Rebid','Procurement'); // Rebid
         }
 
         // All NOAs confirmed → NOA Confirmed
         if ($noas->every(fn($noa) => $noa->status->name == 'Conformed')) {
-            return 56; // NOA Conformed
+            return ListStatus::getID('NOA Conformed','Procurement'); // NOA Conformed
         }
 
         // Some NOAs confirmed → Partially NOA Conformed
@@ -385,11 +386,11 @@ class ProcurementBac extends Model
             if ($noas->contains(fn($noa) => $noa->status->name === 'PO Pending')) {
                 // All NOAs confirmed → NOA Confirmed
                 if ($noas->every(fn($noa) => $noa->status->name == 'PO Pending')) {
-                    return 62; // PO Pending
+                    return ListStatus::getID('PO Pending','Procurement'); // PO Pending
                 }
-                return 63; // Partially PO Pending
+                return ListStatus::getID('Partially PO Pending','Procurement'); // Partially PO Pending
             }
-            return 58; // Partially NOA Conformed
+            return ListStatus::getID('Partially NOA Conformed','Procurement'); // Partially NOA Conformed
         }
 
 
@@ -397,16 +398,16 @@ class ProcurementBac extends Model
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Pending')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Pending')) {
-                return 62; // PO Pending
+                return ListStatus::getID('PO Pending','Procurement'); // PO Pending
             }
             else if ($noas->contains(fn($noa) => $noa->status->name === 'PO Issued')) {
                 // Sme NOAs has PO Served to Supplier → PO Partially Served
                 if ($noas->every(fn($noa) => $noa->status->name == 'PO Issued')) {
-                    return 49; // PO Issued
+                    return ListStatus::getID('PO Issued','Procurement'); // PO Issued
                 }
-                return 64; // PO Partially Issued
+                return ListStatus::getID('PO Partially Issued','Procurement'); // PO Partially Issued
             }
-            return 63; // Partially PO Pending
+            return ListStatus::getID('Partially PO Pending','Procurement'); // Partially PO Pending
         }
 
 
@@ -415,50 +416,50 @@ class ProcurementBac extends Model
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Issued')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Issued')) {
-                return 49; // PO Issued
+                return ListStatus::getID('PO Issued','Procurement'); // PO Issued
             }
             else  if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
-                return 65; // PO Partially Conformed
+                return ListStatus::getID('PO Partially Conformed','Procurement'); // PO Partially Conformed
             }
-            return 64; // Partially PO Issued
+            return ListStatus::getID('Partially PO Issued','Procurement'); // Partially PO Issued
         }
 
         // Some NOAs PO Served To Supplier → PO Conformed
         if ($noas->contains(fn($noa) => $noa->status->name === 'PO Conformed')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'PO Conformed')) {
-                return 51; // PO Conformed
+                return ListStatus::getID('PO Conformed','Procurement'); // PO Conformed
             }
             // Some NOAs Delivered/For Inspection 
             if ($noas->contains(fn($noa) => $noa->status->name === 'Delivered/For Inspection')) {
                 // All NOAs confirmed → NOA Confirmed
                 if ($noas->every(fn($noa) => $noa->status->name == 'Delivered/For Inspection')) {
-                    return 52; // Delivered/For Inspection
+                    return ListStatus::getID('Delivered/For Inspection','Procurement'); // Delivered/For Inspection
                 }
-                return 66; // Partially Delivered/For Inspection
+                return ListStatus::getID('Partially Delivered/For Inspection','Procurement'); // Partially Delivered/For Inspection
             }
-            return 65; // PO Partially Conformed
+            return ListStatus::getID('PO Partially Conformed','Procurement'); // PO Partially Conformed
         }
 
         // Some NOAs Delivered/For Inspection  and Completed
         if ($noas->contains(fn($noa) => $noa->status->name === 'Delivered/For Inspection')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'Delivered/For Inspection')) {
-                return 52; // Delivered/For Inspection
+                return ListStatus::getID('Delivered/For Inspection','Procurement'); // Delivered/For Inspection
             }
             if ($noas->contains(fn($noa) => $noa->status->name == 'Completed')) {
-                return 67; // Partially Completed/Awaiting for Inspection
+                return ListStatus::getID('Partially Completed','Procurement'); // Partially Completed
             }
-            return 66; // Partially Delivered/For Inspection
+            return ListStatus::getID('Partially Delivered/For Inspection','Procurement'); // Partially Delivered/For Inspection
         }
 
            // Some NOAs Delivered/For Inspection 
         if ($noas->contains(fn($noa) => $noa->status->name === 'Completed')) {
              // All NOAs confirmed → NOA Confirmed
             if ($noas->every(fn($noa) => $noa->status->name == 'Completed')) {
-                return 53; // Completed
+                return ListStatus::getID('Completed','Procurement'); // Completed
             }
-            return 67; // Partially Completed/Awaiting for Inspection
+            return ListStatus::getID('Partially Completed','Procurement'); // Partially Completed
         }
 
 
@@ -467,22 +468,21 @@ class ProcurementBac extends Model
 
             // STEP 1: Find the first Not Conformed NOA
             foreach ($availableQuotationItems as $item) {
-                if ($item->status_id == 40) {
-                    // Available for Re-Award → Awarded
-                    $item->update(['status_id' => 43]);
+                if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                    // Available for Re-award → Awarded
+                    $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                 }
-                else if ($item->status_id == 43) {
+                else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                     // Awarded → Not Conformed
-                    $item->update(['status_id' => 61]);
+                    $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                 }
             }
 
             if ($hasAvailableReAwardItems) {
-                return 59; // Re-Award 
+                return ListStatus::getID('Re-Award','Procurement'); // Re-Award 
             }
                         
-            //dd('rebid');
-            return 60; // Rebid
+            return ListStatus::getID('Rebid','Procurement'); // Rebid
         }
 
           // All NOAs has status "PO Not Conformed"
@@ -490,21 +490,21 @@ class ProcurementBac extends Model
        
             // STEP 1: Find the first Not Conformed NOA
             foreach ($availableQuotationItems as $item) {
-                if ($item->status_id == 40) {
-                    // Available for Re-Award → Awarded
-                    $item->update(['status_id' => 43]);
+                if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
+                    // Available for Re-award → Awarded
+                    $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
                 }
-                else if ($item->status_id == 43) {
+                else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                     // Awarded → Not Conformed
-                    $item->update(['status_id' => 61]);
+                    $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                 }
             }
 
             if ($hasAvailableReAwardItems) {
-                return 59; // Re-Award 
+                return ListStatus::getID('Re-award','Procurement'); // Re-award 
             }
 
-            return 60; // Rebid
+            return ListStatus::getID('Rebid','Procurement'); // Rebid
         }
 
         return $current_status;

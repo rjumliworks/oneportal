@@ -32,7 +32,7 @@
       </b-button>
 
       <b-button
-        v-if="purchase_order"
+        v-if="purchase_order && purchase_order.status.name != 'Not Conformed'"
         variant="outline-success"
         class="btn-modern shadow-sm"
         size="sm"
@@ -51,7 +51,7 @@
         v-b-tooltip.hover
         title="Update Status"
         v-if="
-          ((purchase_order && purchase_order.status.name != 'Delivered/For Inspection') && (purchase_order.status.name != 'Completed'))
+          (((purchase_order && purchase_order.status.name != 'Delivered/For Inspection') ) && (purchase_order.status.name != 'Completed' && purchase_order.status.name != 'Not Conformed') )
         "
         @click="updateStatus(purchase_order)"
       >

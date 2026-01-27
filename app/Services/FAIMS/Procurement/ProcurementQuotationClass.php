@@ -7,6 +7,7 @@ use App\Models\ProcurementQuotation;
 use App\Models\ProcurementQuotationItem;
 use App\Http\Resources\FAIMS\Procurement\ProcurementQuotationResource;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ListStatus;
 
 class ProcurementQuotationClass
 {
@@ -24,7 +25,7 @@ class ProcurementQuotationClass
             $procurement_quotation->submission_not_later_than = $request->submission_not_later_than;
             $procurement_quotation->supply_officer_id = $request->supply_officer_id;
             $procurement_quotation->supplier_id = $supplier_id;
-            $procurement_quotation->status_id = 36; // set to 'pending' 
+            $procurement_quotation->status_id = ListStatus::getID('Pending','Procurement'); // set to 'pending' 
             $procurement_quotation->save();
 
             // items
@@ -33,7 +34,7 @@ class ProcurementQuotationClass
                 $procurement_quotation_item = new ProcurementQuotationItem();
                 $procurement_quotation_item->quotation_id = $procurement_quotation->id;
                 $procurement_quotation_item->procurement_item_id = $item['id'];
-                $procurement_quotation_item->status_id = 39; // set status to "available for award"
+                $procurement_quotation_item->status_id = ListStatus::getID('Available for Award','Procurement'); // set status to "available for award"
                 $procurement_quotation_item->save();
 
             }
@@ -48,13 +49,13 @@ class ProcurementQuotationClass
         if( $procurement && $procurement->status->name === 'Rebid'){
             // update Procurement status
             $procurement->update([
-                'sub_status_id' =>  42, // set to "For Bids"
+                'sub_status_id' =>  ListStatus::getID('For Bids','Procurement'), // set to "For Bids"
             ]);
         }
         else{
             // update Procurement status
             $procurement->update([
-                'status_id' =>  42, // set to "For Bids"
+                'status_id' =>  ListStatus::getID('For Bids','Procurement'), // set to "For Bids"
             ]);
         }
 

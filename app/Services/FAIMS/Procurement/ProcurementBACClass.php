@@ -7,12 +7,10 @@ use App\Models\Procurement;
 use App\Models\ProcurementBacNoa;
 use App\Models\ProcurementBacNoaItem;
 use App\Models\ProcurementQuotation;
-
-
-
 use App\Http\Resources\FAIMS\Procurement\ProcurementBacResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\ListStatus;
 
 class ProcurementBACClass
 {
@@ -61,7 +59,7 @@ class ProcurementBACClass
                 'body' => $request->body,
                 'procurement_id' => $request->procurement_id,
                 'created_by_id' => $user->id,
-                'status_id' => 36, // set to "pending"
+                'status_id' => ListStatus::getID('Pending','Procurement'), // set to "pending"
             ]);    
         }
 
@@ -76,13 +74,13 @@ class ProcurementBACClass
     { 
          if($procurement->status->name === "Rebid"){
             $procurement->update([
-                'sub_status_id' => 45  ,//set to 'For Approval of BAC Resolution'
+                'sub_status_id' => ListStatus::getID('For Approval of BAC Resolution','Procurement')  ,//set to 'For Approval of BAC Resolution'
             ]);   
         }
         else{
             // update procurement substatus to "For Quotations"
             $procurement->update([
-                'status_id' => 45  ,//set to 'For Approval of Failure BAC Resolution'
+                'status_id' => ListStatus::getID('For Approval of BAC Resolution','Procurement')  ,//set to 'For Approval of BAC Resolution'
             ]);   
         }  
     }
@@ -90,7 +88,7 @@ class ProcurementBACClass
     protected function saveReawardBACResolution($procurement, $request)
     { 
         $procurement->update([
-            'sub_status_id' => 45  ,//set to 'For Approval of BAC Resolution'
+            'sub_status_id' => ListStatus::getID('For Approval of BAC Resolution','Procurement')  ,//set to 'For Approval of BAC Resolution'
         ]);   
     }
 
@@ -99,15 +97,15 @@ class ProcurementBACClass
 
         // update procurement substatus to "For Quotations"
         $procurement->update([
-            'sub_status_id' => 72  ,//set to 'For Approval of Failure BAC Resolution'
+            'sub_status_id' => ListStatus::getID('For Approval of Failure BAC Resolution','Procurement')  ,//set to 'For Approval of Failure BAC Resolution'
         ]);     
         // Update related RFQs to "Failed RFQs"
         $procurement->quotations()->update([
-            'status_id' => 71, // Failed RFQ
+            'status_id' =>  ListStatus::getID('Failed RFQ','Procurement'), // Failed RFQ
         ]);
         // Update related items of each quotation where item status is "Awarded" (status_id = 43)
-        foreach ($procurement->quotations->where('status_id', 71) as $quotation) {
-            foreach ($quotation->items->where('status_id', 43) as $item) {
+        foreach ($procurement->quotations->where('status_id', ListStatus::getID('Failed RFQ','Procurement')) as $quotation) {
+            foreach ($quotation->items->where('status_id', ListStatus::getID('Awarded','Procurement')) as $item) {
                 $item->update([
                     'is_rebid' => 1, // so that next bac resolution type "Award" will not show the items past awarded
                 ]);
@@ -115,7 +113,7 @@ class ProcurementBACClass
         }
         // Update related BAC Resolutions to "Failed Biddings"
         $procurement->bac_resolutions()->update([
-            'status_id' => 70, //  set to "Failed Bidding"
+            'status_id' => ListStatus::getID('Failed Bidding','Procurement'), //  set to "Failed Bidding"
         ]);
     }
     
@@ -146,39 +144,39 @@ class ProcurementBACClass
         $bac_resolution = ProcurementBac::with('procurement.status' )->findOrFail($id);
 
         $bac_resolution->update([
-            'status_id' => 38, // set status to "Approved"
+            'status_id' => ListStatus::getID('Approved','Procurement'), // set status to "Approved"
         ]);
 
         $procurement = $bac_resolution->procurement;
         switch($procurement->status->name){
             case 'Re-award':
                  $procurement->update([
-                    'sub_status_id' => 46, // set sub_status to "For NOA"
+                    'sub_status_id' => ListStatus::getID('For NOA','Procurement'), // set sub_status to "For NOA"
                 ]);
             break;
             case 'Rebid':
                 if($procurement->sub_status->name ){
                     if($procurement->sub_status->name == 'For Approval of Failure BAC Resolution'){
                         $procurement->update([
-                            'sub_status_id' => 69, // set sub_status to "For Quotations"
+                            'sub_status_id' => ListStatus::getID('For Quotations','Procurement'), // set sub_status to "For Quotations"
                         ]);
                     }
                     else{
                         $procurement->update([
-                            'sub_status_id' => 46, // set status to "For NOA"
+                            'sub_status_id' => ListStatus::getID('For NOA','Procurement'), // set status to "For NOA"
                         ]);
                     }
                 }
                 else{
                     $procurement->update([
-                        'status_id' => 69, // set sub_status to "For Quotations"
+                        'status_id' =>  ListStatus::getID('For Quotations','Procurement'), // set sub_status to "For Quotations"
                     ]);
                 }
             
             break;
             default:
                 $procurement->update([
-                    'status_id' => 46, // set status to "For NOA"
+                    'status_id' => ListStatus::getID('For NOA','Procurement'), // set status to "For NOA"
                 ]);
 
             break;
@@ -206,7 +204,7 @@ class ProcurementBACClass
                 'procurement_bac_id' => $bac_resolution->id,
                 'procurement_quotation_id' => $quotation['id'],
                 'created_by_id' => $user->id,
-                'status_id' => 36, //set to "pending"
+                'status_id' => ListStatus::getID('Pending','Procurement'), //set to "pending"
             ]);
 
             // create noa items

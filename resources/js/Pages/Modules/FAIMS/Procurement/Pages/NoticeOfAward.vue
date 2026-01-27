@@ -87,7 +87,7 @@
               </button>
               <button
                 v-if="
-                  (  list.status.name == 'Conformed' ||
+                  (list.status.name == 'Conformed' || list.status.name == 'Not Co nformed'||
                   list.status.name == 'PO Conformed' ||
                   list.status.name == 'PO Issued' ||
                   list.status.name == 'PO Pending' ||
