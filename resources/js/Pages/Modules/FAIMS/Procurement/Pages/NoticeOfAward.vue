@@ -87,14 +87,14 @@
               </button>
               <button
                 v-if="
-                  ( list.status.name == 'Conformed' ||
+                  (  list.status.name == 'Conformed' ||
                   list.status.name == 'PO Conformed' ||
                   list.status.name == 'PO Issued' ||
                   list.status.name == 'PO Pending' ||
                   list.status.name == 'PO Conformed' ||
                   list.status.name == 'Delivered/For Inspection' ||
                   list.status.name == 'Completed') &&
-                  $page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer')
+                  ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))
                 "
                 @click="goPOPage(list)"
                 class="btn btn-outline-success btn-sm"

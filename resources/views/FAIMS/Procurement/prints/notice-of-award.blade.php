@@ -130,6 +130,34 @@
         </div>
     </div>
 
+    <div style="page-break-before: always;">
+        <p>The item awarded under this procurement is as follow</p>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">Item No.</th>
+                        <th style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">Unit</th>
+                        <th style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">Description</th>
+                        <th style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">Quantity</th>
+                        <th style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">Unit Cost</th>
+                        <th style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($noa->items as $item)
+                        <tr>
+                            <td style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 9px;">{{ $item->item->item->item_no }}</td>
+                            <td style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 9px;">{{ $item->item->item->item_unit_type->name_short ?? '' }}</td>
+                            <td style="border: 1px solid #000; padding: 3px; text-align: justify; font-size: 9px;">{!! $item->item->item->item_description !!}</td>
+                            <td style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 9px;">{{ $item->item->item->item_quantity }}</td>
+                            <td style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 9px;">{{ number_format($item->item->bid_price, 2) }}</td>
+                            <td style="border: 1px solid #000; padding: 3px; text-align: center; font-size: 9px;">{{ number_format($item->item->bid_price * $item->item->item->item_quantity, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+    </div>
+
 
   <script type="text/php">
         if ( isset($pdf) ) {

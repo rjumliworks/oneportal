@@ -154,7 +154,7 @@
                       </button>
 
                       <button
-                        v-if="list.status.name == 'Completed'"
+                        v-if="list.status.name == 'Delivered/For Inspection' || list.status.name == 'Completed'"
                         @click="openPrintIAR(list)"
                         class="btn btn-outline-primary btn-sm"
                         v-b-tooltip.hover

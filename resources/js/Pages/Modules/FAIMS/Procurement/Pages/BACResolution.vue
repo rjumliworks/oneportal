@@ -22,7 +22,6 @@
         </span>
         <b-button
           v-if="
-            procurement.status.name == 'For BAC Resolution' ||
             (procurement.status.name === 'Rebid' &&
               procurement.sub_status?.name == null) ||
             procurement.status.name == 'Re-award'
@@ -105,19 +104,6 @@
               </div>
               <h6 class="empty-state-title">No BAC Resolutions</h6>
               <p class="empty-state-message">No BAC resolutions have been created for this procurement yet.</p>
-              <b-button
-                v-if="
-                  procurement.status.name == 'For BAC Resolution' ||
-                  (procurement.status.name === 'Rebid' &&
-                    procurement.sub_status?.name == null) ||
-                  procurement.status.name == 'Re-award'
-                "
-                type="button"
-                variant="outline-primary"
-                @click="openBACReso()"
-              >
-                <i class="ri-add-circle-fill align-bottom me-1"></i> Create First Resolution
-              </b-button>
             </div>
           </td>
         </tr>

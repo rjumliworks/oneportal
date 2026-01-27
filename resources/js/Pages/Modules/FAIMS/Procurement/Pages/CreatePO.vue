@@ -51,7 +51,7 @@
         v-b-tooltip.hover
         title="Update Status"
         v-if="
-          (purchase_order && purchase_order.status.name != 'Delivered/For Inspection' && purchase_order.status.name != 'Completed')
+          ((purchase_order && purchase_order.status.name != 'Delivered/For Inspection') && (purchase_order.status.name != 'Completed'))
         "
         @click="updateStatus(purchase_order)"
       >
@@ -76,7 +76,7 @@
         variant="outline-success"
         class="btn-modern shadow-sm"
         size="sm"
-        v-if="purchase_order && purchase_order.status.name == 'Conformed'"
+        v-if="purchase_order && (purchase_order.status.name == 'Conformed' || purchase_order.status.name == 'Delivered/For Inspection')"
         @click="printNTP(purchase_order)"
         v-b-tooltip.hover
         title="Notice to Proceed"

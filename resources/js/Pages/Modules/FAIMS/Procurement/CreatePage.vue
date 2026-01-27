@@ -478,7 +478,7 @@ export default {
         this.form.requested_by_id = this.procurement.requested_by_id;
         this.form.approved_by_id = this.procurement.approved_by_id;
         this.form.items = this.procurement.items;
-        this.getDataFromLocalStorage(); // update items
+        // this.getDataFromLocalStorage(); // update items
       }
     },
   },
@@ -507,6 +507,7 @@ export default {
   mounted() {
     // Load from localStorage on component mount
     this.getDataFromLocalStorage();
+  
     this.action = this.option;
     try {
       this.isRightCollapsed = JSON.parse(localStorage.getItem("isRightCollapsed")) ?? true;
