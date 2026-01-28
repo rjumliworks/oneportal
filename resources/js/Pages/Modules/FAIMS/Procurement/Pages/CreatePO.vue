@@ -32,7 +32,7 @@
       </b-button>
 
       <b-button
-        v-if="purchase_order && purchase_order.status.name != 'Not Conformed'"
+        v-if="(purchase_order && purchase_order.status.name != 'Not Conformed') && purchase_order.status.name != 'Completed'"
         variant="outline-success"
         class="btn-modern shadow-sm"
         size="sm"

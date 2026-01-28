@@ -69,7 +69,7 @@ class ProcurementBac extends Model
     public function overall_status($current_status)
     {
         $noas = $this->notice_of_awards;
-       
+     
 
         //check ih items with status "Available for Re-award"
         $hasAvailableReAwardItems = $this->procurement->quotations->flatMap->items
@@ -126,30 +126,31 @@ class ProcurementBac extends Model
 
                 return ListStatus::getID('Rebid','Procurement'); // Rebid
             }
+
+            if ($noas->contains(fn($noa) => $noa->status->name === 'Completed')) {
+                return ListStatus::getID('Partially Completed','Procurement'); 
+            }
          
             return ListStatus::getID('Partially Awarded','Procurement'); // Partially Awarded
         }
 
+     
          // All NOAs confirmed → NOA Confirmed
         if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
-       
-            if(count($availableQuotationItems) > 0){
-                // STEP 1: Find the first Not Conformed NOA
-                foreach ($availableQuotationItems as $item) {
+            // STEP 1: Find the first Not Conformed NOA
+            foreach ($availableQuotationItems as $item) {
+                if ($item->status_id === ListStatus::getID('Available for Re-award','Procurement')) {
+                    // Available for Re-award → Awarded
+                    $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
+                }
 
-                    if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
-                        // Available for Re-award → Awarded
-                        $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
-                    }
-
-                    else if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
-                        // Awarded → Not Conformed
-                        $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
-                    }
+                else if ($item->status_id === ListStatus::getID('Awarded','Procurement')) {
+                    // Awarded → Not Conformed
+                    $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
                 }
 
             }
-            
+
             if ($hasAvailableReAwardItems) {
                 return ListStatus::getID('Re-award','Procurement'); 
             }

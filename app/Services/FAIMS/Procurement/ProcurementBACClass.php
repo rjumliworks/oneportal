@@ -94,7 +94,6 @@ class ProcurementBACClass
 
     protected function saveFailureBACResolution($procurement, $request)
     { 
-
         // update procurement substatus to "For Quotations"
         $procurement->update([
             'sub_status_id' => ListStatus::getID('For Approval of Failure BAC Resolution','Procurement')  ,//set to 'For Approval of Failure BAC Resolution'
@@ -103,7 +102,7 @@ class ProcurementBACClass
         $procurement->quotations()->update([
             'status_id' =>  ListStatus::getID('Failed RFQ','Procurement'), // Failed RFQ
         ]);
-        // Update related items of each quotation where item status is "Awarded" (status_id = 43)
+        // Update related items of each quotation where item status is "Awarded" 
         foreach ($procurement->quotations->where('status_id', ListStatus::getID('Failed RFQ','Procurement')) as $quotation) {
             foreach ($quotation->items->where('status_id', ListStatus::getID('Awarded','Procurement')) as $item) {
                 $item->update([
@@ -206,10 +205,11 @@ class ProcurementBACClass
                 'created_by_id' => $user->id,
                 'status_id' => ListStatus::getID('Pending','Procurement'), //set to "pending"
             ]);
+            
 
             // create noa items
             foreach ($quotation['items'] as $item) {
-                if(!empty($item['bid_price']) ) // if item status is "Awarded" or "Available for re-award"
+                if(!empty($item['bid_price']) && $item['status_id'] === ListStatus::getID('Awarded','Procurement')) // if item status is "Awarded" or "Available for re-award"
                 {
                     ProcurementBacNoaItem::create([
                         'procurement_bac_noa_id' => $noa->id,

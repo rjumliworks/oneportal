@@ -138,6 +138,7 @@ class ProcurementBacNoaClass
             $noa->procurement_bac->update([
                 'status_id' => ListStatus::getID('Not Conformed','Procurement'),
             ]);
+
         }
 
         // update Procurement Request Status

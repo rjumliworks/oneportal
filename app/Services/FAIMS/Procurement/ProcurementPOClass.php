@@ -155,7 +155,7 @@ class ProcurementPOClass
         $procurement =  $po->noa->procurement_bac->procurement;
 
         // if current_pr_status "Re-award" or "Rebid"
-       if($current_pr_status == 59 || $current_pr_status == 60){
+       if($current_pr_status == ListStatus::getID('Re-award','Procurement') || $current_pr_status == ListStatus::getID('Rebid','Procurement')){
             $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
             // update Procurement Request Status
             $procurement->update([
@@ -163,7 +163,7 @@ class ProcurementPOClass
             ]);
 
             // if pr sub_status is "Completed" update pr status also to "Completed"
-            if($updated_pr_substatus == 53){
+            if($updated_pr_substatus == ListStatus::getID('Completed','Procurement')){
                 $procurement->update([
                     'status_id' =>  $updated_pr_substatus,
                 ]);
