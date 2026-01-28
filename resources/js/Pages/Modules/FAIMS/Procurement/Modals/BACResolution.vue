@@ -572,12 +572,12 @@ export default {
 
     },
 
-    reawardContent(current_date, mode_of_procurement_names , mode_of_procurement_ra_nos , app_types, 
+    reawardContent(current_date, mode_of_procurement_names , mode_of_procurement_ra_nos , app_types,
                         allocated_budget, budget_in_words ,all_pr_supplier_names, pr_date, submission_not_later_than_with_format, bidders){
-      
+
         // Filter rfq suppliers who bid same bid items
       const reawarded_quotations = (this.procurement.quotations).filter(quotation =>
-        (quotation.items).some(item => item.status.id == 43 && item.bid_price != null)
+        (quotation.items).some(item => item.status_id == 43 && item.bid_price != null)
       );
 
 
@@ -613,7 +613,7 @@ export default {
 
       // === CORRECT total accumulation across reawarded bids ===
       const reawarded_bid_total_price = reawarded_quotations.reduce((total, bid) => {
-        const filtered_bid_details = (bid.bid_items || []).filter(bid_item => bid_item.status_id == 43);
+        const filtered_bid_details = (bid.bid_items || []).filter(bid_item => bid_item.status.name == "Awarded");
         const total_price_for_bid = filtered_bid_details.reduce((sum, detail) => {
           const bp = parseFloat(detail.item_bid_price) || 0;
           const bq = parseFloat(detail.item_quantity) || 0;
@@ -625,14 +625,14 @@ export default {
       const reaward_total_amount_contract_in_words = this.numberToWords(reawarded_bid_total_price);
 
       const reawarded_table_rows = reawarded_quotations
-        .map(bid => {
-          const filtered_bid_items = (bid.bid_items || []).filter(bid_item =>  bid_item.status_id == 43);
-          if (filtered_bid_items.length === 0) return null;
-          const bid_item_ids = filtered_bid_items.map(bid_item => bid_item.item_no).join(", ");
+        .map(quotation => {
+          const filtered_items = (quotation.items || []).filter(item => item.status_id == 43);
+          if (filtered_items.length === 0) return null;
+          const item_ids = filtered_items.map(item => item.item.item_no).join(", ");
           return `
             <tr>
-              <td>${bid.supplier?.name}</td>
-              <td>${bid_item_ids}</td>
+              <td>${quotation.supplier?.name}</td>
+              <td>${item_ids}</td>
             </tr>
           `;
         })

@@ -5,6 +5,9 @@ namespace App\Services\FAIMS\Procurement;
 use App\Models\ProcurementBac;
 use App\Models\Procurement;
 use App\Models\ProcurementBacNoa;
+use App\Models\ProcurementBacNoaItem;
+use App\Models\ProcurementQuotation;
+use App\Models\ProcurementQuotationItem;
 use App\Models\ProcurementNoaPo;
 use App\Models\ProcurementPoNtp;
 use App\Models\ProcurementPoIar;
@@ -150,6 +153,26 @@ class ProcurementPOClass
             $po->noa->update([
                 'status_id' => ListStatus::getID('Completed','Procurement'), // set status to "Completed"
             ]);
+           // update Quotation items status to "Completed" only items which is related to the noa
+           $noa_items = ProcurementBacNoaItem::where('procurement_bac_noa_id', $po->noa->id)->get();
+           foreach ($noa_items as $noa_item) {
+               $quotation_item = $noa_item->item;
+               $quotation_item->update([
+                   'status_id' => ListStatus::getID('Completed','Procurement')
+               ]);
+
+           }
+
+           // update also the items in with the same item no in the related quotation items
+           $item_ids = $noa_items->pluck('item.procurement_item_id')->unique();
+           ProcurementQuotationItem::whereHas('quotation', function($q) use ($po) {
+               $q->where('procurement_id', $po->procurement_id);
+           })->whereIn('procurement_item_id', $item_ids)
+           ->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
+           ->orWhere('status_id', ListStatus::getID('Awarded','Procurement'))
+           ->update(['status_id' => ListStatus::getID('Not Awarded','Procurement')]);
+
+           
         }
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
         $procurement =  $po->noa->procurement_bac->procurement;
@@ -227,10 +250,21 @@ class ProcurementPOClass
         $po->noa->procurement_bac->update([
             'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set bac resolution status to "PO Not Conformed"
         ]);
-    
+
+        // update quotation items with the same item no to "Not Conformed"
+        $noa_items = ProcurementBacNoaItem::where('procurement_bac_noa_id', $po->noa->id)->get();
+        $item_ids = $noa_items->pluck('item.procurement_item_id')->unique();
+        ProcurementQuotationItem::whereHas('quotation', function($q) use ($po) {
+            $q->where('procurement_id', $po->procurement_id);
+        })->whereIn('procurement_item_id', $item_ids)
+        ->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
+        ->orWhere('status_id', ListStatus::getID('Awarded','Procurement'))
+        ->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
+
+        // create comments for reason
         $po->comments()->create([
             'content' => $request->comment,
-            'user_id' => $user->id, 
+            'user_id' => $user->id,
         ]);
 
         $procurement = $po->noa->procurement_bac->procurement;

@@ -324,10 +324,14 @@ export default {
       switch (status_name) {
         case "Not Available for Award/Re-award":
           return "danger"; // Maps to Bootstrap's warning variant
+        case "Not Awarded":
+          return "warning"; // Maps to Bootstrap's warning variant
         case "For Bids":
           return "info"; // Maps to Bootstrap's info variant
         case "Awarded":
           return "success"; // Maps to Bootstrap's success variant
+        case "Completed":
+          return "dark"; // Maps to Bootstrap's dark variant
         default:
           return "secondary"; // Default variant if none match
       }

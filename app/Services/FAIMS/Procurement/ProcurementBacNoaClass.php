@@ -5,6 +5,8 @@ namespace App\Services\FAIMS\Procurement;
 use App\Models\ProcurementBac;
 use App\Models\Procurement;
 use App\Models\ProcurementBacNoa;
+use App\Models\ProcurementBacNoaItem;
+use App\Models\ProcurementQuotationItem;
 use App\Http\Resources\FAIMS\Procurement\ProcurementBacNoaResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -147,6 +149,16 @@ class ProcurementBacNoaClass
             'updated_by_id' => $user->id,
         ]); 
 
+        // update Quotation items status to "Not Conformed" only items which is related to the noa
+        $noa_items = ProcurementBacNoaItem::where('procurement_bac_noa_id', $noa->id)->get();
+        foreach ($noa_items as $noa_item) {
+            $quotation_item = $noa_item->item;
+            $quotation_item->update([
+                'status_id' => ListStatus::getID('Not Conformed','Procurement')
+            ]);
+        }
+
+    
         return [
             'data' =>new ProcurementBacNoaResource($noa),
             'message' => 'BAC Resolution Status updated successfully!', 

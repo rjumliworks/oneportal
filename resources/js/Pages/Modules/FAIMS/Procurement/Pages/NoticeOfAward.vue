@@ -122,14 +122,7 @@
               </div>
               <h6 class="empty-state-title">No Notice of Awards</h6>
               <p class="empty-state-message">No notices of award have been created for this procurement yet.</p>
-              <b-button
-                v-if="procurement.status_id == 44"
-                type="button"
-                variant="outline-primary"
-                @click="openNOA()"
-              >
-                <i class="ri-add-circle-fill align-bottom me-1"></i> Create First Notice
-              </b-button>
+
             </div>
           </td>
         </tr>
