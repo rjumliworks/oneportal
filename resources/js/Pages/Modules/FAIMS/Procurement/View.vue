@@ -34,6 +34,15 @@
                 style="font-size: 0.75rem; text-align: center"
                 >{{ procurement.status?.name }}</b-badge
               >
+              <b-badge
+                v-if="isPartiallyCompleted"
+                class="bg-warning text-dark ms-1"
+                style="font-size: 0.65rem; text-align: center"
+                v-b-tooltip.hover
+                title="This procurement has partially completed items"
+              >
+                <i class="ri-information-line me-1"></i>Partial
+              </b-badge>
               </div>
             </p>
             <p class="card-title mb-0 fs-10">
@@ -378,6 +387,18 @@ export default {
     },
     posCount() {
       return this.procurement.pos ? this.procurement.pos.length : 0;
+    },
+    isPartiallyCompleted() {
+      // Check if procurement has mixed statuses indicating partial completion
+      if (!this.procurement.noas || this.procurement.noas.length === 0) return false;
+
+      const statuses = this.procurement.noas.map(noa => noa.status?.name);
+      const uniqueStatuses = [...new Set(statuses)];
+
+      // If there are multiple different statuses, it's partially completed
+      return uniqueStatuses.length > 1 && uniqueStatuses.some(status =>
+        ['Completed', 'Delivered/For Inspection', 'PO Conformed', 'PO Issued', 'PO Pending'].includes(status)
+      );
     },
   },
   watch: {

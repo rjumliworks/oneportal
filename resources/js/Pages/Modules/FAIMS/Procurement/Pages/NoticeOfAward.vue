@@ -92,7 +92,7 @@
                   list.status.name == 'PO Issued' ||
                   list.status.name == 'PO Pending' ||
                   list.status.name == 'PO Conformed' ||
-                  list.status.name == 'Delivered/For Inspection' ||
+                  list.status.name == 'Delivered/For Inspection' || list.status.name == 'PO Delivered/For Inspection' ||
                   list.status.name == 'Completed') &&
                   ($page.props.roles.includes('Procurement Staff') || $page.props.roles.includes('Procurement Officer'))
                 "

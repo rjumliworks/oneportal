@@ -140,7 +140,7 @@ class ProcurementPOClass
                 'status_id' => ListStatus::getID('Delivered/For Inspection','Procurement'), // set status to "Delivered/For Inspection"
             ]);
             $po->noa->update([
-                'status_id' => ListStatus::getID('Delivered/For Inspection','Procurement'), // set noa status to "PO Delivered/For Inspection"
+                'status_id' => ListStatus::getID('PO Delivered/For Inspection','Procurement'), // set noa status to "PO Delivered/For Inspection"
             ]);
             //Create IAR
             $this->createIAR($po);
@@ -235,7 +235,6 @@ class ProcurementPOClass
 
     public function notConformed($id, $request)
     { 
-        //dd('hey');
         $user = Auth::user();
         $po = ProcurementNoaPo::with('noa.procurement_bac.procurement' , 'status')->findOrFail($id);
 
@@ -244,7 +243,7 @@ class ProcurementPOClass
         ]);
 
         $po->noa->update([
-            'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set noa status to "PO Not Conformed"
+            'status_id' => ListStatus::getID('PO Not Conformed','Procurement'), // set noa status to "PO Not Conformed"
         ]);
 
         $po->noa->procurement_bac->update([
@@ -270,44 +269,21 @@ class ProcurementPOClass
         $procurement = $po->noa->procurement_bac->procurement;
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
 
-        // if updated status is "Re-award" or "Rebid"
-        if($current_pr_status  == ListStatus::getID('Re-award','Procurement') || $current_pr_status  == ListStatus::getID('Rebid','Procurement')){
-            $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
-            if($updated_pr_substatus  == ListStatus::getID('Re-award','Procurement')){
-                $procurement->update([
-                    'reawarded_count' =>  $procurement->reawarded_count + 1,
-                    'sub_status_id' => null,
-                ]);
-            }
-            else if($updated_pr_substatus  == ListStatus::getID('Rebid','Procurement')){
-                $procurement->update([
-                    'rebidded_count' =>  $procurement->rebidded_count + 1,
-                   'sub_status_id' => null,
-                ]);
-            }
-            // --- update the old BAC Resolution status to "PO Not Conformed" --
-            $po->noa->update([
-                'status_id' => ListStatus::getID('Not Conformed','Procurement'),
-            ]);
+        // Always update the procurement status using overall_status
+        $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
+        $procurement->update([
+            'status_id' => $updated_pr_status,
+        ]);
 
+        // Handle re-award/rebid logic if applicable
+        if($updated_pr_status == ListStatus::getID('Re-award','Procurement')){
+            $procurement->update([
+                'reawarded_count' => $procurement->reawarded_count + 1,
+            ]);
         }
-        else{
-            $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
-            if($updated_pr_status  == ListStatus::getID('Re-award','Procurement')){
-                $procurement->update([
-                    'reawarded_count' =>  $procurement->reawarded_count + 1,
-                    'status_id' =>  $updated_pr_status,
-                ]);
-            }
-            else if($updated_pr_status  == ListStatus::getID('Rebid','Procurement')){
-                $procurement->update([
-                    'rebidded_count' =>  $procurement->rebidded_count + 1,
-                    'status_id' =>  $updated_pr_status,
-                ]);
-            }
-            //--- update the old BAC Resolution status to "PO Not Conformed" --
-            $po->noa->update([
-                'status_id' => ListStatus::getID('Not Conformed','Procurement'),
+        else if($updated_pr_status == ListStatus::getID('Rebid','Procurement')){
+            $procurement->update([
+                'rebidded_count' => $procurement->rebidded_count + 1,
             ]);
         }
         return [
