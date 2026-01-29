@@ -68,7 +68,10 @@ class ProcurementBac extends Model
 
     public function overall_status($current_status)
     {
+      
+
         $noas = $this->notice_of_awards;
+        
 
         // Define status hierarchy from highest to lowest
         $status_hierarchy = [
@@ -82,15 +85,7 @@ class ProcurementBac extends Model
             'Served to Supplier' => ['full' => 'Awarded', 'partial' => 'Partially Awarded'],
         ];
 
-        foreach ($status_hierarchy as $noa_status => $procurement_statuses) {
-            if ($noas->contains(fn($noa) => $noa->status->name === $noa_status)) {
-                return $noas->every(fn($noa) => $noa->status->name === $noa_status)
-                    ? ListStatus::getID($procurement_statuses['full'], 'Procurement')
-                    : ListStatus::getID($procurement_statuses['partial'], 'Procurement');
-            }
-        }
-
-        // Handle special cases for Not Conformed and PO Not Conformed
+         // Handle special cases for Not Conformed and PO Not Conformed
         if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
             $this->update_items_for_re_award();
             return $this->determine_re_award_or_rebid();
@@ -99,6 +94,15 @@ class ProcurementBac extends Model
         if ($noas->contains(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
             $this->update_items_for_not_conformed();
             return $this->determine_re_award_or_rebid();
+        }
+
+
+        foreach ($status_hierarchy as $noa_status => $procurement_statuses) {
+            if ($noas->contains(fn($noa) => $noa->status->name === $noa_status)) {
+                return $noas->every(fn($noa) => $noa->status->name === $noa_status)
+                    ? ListStatus::getID($procurement_statuses['full'], 'Procurement')
+                    : ListStatus::getID($procurement_statuses['partial'], 'Procurement');
+            }
         }
 
         return $current_status;
@@ -136,6 +140,7 @@ class ProcurementBac extends Model
         $has_available_re_award_items = $this->procurement->quotations->flatMap->items
             ->contains(fn($item) => $item->status->id == ListStatus::getID('Available for Re-award','Procurement'));
 
+
         return $has_available_re_award_items
             ? ListStatus::getID('Re-award','Procurement')
             : ListStatus::getID('Rebid','Procurement');
@@ -166,6 +171,8 @@ class ProcurementBac extends Model
                     : ListStatus::getID($partial_status, 'Procurement');
             }
         }
+
+     
 
         // Handle special cases for Not Conformed and PO Not Conformed
         if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
