@@ -13,7 +13,9 @@
                   </div>
                   <div>
                     <h1 class="hero-title mb-1">Procurement Details</h1>
-                    <p class="hero-subtitle mb-0">Comprehensive overview of procurement information</p>
+                    <p class="hero-subtitle mb-0">
+                      Comprehensive overview of procurement information
+                    </p>
                   </div>
                 </div>
               </div>
@@ -23,7 +25,7 @@
                 <div class="status-badge-wrapper">
                   <b-badge
                     :class="procurement.status.bg + ' status-badge-main'"
-                    style="font-size: 1rem; padding: 0.5rem 1rem;"
+                    style="font-size: 1rem; padding: 0.5rem 1rem"
                   >
                     <i :class="statusIcons[procurement.status.id] + ' me-2'"></i>
                     {{ procurement.status.name }}
@@ -31,7 +33,7 @@
                   <div v-if="procurement.sub_status" class="mt-2">
                     <b-badge
                       :class="procurement.sub_status.bg + ' status-badge-sub'"
-                      style="font-size: 0.8rem; padding: 0.3rem 0.8rem;"
+                      style="font-size: 0.8rem; padding: 0.3rem 0.8rem"
                     >
                       {{ procurement.sub_status.name }}
                     </b-badge>
@@ -150,7 +152,9 @@
                   </div>
                   <div class="personnel-info">
                     <span class="personnel-role">Created By</span>
-                    <span class="personnel-name">{{ procurement.created_by.profile.fullname }}</span>
+                    <span class="personnel-name">{{
+                      procurement.created_by.profile.fullname
+                    }}</span>
                   </div>
                 </div>
                 <div class="personnel-item">
@@ -159,7 +163,9 @@
                   </div>
                   <div class="personnel-info">
                     <span class="personnel-role">Requested By</span>
-                    <span class="personnel-name">{{ procurement.requested_by.profile.fullname }}</span>
+                    <span class="personnel-name">{{
+                      procurement.requested_by.profile.fullname
+                    }}</span>
                   </div>
                 </div>
               </div>
@@ -183,11 +189,17 @@
                   :key="code.id"
                   class="pap-code-item"
                 >
-                  <b-badge variant="primary" :class="procurement.status.bg + ' pap-badge'">
+                  <b-badge
+                    variant="primary"
+                    :class="procurement.status.bg + ' pap-badge'"
+                  >
                     {{ code.procurement_code?.title }}
                   </b-badge>
                 </div>
-                <div v-if="!procurement.codes || procurement.codes.length === 0" class="text-center text-muted py-2">
+                <div
+                  v-if="!procurement.codes || procurement.codes.length === 0"
+                  class="text-center text-muted py-2"
+                >
                   <i class="ri-price-tag-3-line fs-2 mb-1"></i>
                   <p class="mb-0">No PAP codes assigned</p>
                 </div>
@@ -206,12 +218,16 @@
               <h5 class="card-header-title">Procurement Items</h5>
             </div>
             <div class="card-body-custom">
-              <div v-if="procurement.items && procurement.items.length > 0" class="items-table-container">
+              <div
+                v-if="procurement.items && procurement.items.length > 0"
+                class="items-table-container"
+              >
                 <div class="table-responsive">
                   <table class="items-table">
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
+                        <th class="text-center">Status</th>
                         <th>Description</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Unit</th>
@@ -220,21 +236,61 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item, index) in procurement.items" :key="item.id" class="item-row">
+                      <tr
+                        v-for="(item, index) in procurement.items"
+                        :key="item.id"
+                        class="item-row"
+                      >
                         <td class="text-center item-number">{{ index + 1 }}</td>
+                        <td class="text-center">
+                          <b-badge
+                            :class="item.status?.bg"
+                            class="fs-11"
+                            v-if="item.status"
+                          >
+                            {{ item.status?.name }}
+                          </b-badge>
+                          <span v-else class="text-muted">-</span>
+                        </td>
                         <td class="item-description">
                           <span v-html="item.item_description"></span>
                         </td>
-                        <td class="text-center item-quantity">{{ item.item_quantity }}</td>
-                        <td class="text-center item-unit">{{ item.item_quantity > 1 ? item.item_unit_type?.name_long : item.item_unit_type?.name_short || 'N/A' }}</td>
-                        <td class="text-end item-cost">₱{{ Number(item.item_unit_cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>
-                        <td class="text-end item-total">₱{{ Number(item.total_cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>
+                        <td class="text-center item-quantity">
+                          {{ item.item_quantity }}
+                        </td>
+                        <td class="text-center item-unit">
+                          {{
+                            item.item_quantity > 1
+                              ? item.item_unit_type?.name_long
+                              : item.item_unit_type?.name_short || "N/A"
+                          }}
+                        </td>
+                        <td class="text-end item-cost">
+                          ₱{{
+                            Number(item.item_unit_cost).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })
+                          }}
+                        </td>
+                        <td class="text-end item-total">
+                          ₱{{
+                            Number(item.total_cost).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })
+                          }}
+                        </td>
                       </tr>
                     </tbody>
                     <tfoot>
                       <tr class="grand-total-row">
-                        <td colspan="5" class="text-end grand-total-label">Grand Total:</td>
-                        <td class="text-end grand-total-amount">₱{{ calculateGrandTotal() }}</td>
+                        <td colspan="5" class="text-end grand-total-label">
+                          Grand Total:
+                        </td>
+                        <td class="text-end grand-total-amount">
+                          ₱{{ calculateGrandTotal() }}
+                        </td>
                       </tr>
                     </tfoot>
                   </table>
@@ -245,7 +301,9 @@
                   <i class="ri-shopping-bag-line"></i>
                 </div>
                 <h6 class="empty-state-title">No Items Found</h6>
-                <p class="empty-state-text">This procurement has no items assigned yet.</p>
+                <p class="empty-state-text">
+                  This procurement has no items assigned yet.
+                </p>
               </div>
             </div>
           </div>
@@ -335,12 +393,15 @@ export default {
   methods: {
     calculateGrandTotal() {
       if (!this.procurement.items || this.procurement.items.length === 0) {
-        return '0.00';
+        return "0.00";
       }
       const total = this.procurement.items.reduce((sum, item) => {
         return sum + (parseFloat(item.total_cost) || 0);
       }, 0);
-      return total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return total.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
     },
   },
 };
@@ -369,7 +430,7 @@ export default {
 }
 
 .hero-gradient::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -440,7 +501,7 @@ export default {
 }
 
 .info-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -704,15 +765,17 @@ export default {
   max-width: 300px;
 }
 
-.item-quantity, .item-unit {
+.item-quantity,
+.item-unit {
   font-weight: 600;
   color: #495057;
 }
 
-.item-cost, .item-total {
+.item-cost,
+.item-total {
   font-weight: 700;
   color: #28a745;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 .grand-total-row {
@@ -730,7 +793,7 @@ export default {
   font-weight: 700;
   color: #28a745;
   font-size: 1rem;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 /* Empty State */

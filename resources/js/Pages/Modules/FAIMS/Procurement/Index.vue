@@ -82,10 +82,9 @@
                     <th style="width: 12%">Code</th>
                     <th style="width: 18%">Purpose</th>
                     <th style="width: 12%">Division</th>
-                    <th style="width: 12%">Created By</th>
+                    <th style="width: 12%">Created By/Date</th>
                     <th style="width: 12%">Requested By</th>
                     <th style="width: 10%">PAP Code</th>
-                    <th style="width: 10%">Date Created</th>
                     <th style="width: 10%">Status</th>
                     <th style="width: 10%">Sub-status</th>
                     <th style="width: 10%" class="text-center">Actions</th>
@@ -116,7 +115,10 @@
                       </div>
                     </td>
                     <td>{{ list.division?.name }}</td>
-                    <td>{{ list.created_by }}</td>
+                    <td>
+                    {{ list.created_by }}
+                      <p class="text-muted">{{ formatDate(list.date) }}</p>
+                    </td>
                     <td>{{ list.requested_by }}</td>
                     <td>
                       <div class="d-flex flex-wrap gap-1">
@@ -129,7 +131,7 @@
                         </span>
                       </div>
                     </td>
-                    <td>{{ formatDate(list.date) }}</td>
+                
                     <td>
                       <b-badge :class="list.status.bg" class="fs-11">{{ list.status?.name }}</b-badge>
                     </td>

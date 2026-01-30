@@ -116,6 +116,25 @@ class ProcurementPOClass
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
         $procurement =  $po->noa->procurement_bac->procurement;
 
+           // if current_pr_status "Re-award" or "Rebid"
+        if($current_pr_status == ListStatus::getID('Re-award','Procurement') || $current_pr_status == ListStatus::getID('Rebid','Procurement')){
+            $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
+
+            // update Procurement Request SubStatus
+            $procurement->update([
+                'sub_status_id' =>  $updated_pr_substatus,
+            ]);
+
+        }
+        else{
+            $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
+            // update Procurement Request Status
+            $procurement->update([
+                'status_id' =>  $updated_pr_status,
+                'sub_status_id'=>null,
+            ]);
+        }
+
         if($request->status['name'] == "Pending"){
 
              $po->update([
@@ -184,7 +203,6 @@ class ProcurementPOClass
            })
            ->update(['status_id' => ListStatus::getID('Not Awarded','Procurement')]);
 
-          // dd($procurement->items->every(fn($item) => $item->status_id == ListStatus::getID('Completed','Procurement')));
             // check Procurement Items if all items are Completed else Partially Completed
             if ($procurement->items->every(fn($item) => $item->status_id == ListStatus::getID('Completed','Procurement'))) {
                 $procurement->update([
@@ -198,32 +216,17 @@ class ProcurementPOClass
                     'status_id' => ListStatus::getID('Partially Completed','Procurement'),
                     'sub_status_id'=> null,
                 ]);
-           
-             
-            }
             
-
+                
+            }
         }
 
 
-    // if current_pr_status "Re-award" or "Rebid"
-        if($current_pr_status == ListStatus::getID('Re-award','Procurement') || $current_pr_status == ListStatus::getID('Rebid','Procurement')){
-            $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
+ 
 
-            // update Procurement Request SubStatus
-            $procurement->update([
-                'sub_status_id' =>  $updated_pr_substatus,
-            ]);
+        
+       
 
-        }
-        else{
-            $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
-            // update Procurement Request Status
-            $procurement->update([
-                'status_id' =>  $updated_pr_status,
-                'sub_status_id'=>null,
-            ]);
-        }
 
         return [
             'data' =>new ProcurementNoaPoResource($po),
@@ -260,16 +263,18 @@ class ProcurementPOClass
 
     public function notConformed($id, $request)
     { 
+   
         $user = Auth::user();
         $po = ProcurementNoaPo::with('noa.procurement_bac.procurement' , 'status')->findOrFail($id);
 
         $po->update([
             'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set status to "Not Conformed"
-        ]);
+        ]);     
 
         $po->noa->update([
             'status_id' => ListStatus::getID('PO Not Conformed','Procurement'), // set noa status to "PO Not Conformed"
         ]);
+    
 
         $po->noa->procurement_bac->update([
             'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set bac resolution status to "PO Not Conformed"
@@ -295,8 +300,8 @@ class ProcurementPOClass
         $procurement = $po->noa->procurement_bac->procurement;
         $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
 
-        // Always update the procurement status using overall_status
-        $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
+       // Determine if rebid or reaward
+        $updated_pr_status = $po->noa->procurement_bac->determine_re_award_or_rebid();
         $procurement->update([
             'status_id' => $updated_pr_status,
         ]);

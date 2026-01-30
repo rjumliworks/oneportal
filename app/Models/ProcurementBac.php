@@ -73,7 +73,6 @@ class ProcurementBac extends Model
 
         // Define status hierarchy from highest to lowest
         $status_hierarchy = [
-            'Completed' => ['full' => 'Completed', 'partial' => 'Completed'],
             'Delivered/For Inspection' => ['full' => 'Delivered/For Inspection', 'partial' => 'Partially Delivered/For Inspection'],
             'PO Delivered/For Inspection' => ['full' => 'PO Delivered/For Inspection', 'partial' => 'PO Partially Delivered/For Inspection'],
             'PO Conformed' => ['full' => 'PO Conformed', 'partial' => 'PO Partially Conformed'],

@@ -25,4 +25,10 @@ class ProcurementItem extends Model
     {
         return $this->belongsTo('App\Models\UnitType', 'item_unit_type_id');
     }
+
+    
+    public function status()
+    {
+        return $this->belongsTo('App\Models\ListStatus', 'status_id');
+    }
 }

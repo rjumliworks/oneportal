@@ -194,14 +194,16 @@ class ProcurementBACClass
 
     public function createNOA($request, $bac_resolution , $user, $bac_reso_type = null)
     {
+        //dd('hey');
         if($bac_reso_type == 'Re-award'){
-            // For Re-award, create only one NOA and include all not conformed items from all quotations
+            // For Re-award, create only one NOA and include all not conformed or available for re-award items from all quotations
             $procurement = $bac_resolution->procurement;
             $first_quotation_id = null;
             $all_items = [];
             foreach ($procurement->quotations as $quotation) {
                 foreach ($quotation->items as $item) {
-                    if($item->status_id === ListStatus::getID('Not Conformed','Procurement')) {
+                    if($item->status_id === ListStatus::getID('Not Conformed','Procurement') ||
+                       $item->status_id === ListStatus::getID('Available for Re-award','Procurement')) {
                         $all_items[] = $item;
                         if(!$first_quotation_id) {
                             $first_quotation_id = $quotation->id;

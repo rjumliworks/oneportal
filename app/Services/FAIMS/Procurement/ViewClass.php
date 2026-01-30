@@ -215,7 +215,7 @@ class ViewClass
 
     public function show($id, $request){
 
-        $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by'
+        $procurement = Procurement::with('division','unit', 'codes' , 'items' , 'approved_by.profile' , 'items.item_unit_type','items.status', 'quotations.supplier' ,  'quotations.items' , 'status', 'sub_status' , 'requested_by', 'created_by'
                                     , 'bac_resolutions.comments.user.profile', 'bac_resolutions.comments.replies.user.profile', 'noas.comments.user.profile', 'noas.comments.replies.user.profile', 'pos.comments.user.profile', 'pos.comments.replies.user.profile', 'comments.user.profile', 'comments.replies.user.profile')->findOrFail($id);
 
         // Add status distribution for the status flow panel

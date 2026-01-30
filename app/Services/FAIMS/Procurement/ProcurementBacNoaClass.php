@@ -92,6 +92,8 @@ class ProcurementBacNoaClass
                 'status_id' =>  $updated_pr_status,
             ]);
         }
+
+      
         
         return [
             'data' =>new ProcurementBacNoaResource($noa),
