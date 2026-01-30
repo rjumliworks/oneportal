@@ -69,13 +69,11 @@ class ProcurementBac extends Model
     public function overall_status($current_status)
     {
       
-
         $noas = $this->notice_of_awards;
-        
 
         // Define status hierarchy from highest to lowest
         $status_hierarchy = [
-            'Completed' => ['full' => 'Completed', 'partial' => 'Partially Completed'],
+            'Completed' => ['full' => 'Completed', 'partial' => 'Completed'],
             'Delivered/For Inspection' => ['full' => 'Delivered/For Inspection', 'partial' => 'Partially Delivered/For Inspection'],
             'PO Delivered/For Inspection' => ['full' => 'PO Delivered/For Inspection', 'partial' => 'PO Partially Delivered/For Inspection'],
             'PO Conformed' => ['full' => 'PO Conformed', 'partial' => 'PO Partially Conformed'],
@@ -85,16 +83,16 @@ class ProcurementBac extends Model
             'Served to Supplier' => ['full' => 'Awarded', 'partial' => 'Partially Awarded'],
         ];
 
-         // Handle special cases for Not Conformed and PO Not Conformed
-        if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
-            $this->update_items_for_re_award();
-            return $this->determine_re_award_or_rebid();
-        }
+        //  // Handle special cases for Not Conformed and PO Not Conformed
+        // if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
+        //     //$this->update_items_for_re_award($not_conformed_noa);
+        //     return $this->determine_re_award_or_rebid();
+        // }
 
-        if ($noas->contains(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
-            $this->update_items_for_not_conformed();
-            return $this->determine_re_award_or_rebid();
-        }
+        // if ($noas->contains(fn($noa) => $noa->status->name == 'PO Not Conformed')) {
+        //     //$this->update_items_for_not_conformed();
+        //     return $this->determine_re_award_or_rebid();
+        // }
 
 
         foreach ($status_hierarchy as $noa_status => $procurement_statuses) {
@@ -108,14 +106,25 @@ class ProcurementBac extends Model
         return $current_status;
     }
 
-    private function update_items_for_re_award()
+    private function update_items_for_re_award($noa = null)
     {
-        $available_quotation_items = $this->procurement->quotations
-            ->flatMap->items
-            ->filter(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement'));
+        if ($noa) {
+            // Update only items related to the specific NOA
+            $noa_items = ProcurementBacNoaItem::where('procurement_bac_noa_id', $noa->id)->get();
+            $item_ids = $noa_items->pluck('item.procurement_item_id')->unique();
+            ProcurementQuotationItem::where('quotation_id', $noa->procurement_quotation_id)
+                ->whereIn('procurement_item_id', $item_ids)
+                ->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
+                ->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
+        } else {
+            // Fallback to original logic if no NOA provided
+            $available_quotation_items = $this->procurement->quotations
+                ->flatMap->items
+                ->filter(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement'));
 
-        foreach ($available_quotation_items as $item) {
-            $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
+            foreach ($available_quotation_items as $item) {
+                $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
+            }
         }
     }
 
@@ -127,15 +136,13 @@ class ProcurementBac extends Model
                                   $item->status_id == ListStatus::getID('Awarded','Procurement'));
 
         foreach ($available_quotation_items as $item) {
-            if ($item->status_id == ListStatus::getID('Available for Re-award','Procurement')) {
-                $item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
-            } elseif ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
+          if ($item->status_id == ListStatus::getID('Awarded','Procurement')) {
                 $item->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
             }
         }
     }
 
-    private function determine_re_award_or_rebid()
+    public function determine_re_award_or_rebid()
     {
         $has_available_re_award_items = $this->procurement->quotations->flatMap->items
             ->contains(fn($item) => $item->status->id == ListStatus::getID('Available for Re-award','Procurement'));
@@ -146,6 +153,8 @@ class ProcurementBac extends Model
             : ListStatus::getID('Rebid','Procurement');
     }
 
+
+
     public function overall_substatus($current_status)
     {
         $noas = $this->notice_of_awards;
@@ -153,12 +162,11 @@ class ProcurementBac extends Model
      
         // Define status hierarchy from highest to lowest
         $status_hierarchy = [
-            'Completed' => 'Partially Completed',
             'Delivered/For Inspection' => 'Partially Delivered/For Inspection',
             'PO Delivered/For Inspection' => 'PO Partially Delivered/For Inspection',
             'PO Conformed' => 'PO Partially Conformed',
             'PO Issued' => 'PO Partially Issued',
-            'PO Pending' => ' PO Pending',
+            'PO Pending' => 'PO Pending',
             'Conformed' => 'Partially NOA Conformed',
             'Served to Supplier' => 'Partially Awarded',
         ];
@@ -176,7 +184,7 @@ class ProcurementBac extends Model
 
         // Handle special cases for Not Conformed and PO Not Conformed
         if ($noas->contains(fn($noa) => $noa->status->name == 'Not Conformed')) {
-            $this->update_items_for_re_award();
+            //$this->update_items_for_re_award();
             return $this->determine_re_award_or_rebid();
         }
 
@@ -185,7 +193,7 @@ class ProcurementBac extends Model
             return $this->determine_re_award_or_rebid();
         }
 
-        return $current_status;
+        return null;
     }
 
     public function getActivitylogOptions(): LogOptions {

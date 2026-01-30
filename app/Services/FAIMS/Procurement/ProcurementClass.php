@@ -69,6 +69,7 @@ class ProcurementClass
             $data->item_quantity = $item['item_quantity'];
             $data->item_description = $item['item_description'];
             $data->total_cost = $item['total_cost'];
+            $data->status_id = ListStatus::getID('Pending','Procurement');
             $data->save();
         }
 

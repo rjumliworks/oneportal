@@ -12,7 +12,8 @@ class ProcurementItem extends Model
         'item_description',
         'item_quantity',
         'item_unit_cost', 
-        'total_cost' 
+        'total_cost',
+        'status_id'
     ];
 
     public function procurement()

@@ -4,6 +4,7 @@ namespace App\Services\FAIMS\Procurement;
 
 use App\Models\ProcurementBac;
 use App\Models\Procurement;
+use App\Models\ProcurementItem;
 use App\Models\ProcurementBacNoa;
 use App\Models\ProcurementBacNoaItem;
 use App\Models\ProcurementQuotation;
@@ -112,6 +113,8 @@ class ProcurementPOClass
  
         $user = Auth::user();
         $po = ProcurementNoaPo::with('noa.procurement_bac.procurement')->findOrFail($id);
+        $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
+        $procurement =  $po->noa->procurement_bac->procurement;
 
         if($request->status['name'] == "Pending"){
 
@@ -148,11 +151,14 @@ class ProcurementPOClass
         else if($request->status['name'] == "Delivered/For Inspection"){
              $po->update([
                 'status_id' => ListStatus::getID('Completed','Procurement'), // set status to "Completed"
-               
+
             ]);
             $po->noa->update([
                 'status_id' => ListStatus::getID('Completed','Procurement'), // set status to "Completed"
             ]);
+
+
+
            // update Quotation items status to "Completed" only items which is related to the noa
            $noa_items = ProcurementBacNoaItem::where('procurement_bac_noa_id', $po->noa->id)->get();
            foreach ($noa_items as $noa_item) {
@@ -163,40 +169,59 @@ class ProcurementPOClass
 
            }
 
-           // update also the items in with the same item no in the related quotation items
            $item_ids = $noa_items->pluck('item.procurement_item_id')->unique();
+
+           // update ProcurementItem status to "Completed" only for items related to the NOA
+           ProcurementItem::whereIn('id', $item_ids)->update(['status_id' => ListStatus::getID('Completed','Procurement')]);
+
+           // update also the items in with the same item no in the related quotation items to "Not Awarded"
            ProcurementQuotationItem::whereHas('quotation', function($q) use ($po) {
                $q->where('procurement_id', $po->procurement_id);
            })->whereIn('procurement_item_id', $item_ids)
-           ->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
-           ->orWhere('status_id', ListStatus::getID('Awarded','Procurement'))
+           ->where(function($q) {
+               $q->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
+                 ->orWhere('status_id', ListStatus::getID('Awarded','Procurement'));
+           })
            ->update(['status_id' => ListStatus::getID('Not Awarded','Procurement')]);
 
+          // dd($procurement->items->every(fn($item) => $item->status_id == ListStatus::getID('Completed','Procurement')));
+            // check Procurement Items if all items are Completed else Partially Completed
+            if ($procurement->items->every(fn($item) => $item->status_id == ListStatus::getID('Completed','Procurement'))) {
+                $procurement->update([
+                    'status_id' => ListStatus::getID('Completed','Procurement'),
+                    'sub_status_id' => null,
+                ]);
+            }
+            else{
+                // update Procurement Request SubStatus
+                $procurement->update([
+                    'status_id' => ListStatus::getID('Partially Completed','Procurement'),
+                    'sub_status_id'=> null,
+                ]);
            
-        }
-        $current_pr_status = $po->noa->procurement_bac->procurement->status_id;
-        $procurement =  $po->noa->procurement_bac->procurement;
+             
+            }
+            
 
-        // if current_pr_status "Re-award" or "Rebid"
-       if($current_pr_status == ListStatus::getID('Re-award','Procurement') || $current_pr_status == ListStatus::getID('Rebid','Procurement')){
+        }
+
+
+    // if current_pr_status "Re-award" or "Rebid"
+        if($current_pr_status == ListStatus::getID('Re-award','Procurement') || $current_pr_status == ListStatus::getID('Rebid','Procurement')){
             $updated_pr_substatus = $po->noa->procurement_bac->overall_substatus($current_pr_status);
-            // update Procurement Request Status
+
+            // update Procurement Request SubStatus
             $procurement->update([
                 'sub_status_id' =>  $updated_pr_substatus,
             ]);
 
-            // if pr sub_status is "Completed" update pr status also to "Completed"
-            if($updated_pr_substatus == ListStatus::getID('Completed','Procurement')){
-                $procurement->update([
-                    'status_id' =>  $updated_pr_substatus,
-                ]);
-            }
         }
         else{
             $updated_pr_status = $po->noa->procurement_bac->overall_status($current_pr_status);
             // update Procurement Request Status
             $procurement->update([
                 'status_id' =>  $updated_pr_status,
+                'sub_status_id'=>null,
             ]);
         }
 
@@ -250,15 +275,16 @@ class ProcurementPOClass
             'status_id' => ListStatus::getID('Not Conformed','Procurement'), // set bac resolution status to "PO Not Conformed"
         ]);
 
-        // update quotation items with the same item no to "Not Conformed"
+        // update quotation items in the specific quotation to "Awarded" for re-award
         $noa_items = ProcurementBacNoaItem::where('procurement_bac_noa_id', $po->noa->id)->get();
         $item_ids = $noa_items->pluck('item.procurement_item_id')->unique();
-        ProcurementQuotationItem::whereHas('quotation', function($q) use ($po) {
-            $q->where('procurement_id', $po->procurement_id);
-        })->whereIn('procurement_item_id', $item_ids)
-        ->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
-        ->orWhere('status_id', ListStatus::getID('Awarded','Procurement'))
-        ->update(['status_id' => ListStatus::getID('Not Conformed','Procurement')]);
+        ProcurementQuotationItem::where('quotation_id', $po->noa->procurement_quotation_id)
+        ->whereIn('procurement_item_id', $item_ids)
+        ->where(function($q) {
+            $q->where('status_id', ListStatus::getID('Available for Re-award','Procurement'))
+              ->orWhere('status_id', ListStatus::getID('Awarded','Procurement'));
+        })
+        ->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
 
         // create comments for reason
         $po->comments()->create([

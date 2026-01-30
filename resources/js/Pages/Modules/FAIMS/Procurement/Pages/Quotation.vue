@@ -56,8 +56,8 @@
           <td style="line-height: 0.1">
             <p>{{ list.supplier?.name }}</p>
 
-            <p>
-              {{ list.supplier.address }}
+            <p class="text-muted">
+              {{ list.supplier.address.address }}
             </p>
           </td>
           <td>{{ list.supply_officer }}</td>

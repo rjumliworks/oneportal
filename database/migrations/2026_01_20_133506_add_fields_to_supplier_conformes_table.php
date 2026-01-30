@@ -19,10 +19,11 @@ return new class extends Migration
                 $table->boolean('is_active')->default(1);
             }
             if (!Schema::hasColumn('supplier_conformes', 'user_id')) {
-                $table->unsignedBigInteger('user_id')->nullable();
-                $table->foreign('user_id')->references('id')->on('users');
+                $table->tinyInteger('user_id')->unsigned()->index()->nullable();
+                $table->foreign('user_id')->references('id')->on('list_units');
             }
-
+        });
+    }
     /**
      * Reverse the migrations.
      */

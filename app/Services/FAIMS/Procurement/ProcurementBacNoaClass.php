@@ -120,7 +120,9 @@ class ProcurementBacNoaClass
         
         $procurement = $noa->procurement_bac->procurement;
         $current_pr_status = $noa->procurement_bac->procurement->status_id;
-        $updated_pr_status = $noa->procurement_bac->overall_status($current_pr_status);
+
+        // Determine if rebid or reaward
+        $updated_pr_status = $noa->procurement_bac->determine_re_award_or_rebid();
     
         // if updated status is "Re-award" or "Rebid"
         if($updated_pr_status  == ListStatus::getID('Re-award','Procurement') || $updated_pr_status  == ListStatus::getID('Rebid','Procurement')){
@@ -158,6 +160,15 @@ class ProcurementBacNoaClass
             ]);
         }
 
+        // Update the next item to be awarded in other quotations
+        $procurement = $noa->procurement_bac->procurement;
+        $other_quotations = $procurement->quotations->where('id', '!=', $noa->procurement_quotation_id);
+        $available_items = $other_quotations->flatMap->items->filter(fn($item) => $item->status_id == ListStatus::getID('Available for Re-award','Procurement') && !empty($item->bid_price));
+        if ($available_items->isNotEmpty()) {
+            $next_item = $available_items->sortBy('bid_price')->first();
+            $next_item->update(['status_id' => ListStatus::getID('Awarded','Procurement')]);
+        }
+
     
         return [
             'data' =>new ProcurementBacNoaResource($noa),
@@ -165,6 +176,11 @@ class ProcurementBacNoaClass
             'info' => "You've successfully updated BAC Resolution Status.",
         ];
     }
+
+    
+
+
+    
 
 
    

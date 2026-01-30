@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('item_quantity');
             $table->decimal('item_unit_cost');
             $table->decimal('total_cost');
+            $table->tinyInteger('status_id')->unsigned()->index()->nullable();
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('set null');
             $table->timestamps();
         });
     }
